@@ -1,227 +1,55 @@
-// import { useNavigate } from "react-router-dom";
-// import useStore from "../store/useStore";
-
-// const FEATURES = [
-//   { id: "photo",      icon: "📸", label: "Exam Photo",    desc: "Resize & compress per exam spec",  credit: 1 },
-//   { id: "signature",  icon: "✍️", label: "Signature",     desc: "Format signature for any exam",    credit: 1 },
-//   { id: "crop",       icon: "✂️", label: "Crop Photo",    desc: "Manual crop with aspect ratio",    credit: 1 },
-//   { id: "pdfcompress",icon: "🗜️", label: "PDF Compress",  desc: "Shrink PDF to required KB",        credit: 1 },
-//   { id: "pdfeditor",  icon: "📝", label: "PDF Editor",    desc: "Edit Admit Cards & form PDFs",     credit: 2 },
-//   { id: "resume",     icon: "📄", label: "Resume Builder",desc: "Professional exam-ready CVs",      credit: "1–3" },
-// ];
-
-// export default function Dashboard() {
-//   const { user, credits, logout } = useStore();
-//   const navigate = useNavigate();
-
-//   return (
-//     <div style={{ minHeight: "100vh", background: "#070c18", fontFamily: "Segoe UI, sans-serif", color: "#f1f5f9" }}>
-//       {/* Top Bar */}
-//       <div style={{ background: "#0d1421", borderBottom: "1px solid #1e293b",
-//         padding: "14px 28px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-//         <span style={{ fontSize: 20, fontWeight: 800, color: "#f97316" }}>📋 DocSaathi</span>
-//         <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
-//           <span style={{ background: "#f9731620", color: "#f97316", borderRadius: 20,
-//             padding: "6px 14px", fontSize: 13, fontWeight: 700, border: "1px solid #f9731640",
-//             cursor: "pointer" }} onClick={() => navigate("/pricing")}>
-//             ⚡ {credits ?? user?.credits ?? 0} Credits
-//           </span>
-//           <button onClick={() => { logout(); navigate("/"); }}
-//             style={{ background: "#1e293b", border: "1px solid #374151", color: "#94a3b8",
-//               borderRadius: 8, padding: "7px 14px", cursor: "pointer", fontSize: 13 }}>
-//             Logout
-//           </button>
-//         </div>
-//       </div>
-
-//       <div style={{ padding: "28px" }}>
-//         <h2 style={{ marginBottom: 4 }}>Namaste, {user?.name?.split(" ")[0]} 🙏</h2>
-//         <p style={{ color: "#64748b", marginBottom: 28 }}>What would you like to prepare today?</p>
-
-//         {(credits ?? user?.credits ?? 0) <= 3 && (
-//           <div style={{ background: "#7c2d1220", border: "1px solid #7c2d12",
-//             borderRadius: 10, padding: "10px 16px", color: "#fca57a",
-//             fontSize: 13, marginBottom: 20 }}>
-//             ⚠️ Low credits!{" "}
-//             <span style={{ color: "#f97316", cursor: "pointer", fontWeight: 600 }}
-//               onClick={() => navigate("/pricing")}>Buy a plan</span>
-//             {" "}or downloads will have a watermark (remove for ₹10).
-//           </div>
-//         )}
-
-//         <h3 style={{ marginBottom: 16 }}>🛠️ Tools</h3>
-//         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: 16 }}>
-//           {FEATURES.map(f => (
-//             <div key={f.id} onClick={() => navigate(`/tool/${f.id}`)}
-//               style={{ background: "#0d1421", border: "1px solid #1e293b", borderRadius: 16,
-//                 padding: 20, cursor: "pointer", transition: "border-color 0.2s" }}
-//               onMouseEnter={e => e.currentTarget.style.borderColor = "#f97316"}
-//               onMouseLeave={e => e.currentTarget.style.borderColor = "#1e293b"}>
-//               <div style={{ fontSize: 28, marginBottom: 10 }}>{f.icon}</div>
-//               <h4 style={{ margin: "0 0 6px", color: "#f1f5f9" }}>{f.label}</h4>
-//               <p style={{ margin: "0 0 10px", color: "#64748b", fontSize: 13 }}>{f.desc}</p>
-//               <span style={{ fontSize: 12, color: "#f97316", border: "1px solid #f9731644",
-//                 borderRadius: 6, padding: "2px 8px" }}>
-//                 {f.credit} credit{typeof f.credit === "string" || f.credit > 1 ? "s" : ""}
-//               </span>
-//             </div>
-//           ))}
-//         </div>
-//       </div>
-//     </div>
-//   );
-// }
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import API from "../api/axios";
 import useStore from "../store/useStore";
 import Sidebar from "../components/Sidebar";
 import TopBar from "../components/TopBar";
 
-const FEATURES = [
-  { id: "photo",       icon: "📸", label: "Exam Photo",     desc: "Resize & compress photo per exam spec",        credit: 1,     color: "#3b82f6" },
-  { id: "signature",   icon: "✍️", label: "Signature",      desc: "Format your signature for any exam",           credit: 1,     color: "#8b5cf6" },
-  { id: "crop",        icon: "✂️", label: "Crop Photo",     desc: "Manual crop with aspect ratio lock",           credit: 1,     color: "#ec4899" },
-  { id: "pdfcompress", icon: "🗜️", label: "PDF Compress",   desc: "Shrink PDF to required KB size",               credit: 1,     color: "#f97316" },
-  { id: "pdfeditor",   icon: "📝", label: "PDF Editor",     desc: "Edit Admit Cards & form PDFs",                 credit: 2,     color: "#ef4444" },
-  { id: "resume",      icon: "📄", label: "Resume Builder", desc: "Professional templates, exam-ready CVs",       credit: "1–3", color: "#22c55e" },
+// ─── Exam Form Tools (always 2×2 grid) ───────────────────────────────────────
+const EXAM_TOOLS = [
+  {
+    id: "photo", icon: "📸", label: "Exam Photo", credit: 3, color: "#3b82f6",
+    route: "/tool/photo", tag: "Most Used", tagColor: "#22c55e",
+    desc: "Resize & compress to exact exam portal size and KB automatically",
+  },
+  {
+    id: "signature", icon: "✍️", label: "Exam Signature", credit: 2, color: "#8b5cf6",
+    route: "/tool/signature", tag: null,
+    desc: "Format signature to exact dimensions & file size for any exam form",
+  },
+  {
+    id: "merger", icon: "🪪", label: "Photo + Sign / Date", credit: 6, color: "#f59e0b",
+    route: "/tool/merger", tag: "Coming Soon", tagColor: "#475569",
+    desc: "Combine photo, signature & date of birth on a single document page",
+  },
+  {
+    id: "docsize", icon: "📐", label: "Document Size Changer", credit: 4, color: "#f97316",
+    route: "/pdf/compress", tag: null,
+    desc: "Compress any PDF to the exact KB or MB required by the exam portal",
+  },
 ];
 
-const EXAM_SPECS = {
-  "SSC CGL":  { photoSize: "20-50 KB",   photoDim: "200×230 px",   sigSize: "10-20 KB", sigDim: "200×70 px", photoFormat: "JPG", bg: "White" },
-  "SBI PO":   { photoSize: "20-50 KB",   photoDim: "200×200 px",   sigSize: "10-20 KB", sigDim: "200×80 px", photoFormat: "JPG", bg: "White" },
-  "IBPS PO":  { photoSize: "20-50 KB",   photoDim: "200×230 px",   sigSize: "10-20 KB", sigDim: "200×80 px", photoFormat: "JPG", bg: "White" },
-  "JEE Main": { photoSize: "10-200 KB",  photoDim: "3.5×4.5 cm",   sigSize: "4-30 KB",  sigDim: "3.5×1.5 cm", photoFormat: "JPG", bg: "White" },
-  "NEET UG":  { photoSize: "10-200 KB",  photoDim: "3.5×4.5 cm",   sigSize: "4-30 KB",  sigDim: "3.5×1.5 cm", photoFormat: "JPG", bg: "White" },
-};
+// ─── Document & Utility Tools ─────────────────────────────────────────────────
+const OTHER_TOOLS = [
+  {
+    id: "crop",       icon: "✂️", label: "Crop & Resize",   credit: 1,     color: "#ec4899",
+    route: "/tool/crop",       desc: "Manually crop any image with aspect-ratio lock",
+  },
+  {
+    id: "pdfcompress",icon: "🗜️", label: "PDF Compressor",  credit: 1,     color: "#06b6d4",
+    route: "/pdf/compress",    desc: "Shrink PDF files to any KB or MB target size",
+  },
+  {
+    id: "pdfeditor",  icon: "📝", label: "PDF Editor",       credit: 2,     color: "#ef4444",
+    route: "/tool/pdfeditor",  desc: "Edit Admit Cards, fill form fields, add text",
+  },
+  {
+    id: "resume",     icon: "📄", label: "Resume Builder",   credit: "1–3", color: "#22c55e",
+    route: "/tool/resume",     desc: "Professional templates for govt & private jobs",
+  },
+];
 
-export default function Dashboard() {
-  const { user, credits, logout } = useStore();
-  const navigate = useNavigate();
-  const [activeNav, setActiveNav] = useState("Dashboard");
-  const [showPricing, setShowPricing] = useState(false);
-
-  return (
-    <div style={s.root}>
-      <Sidebar
-        credits={credits ?? user?.credits ?? 15}
-        activeNav={activeNav}
-        setActiveNav={setActiveNav}
-        setShowPricing={setShowPricing}
-        onLogout={() => { logout(); navigate("/"); }}
-      />
-      <div style={s.main}>
-        <TopBar
-          user={user}
-          credits={credits ?? user?.credits ?? 15}
-          setShowPricing={setShowPricing}
-          onLogout={() => { logout(); navigate("/"); }}
-        />
-
-        {showPricing ? (
-          <PricingSection />
-        ) : (
-          <>
-            {/* Welcome */}
-            <div style={s.welcomeBar}>
-              <div>
-                <h2 style={s.welcomeTitle}>
-                  Namaste, {user?.name?.split(" ")[0]} 🙏
-                </h2>
-                <p style={s.welcomeSub}>What would you like to prepare today?</p>
-              </div>
-              <div style={s.creditBadge}>
-                <span style={s.creditIcon}>⚡</span>
-                <span style={s.creditNum}>{credits ?? user?.credits ?? 15}</span>
-                <span style={s.creditLbl}>Credits Left</span>
-              </div>
-            </div>
-
-            {/* Low credit banner */}
-            {(credits ?? user?.credits ?? 15) <= 3 && (
-              <div style={s.lowCreditBanner}>
-                ⚠️ Low credits!{" "}
-                <span style={s.link} onClick={() => setShowPricing(true)}>
-                  Buy a plan
-                </span>{" "}
-                or after 0, downloads will have a watermark (remove for ₹10).
-              </div>
-            )}
-
-            {/* Tools */}
-            <div style={s.sectionHeader}>
-              <h2 style={s.sectionTitle}>🛠️ Tools</h2>
-            </div>
-            <div style={s.featuresGrid}>
-              {FEATURES.map((f) => (
-                <div
-                  key={f.id}
-                  style={s.featureCard}
-                  onClick={() => navigate(`/tool/${f.id}`)}
-                  onMouseEnter={(e) =>
-                    (e.currentTarget.style.borderColor = f.color)
-                  }
-                  onMouseLeave={(e) =>
-                    (e.currentTarget.style.borderColor = "#1e293b")
-                  }
-                >
-                  <div
-                    style={{
-                      ...s.featureIcon,
-                      background: f.color + "18",
-                      color: f.color,
-                    }}
-                  >
-                    {f.icon}
-                  </div>
-                  <h3 style={s.featureLabel}>{f.label}</h3>
-                  <p style={s.featureDesc}>{f.desc}</p>
-                  <div
-                    style={{
-                      ...s.featureCreditBadge,
-                      color: f.color,
-                      borderColor: f.color + "44",
-                    }}
-                  >
-                    {f.credit} credit
-                    {typeof f.credit === "string" || f.credit > 1 ? "s" : ""}
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* Exam Specs Table */}
-            <div style={s.sectionHeader}>
-              <h2 style={s.sectionTitle}>📋 Popular Exam Requirements</h2>
-            </div>
-            <div style={s.examTable}>
-              <div style={s.examTableHeader}>
-                {["Exam", "Photo Size", "Dimensions", "Sig Size", "Sig Dimensions"].map(
-                  (h) => (
-                    <div key={h} style={s.examTh}>{h}</div>
-                  )
-                )}
-              </div>
-              {Object.entries(EXAM_SPECS).map(([exam, sp]) => (
-                <div key={exam} style={s.examRow}>
-                  <div style={{ ...s.examTd, fontWeight: 700, color: "#f97316" }}>
-                    {exam}
-                  </div>
-                  <div style={s.examTd}>{sp.photoSize}</div>
-                  <div style={s.examTd}>{sp.photoDim}</div>
-                  <div style={s.examTd}>{sp.sigSize}</div>
-                  <div style={s.examTd}>{sp.sigDim}</div>
-                </div>
-              ))}
-            </div>
-          </>
-        )}
-      </div>
-    </div>
-  );
-}
-
-// ── Pricing Section (inline) ──────────────────────────────────────────────────
+// ─── Plans ────────────────────────────────────────────────────────────────────
 const PLANS = [
   {
     id: "starter", name: "Starter", price: "₹49", period: "/year",
@@ -240,10 +68,178 @@ const PLANS = [
   },
 ];
 
-import API from "../api/axios";
+const creditLabel = (c) =>
+  typeof c === "string" ? `${c} credits` : `${c} credit${c !== 1 ? "s" : ""}`;
 
-function PricingSection() {
-  const { updateCredits } = useStore();
+// ─── ExamCard (used inside fixed 2×2 grid) ───────────────────────────────────
+function ExamCard({ tool, onClick }) {
+  const [hov, setHov] = useState(false);
+  const disabled = tool.tag === "Coming Soon";
+
+  return (
+    <div
+      style={{
+        ...s.examCard,
+        borderColor: hov && !disabled ? tool.color : "#1e293b",
+        opacity: disabled ? 0.55 : 1,
+        cursor: disabled ? "not-allowed" : "pointer",
+        boxShadow: hov && !disabled ? `0 6px 20px ${tool.color}20` : "none",
+        transform: hov && !disabled ? "translateY(-2px)" : "translateY(0)",
+      }}
+      onClick={() => !disabled && onClick(tool.route)}
+      onMouseEnter={() => setHov(true)}
+      onMouseLeave={() => setHov(false)}
+    >
+      {/* Tag */}
+      {tool.tag && (
+        <span style={{
+          ...s.tag,
+          background: tool.tagColor + "22",
+          color: tool.tagColor,
+          border: `1px solid ${tool.tagColor}44`,
+        }}>
+          {tool.tag}
+        </span>
+      )}
+
+      <div style={{ ...s.examIcon, background: tool.color + "18", color: tool.color }}>
+        {tool.icon}
+      </div>
+      <h3 style={s.examLabel}>{tool.label}</h3>
+      <p style={s.examDesc}>{tool.desc}</p>
+
+      <div style={s.examFooter}>
+        <span style={{ ...s.creditChip, color: tool.color, borderColor: tool.color + "40" }}>
+          ⚡ {creditLabel(tool.credit)}
+        </span>
+        {!disabled && <span style={{ color: tool.color, fontSize: 18, fontWeight: 700 }}>→</span>}
+      </div>
+    </div>
+  );
+}
+
+// ─── OtherCard (horizontal, equal height) ────────────────────────────────────
+function OtherCard({ tool, onClick }) {
+  const [hov, setHov] = useState(false);
+  return (
+    <div
+      style={{
+        ...s.otherCard,
+        borderColor: hov ? tool.color : "#1e293b",
+      }}
+      onClick={() => onClick(tool.route)}
+      onMouseEnter={() => setHov(true)}
+      onMouseLeave={() => setHov(false)}
+    >
+      <div style={{ ...s.otherIcon, background: tool.color + "18", color: tool.color }}>
+        {tool.icon}
+      </div>
+      <div style={s.otherBody}>
+        <p style={s.otherLabel}>{tool.label}</p>
+        <p style={s.otherDesc}>{tool.desc}</p>
+      </div>
+      <span style={{ ...s.otherChip, color: tool.color, borderColor: tool.color + "40" }}>
+        {creditLabel(tool.credit)}
+      </span>
+    </div>
+  );
+}
+
+// ─── Dashboard ────────────────────────────────────────────────────────────────
+export default function Dashboard() {
+  const { user, credits, updateCredits, logout } = useStore();
+  const navigate  = useNavigate();
+  const [activeNav, setActiveNav]     = useState("Dashboard");
+  const [showPricing, setShowPricing] = useState(false);
+  const currentCredits = credits ?? user?.credits ?? 0;
+
+  return (
+    <div style={s.root}>
+      <Sidebar
+        credits={currentCredits}
+        activeNav={activeNav}
+        setActiveNav={setActiveNav}
+        setShowPricing={setShowPricing}
+        onLogout={() => { logout(); navigate("/"); }}
+      />
+
+      <div style={s.main}>
+        <TopBar
+          user={user}
+          credits={currentCredits}
+          setShowPricing={setShowPricing}
+        />
+
+        {showPricing ? (
+          <PricingSection updateCredits={updateCredits} setShowPricing={setShowPricing} />
+        ) : (
+          <div style={s.content}>
+
+            {/* Low credit warning */}
+            {currentCredits <= 5 && (
+              <div style={s.lowBanner}>
+                ⚠️ Only <b>{currentCredits} credits</b> left!{" "}
+                <span style={s.link} onClick={() => setShowPricing(true)}>Buy a plan</span>
+                {" "}— or downloads will carry a watermark (remove for ₹10).
+              </div>
+            )}
+
+            {/* ── EXAM FORM TOOLS ─────────────────────────────────────── */}
+            <div style={s.examSection}>
+              {/* Section header */}
+              <div style={s.examHeader}>
+                <div style={s.examHeaderLeft}>
+                  <span style={{ fontSize: 22 }}>📋</span>
+                  <div>
+                    <h2 style={s.examHeaderTitle}>Exam Form Tools</h2>
+                    <p style={s.examHeaderSub}>
+                      Everything needed to fill an exam form — no Cyber Café required
+                    </p>
+                  </div>
+                </div>
+                <span style={s.examBadge}>For Form Filling</span>
+              </div>
+
+              {/* Fixed 2×2 grid — always exactly 2 columns */}
+              <div style={s.examGrid}>
+                {EXAM_TOOLS.map((t) => (
+                  <ExamCard key={t.id} tool={t} onClick={navigate} />
+                ))}
+              </div>
+            </div>
+
+            {/* ── DOCUMENT & UTILITY TOOLS ────────────────────────────── */}
+            <div style={s.otherSection}>
+              <div style={s.otherHeader}>
+                <span style={s.otherDot} />
+                <div>
+                  <h2 style={s.otherTitle}>Document & Utility Tools</h2>
+                  <p style={s.otherSub}>General-purpose tools for any document task</p>
+                </div>
+              </div>
+
+              {/* Fixed 2×2 grid */}
+              <div style={s.otherGrid}>
+                {OTHER_TOOLS.map((t) => (
+                  <OtherCard key={t.id} tool={t} onClick={navigate} />
+                ))}
+              </div>
+            </div>
+
+            {/* Comparison strip */}
+            <div style={s.strip}>
+              💡 <b>Doc Saathi AI vs Cyber Café</b> — They charge ₹20–50 per photo.
+              We charge ₹1–2. Same result, zero travel, works at 2 AM.
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ─── Pricing Section ─────────────────────────────────────────────────────────
+function PricingSection({ updateCredits, setShowPricing }) {
   const navigate = useNavigate();
 
   const handleBuy = async (planId) => {
@@ -251,117 +247,209 @@ function PricingSection() {
       const { data } = await API.post("/payment/create-order", { planType: planId });
       const options = {
         key: import.meta.env.VITE_RAZORPAY_KEY,
-        amount: data.amount,
-        currency: "INR",
-        name: "DocSaathi",
+        amount: data.amount, currency: "INR",
+        name: "Doc Saathi AI",
         description: `Buy ${planId} plan`,
         order_id: data.orderId,
-        handler: async (response) => {
-          const verify = await API.post("/payment/verify", {
-            razorpayOrderId: response.razorpay_order_id,
-            razorpayPaymentId: response.razorpay_payment_id,
-            razorpaySignature: response.razorpay_signature,
+        handler: async (res) => {
+          const v = await API.post("/payment/verify", {
+            razorpayOrderId:   res.razorpay_order_id,
+            razorpayPaymentId: res.razorpay_payment_id,
+            razorpaySignature: res.razorpay_signature,
           });
-          updateCredits(verify.data.credits);
-          alert(`✅ Payment successful! ${verify.data.credits} credits added.`);
-          navigate("/dashboard");
+          updateCredits(v.data.credits);
+          alert(`✅ Payment successful! ${v.data.credits} credits added.`);
+          setShowPricing(false);
         },
         theme: { color: "#f97316" },
       };
-      const rzp = new window.Razorpay(options);
-      rzp.open();
+      new window.Razorpay(options).open();
     } catch {
       alert("Payment failed. Try again.");
     }
   };
 
   return (
-    <div>
-      <div style={s.sectionHeader}>
-        <h2 style={s.sectionTitle}>💳 Choose Your Plan</h2>
-        <p style={s.sectionSub}>Cheaper than any Cyber Café in India. No hidden fees.</p>
+    <div style={s.content}>
+      <div style={s.otherHeader}>
+        <span style={s.otherDot} />
+        <div>
+          <h2 style={s.otherTitle}>Choose Your Plan</h2>
+          <p style={s.otherSub}>Cheaper than any Cyber Café. No hidden fees.</p>
+        </div>
       </div>
       <div style={s.plansGrid}>
         {PLANS.map((plan) => (
-          <div key={plan.name} style={{ ...s.planCard, borderColor: plan.color }}>
+          <div key={plan.id} style={{ ...s.planCard, borderColor: plan.color }}>
             {plan.badge && (
-              <div style={{ ...s.planBadge, background: plan.color }}>
-                {plan.badge}
-              </div>
+              <div style={{ ...s.planBadge, background: plan.color }}>{plan.badge}</div>
             )}
-            <h3 style={{ ...s.planName, color: plan.color }}>{plan.name}</h3>
-            <div style={s.planPrice}>
-              {plan.price}
-              <span style={s.planPeriod}>{plan.period}</span>
+            <h3 style={{ color: plan.color, fontSize: 20, fontWeight: 800, margin: "0 0 4px" }}>
+              {plan.name}
+            </h3>
+            <div style={{ fontSize: 34, fontWeight: 900, color: "#f1f5f9", margin: "8px 0 2px" }}>
+              {plan.price}<span style={{ fontSize: 15, color: "#64748b", fontWeight: 500 }}>{plan.period}</span>
             </div>
-            <div style={s.planCredits}>{plan.credits} Credits</div>
-            <ul style={s.planPerks}>
+            <div style={{ color: "#94a3b8", fontSize: 13, marginBottom: 16 }}>{plan.credits} Credits</div>
+            <ul style={{ listStyle: "none", padding: 0, margin: "0 0 16px", display: "flex", flexDirection: "column", gap: 6 }}>
               {plan.perks.map((p) => (
-                <li key={p} style={s.planPerk}>✓ {p}</li>
+                <li key={p} style={{ color: "#94a3b8", fontSize: 13 }}>✓ {p}</li>
               ))}
             </ul>
             <button
               onClick={() => handleBuy(plan.id)}
-              style={{ ...s.btnPrimary, background: plan.color, marginTop: 8 }}
+              style={{ width: "100%", background: plan.color, color: "#fff", border: "none", borderRadius: 12, padding: "13px 0", fontWeight: 700, fontSize: 15, cursor: "pointer" }}
             >
               Buy {plan.name}
             </button>
           </div>
         ))}
       </div>
-      <div style={s.payNote}>
+      <p style={{ textAlign: "center", color: "#475569", fontSize: 13, margin: "0 0 12px" }}>
         🔒 Secure via Razorpay · UPI, Cards, Net Banking accepted
-      </div>
-      <div style={s.cyberNote}>
-        💡 <b>DocSaathi vs Cyber Café:</b> They charge ₹20–50 per photo. We charge ₹2–4
-        per photo. Same quality, zero travel.
+      </p>
+      <div style={s.strip}>
+        💡 <b>Doc Saathi AI vs Cyber Café</b> — They charge ₹20–50 per photo. We charge ₹2–4. Same quality, zero travel.
       </div>
     </div>
   );
 }
 
+// ─── Styles ───────────────────────────────────────────────────────────────────
 const s = {
   root: { display: "flex", minHeight: "100vh", background: "#070c18", fontFamily: "'Segoe UI', sans-serif" },
-  main: { flex: 1, overflowY: "auto", paddingBottom: 40 },
-  link: { color: "#f97316", cursor: "pointer", fontWeight: 600 },
+  main: { flex: 1, overflowY: "auto", paddingBottom: 48, minWidth: 0 },
+  content: { padding: "20px 28px", display: "flex", flexDirection: "column", gap: 24 },
+  link: { color: "#f97316", cursor: "pointer", fontWeight: 700 },
 
-  welcomeBar: { display: "flex", alignItems: "center", justifyContent: "space-between", padding: "24px 28px 12px", flexWrap: "wrap", gap: 12 },
-  welcomeTitle: { color: "#f1f5f9", fontSize: 22, fontWeight: 800, margin: 0 },
-  welcomeSub: { color: "#64748b", fontSize: 14, marginTop: 4 },
-  creditBadge: { background: "#0d1421", border: "1px solid #1e293b", borderRadius: 14, padding: "12px 20px", display: "flex", flexDirection: "column", alignItems: "center", gap: 2 },
-  creditIcon: { fontSize: 20 },
-  creditNum: { color: "#f97316", fontWeight: 900, fontSize: 28, lineHeight: 1 },
-  creditLbl: { color: "#64748b", fontSize: 11 },
+  lowBanner: {
+    background: "#7c2d1220", border: "1px solid #7c2d12",
+    borderRadius: 10, padding: "10px 16px", color: "#fca57a", fontSize: 13,
+  },
 
-  lowCreditBanner: { margin: "0 28px 16px", background: "#7c2d1220", border: "1px solid #7c2d12", borderRadius: 10, padding: "10px 16px", color: "#fca57a", fontSize: 13 },
+  // ── Exam section ────────────────────────────────────────────────────────────
+  examSection: {
+    background: "linear-gradient(135deg, #0d1421 0%, #0f172a 100%)",
+    border: "1px solid #1e3a5f",
+    borderRadius: 20,
+    padding: 20,
+  },
+  examHeader: {
+    display: "flex", alignItems: "flex-start",
+    justifyContent: "space-between", marginBottom: 18, gap: 12, flexWrap: "wrap",
+  },
+  examHeaderLeft: { display: "flex", alignItems: "flex-start", gap: 12 },
+  examHeaderTitle: { color: "#f1f5f9", fontWeight: 800, fontSize: 17, margin: "0 0 3px" },
+  examHeaderSub: { color: "#64748b", fontSize: 13, margin: 0 },
+  examBadge: {
+    background: "#1e3a5f", color: "#93c5fd",
+    border: "1px solid #1e40af44", borderRadius: 20,
+    padding: "4px 14px", fontSize: 12, fontWeight: 700, whiteSpace: "nowrap", flexShrink: 0,
+  },
 
-  sectionHeader: { padding: "20px 28px 12px" },
-  sectionTitle: { color: "#f1f5f9", fontWeight: 800, fontSize: 18, margin: 0 },
-  sectionSub: { color: "#64748b", fontSize: 14, marginTop: 4 },
+  // Strict 2×2 — no auto-fill
+  examGrid: {
+    display: "grid",
+    gridTemplateColumns: "1fr 1fr",   // always exactly 2 columns
+    gap: 14,
+  },
 
-  featuresGrid: { display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: 16, padding: "0 28px 8px" },
-  featureCard: { background: "#0d1421", border: "1px solid #1e293b", borderRadius: 16, padding: 20, cursor: "pointer", transition: "border-color 0.2s" },
-  featureIcon: { width: 48, height: 48, borderRadius: 12, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 22, marginBottom: 12 },
-  featureLabel: { color: "#f1f5f9", fontWeight: 700, fontSize: 15, margin: "0 0 6px" },
-  featureDesc: { color: "#64748b", fontSize: 13, margin: "0 0 12px" },
-  featureCreditBadge: { display: "inline-block", fontSize: 12, fontWeight: 600, border: "1px solid", borderRadius: 6, padding: "2px 8px" },
+  // Exam card — all same height via flexbox column
+  examCard: {
+    background: "#070c18",
+    border: "1px solid",
+    borderRadius: 16,
+    padding: 18,
+    display: "flex",
+    flexDirection: "column",
+    transition: "all 0.18s",
+    position: "relative",
+    minHeight: 180,
+  },
+  tag: {
+    display: "inline-block", borderRadius: 6,
+    padding: "2px 10px", fontSize: 11, fontWeight: 700,
+    marginBottom: 10, alignSelf: "flex-start",
+  },
+  examIcon: {
+    width: 46, height: 46, borderRadius: 12,
+    display: "flex", alignItems: "center", justifyContent: "center",
+    fontSize: 22, marginBottom: 12, flexShrink: 0,
+  },
+  examLabel: { color: "#f1f5f9", fontWeight: 700, fontSize: 15, margin: "0 0 6px" },
+  examDesc:  { color: "#64748b", fontSize: 12, margin: "0", lineHeight: 1.5, flex: 1 },
+  examFooter: {
+    display: "flex", alignItems: "center",
+    justifyContent: "space-between", marginTop: 14,
+  },
+  creditChip: {
+    display: "inline-block", fontSize: 12, fontWeight: 700,
+    border: "1px solid", borderRadius: 6, padding: "3px 10px",
+  },
 
-  examTable: { margin: "0 28px 24px", border: "1px solid #1e293b", borderRadius: 14, overflow: "hidden" },
-  examTableHeader: { display: "grid", gridTemplateColumns: "1.5fr 1fr 1fr 1fr 1fr", background: "#111827", padding: "10px 16px" },
-  examTh: { color: "#64748b", fontSize: 12, fontWeight: 700, textTransform: "uppercase" },
-  examRow: { display: "grid", gridTemplateColumns: "1.5fr 1fr 1fr 1fr 1fr", padding: "10px 16px", borderTop: "1px solid #1e293b" },
-  examTd: { color: "#94a3b8", fontSize: 13 },
+  // ── Other tools ─────────────────────────────────────────────────────────────
+  otherSection: {},
+  otherHeader: { display: "flex", alignItems: "flex-start", gap: 10, marginBottom: 14 },
+  otherDot: {
+    width: 8, height: 8, borderRadius: "50%",
+    background: "#f97316", flexShrink: 0, marginTop: 6,
+  },
+  otherTitle: { color: "#f1f5f9", fontWeight: 800, fontSize: 16, margin: "0 0 2px" },
+  otherSub:   { color: "#64748b", fontSize: 13, margin: 0 },
 
-  plansGrid: { display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))", gap: 20, padding: "0 28px 20px" },
-  planCard: { background: "#0d1421", border: "2px solid", borderRadius: 20, padding: 24, position: "relative", overflow: "hidden" },
-  planBadge: { position: "absolute", top: 0, right: 0, borderRadius: "0 18px 0 12px", padding: "4px 14px", fontSize: 11, fontWeight: 800, color: "#fff" },
-  planName: { fontSize: 20, fontWeight: 800, marginBottom: 4 },
-  planPrice: { fontSize: 36, fontWeight: 900, color: "#f1f5f9", margin: "8px 0 4px" },
-  planPeriod: { fontSize: 16, color: "#64748b", fontWeight: 500 },
-  planCredits: { color: "#94a3b8", fontSize: 14, marginBottom: 16 },
-  planPerks: { listStyle: "none", padding: 0, margin: "0 0 16px", display: "flex", flexDirection: "column", gap: 6 },
-  planPerk: { color: "#94a3b8", fontSize: 13 },
-  payNote: { textAlign: "center", color: "#475569", fontSize: 13, marginBottom: 12, padding: "0 28px" },
-  cyberNote: { margin: "0 28px 20px", background: "#052e1620", border: "1px solid #14532d", borderRadius: 12, padding: "12px 16px", color: "#86efac", fontSize: 13 },
-  btnPrimary: { background: "linear-gradient(135deg, #f97316, #ea580c)", color: "#fff", border: "none", borderRadius: 12, padding: "13px 20px", fontWeight: 700, fontSize: 15, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 8, width: "100%" },
+  // Strict 2×2 for other tools too
+  otherGrid: {
+    display: "grid",
+    gridTemplateColumns: "1fr 1fr",
+    gap: 12,
+  },
+
+  // Horizontal card — fixed height
+  otherCard: {
+    background: "#0d1421",
+    border: "1px solid",
+    borderRadius: 14,
+    padding: "14px 16px",
+    display: "flex",
+    alignItems: "center",
+    gap: 14,
+    cursor: "pointer",
+    transition: "border-color 0.15s",
+    minHeight: 72,
+  },
+  otherIcon: {
+    width: 42, height: 42, borderRadius: 11,
+    display: "flex", alignItems: "center", justifyContent: "center",
+    fontSize: 19, flexShrink: 0,
+  },
+  otherBody: { flex: 1, minWidth: 0 },
+  otherLabel: { color: "#f1f5f9", fontWeight: 700, fontSize: 13, margin: "0 0 3px" },
+  otherDesc:  { color: "#64748b", fontSize: 11, margin: 0, lineHeight: 1.4 },
+  otherChip: {
+    fontSize: 11, fontWeight: 700, border: "1px solid",
+    borderRadius: 6, padding: "3px 8px", flexShrink: 0, whiteSpace: "nowrap",
+  },
+
+  // Comparison strip
+  strip: {
+    background: "#052e1618", border: "1px solid #14532d44",
+    borderRadius: 12, padding: "12px 16px",
+    color: "#86efac", fontSize: 13, lineHeight: 1.5,
+  },
+
+  // Plans
+  plansGrid: {
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))",
+    gap: 20, marginBottom: 16,
+  },
+  planCard: {
+    background: "#0d1421", border: "2px solid", borderRadius: 20,
+    padding: 22, position: "relative", overflow: "hidden",
+  },
+  planBadge: {
+    position: "absolute", top: 0, right: 0,
+    borderRadius: "0 18px 0 12px", padding: "4px 14px",
+    fontSize: 11, fontWeight: 800, color: "#fff",
+  },
 };

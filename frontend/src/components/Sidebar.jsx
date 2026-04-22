@@ -1,74 +1,81 @@
 import { useNavigate } from "react-router-dom";
 
-const NAV_ITEMS = ["Dashboard", "History", "Pricing", "Support"];
+const NAV_ITEMS = [
+  { label: "Dashboard", icon: "🏠" },
+  { label: "History",   icon: "🕘" },
+  { label: "Pricing",   icon: "💳" },
+  { label: "Support",   icon: "💬" },
+];
 
 export default function Sidebar({ credits, activeNav, setActiveNav, setShowPricing, onLogout }) {
   const navigate = useNavigate();
 
   const handleNav = (item) => {
     setActiveNav(item);
-    if (item === "Pricing") {
-      setShowPricing(true);
-      navigate("/dashboard");
-    } else if (item === "Dashboard") {
-      setShowPricing(false);
-      navigate("/dashboard");
-    }
+    if (item === "Pricing") { setShowPricing(true); navigate("/dashboard"); }
+    else if (item === "Dashboard") { setShowPricing(false); navigate("/dashboard"); }
   };
+
+  const ringPct = Math.min(credits / 100, 1);
+  const circumference = 2 * Math.PI * 26;
 
   return (
     <div style={s.sidebar}>
-      {/* Brand */}
-      <div style={s.sideBrand}>
-        <span style={{ fontSize: 22 }}>📋</span>
-        <span style={s.brandName}>DocSaathi</span>
+
+      {/* ── Brand ────────────────────────────────────────────────── */}
+      <div style={s.brand}>
+        <div style={s.brandIconBox}>🤖</div>
+        <div style={s.brandText}>
+          {/* All on one line, same weight, same size */}
+          <span style={s.brandWord}>Doc Saathi </span>
+          <span style={s.brandWordAI}>AI</span>
+        </div>
       </div>
 
-      {/* Credits Ring */}
-      <div style={s.sideCredits}>
-        <div style={s.creditRing}>
-          <svg width="60" height="60" viewBox="0 0 60 60">
+      {/* ── Credit Ring ──────────────────────────────────────────── */}
+      <div style={s.creditWrap}>
+        <div style={s.ringOuter}>
+          <svg width="76" height="76" viewBox="0 0 60 60">
             <circle cx="30" cy="30" r="26" fill="none" stroke="#1e293b" strokeWidth="5" />
             <circle
-              cx="30" cy="30" r="26" fill="none" stroke="#f97316" strokeWidth="5"
-              strokeDasharray={`${Math.min(credits / 15, 1) * 163} 163`}
-              strokeLinecap="round" transform="rotate(-90 30 30)"
+              cx="30" cy="30" r="26" fill="none"
+              stroke={credits <= 5 ? "#ef4444" : "#f97316"}
+              strokeWidth="5"
+              strokeDasharray={`${ringPct * circumference} ${circumference}`}
+              strokeLinecap="round"
+              transform="rotate(-90 30 30)"
+              style={{ transition: "all 0.4s" }}
             />
           </svg>
-          <div style={s.creditRingText}>{credits}</div>
+          <div style={s.ringNum}>{credits}</div>
         </div>
-        <p style={s.creditRingLabel}>Credits Remaining</p>
+        <p style={s.ringLabel}>Credits Remaining</p>
         <button
-          style={s.buyCreditsBtn}
+          style={s.buyBtn}
           onClick={() => { setShowPricing(true); navigate("/dashboard"); }}
         >
           + Buy Credits
         </button>
       </div>
 
-      {/* Nav */}
-      <nav style={s.sideNav}>
-        {NAV_ITEMS.map((item) => (
+      {/* ── Nav ──────────────────────────────────────────────────── */}
+      <nav style={s.nav}>
+        {NAV_ITEMS.map(({ label, icon }) => (
           <button
-            key={item}
-            style={{ ...s.sideNavItem, ...(activeNav === item ? s.sideNavActive : {}) }}
-            onClick={() => handleNav(item)}
+            key={label}
+            style={{ ...s.navItem, ...(activeNav === label ? s.navActive : {}) }}
+            onClick={() => handleNav(label)}
           >
-            {item === "Dashboard" && "🏠"}{" "}
-            {item === "History" && "🕘"}{" "}
-            {item === "Pricing" && "💳"}{" "}
-            {item === "Support" && "💬"}{" "}
-            {item}
+            <span>{icon}</span> {label}
           </button>
         ))}
       </nav>
 
-      {/* Bottom */}
-      <div style={s.sideBottom}>
-        <p style={s.sideTagline}>Cheaper than Cyber Café.</p>
-        <p style={s.sideTaglineSub}>Smarter. Faster. Anywhere.</p>
+      {/* ── Footer ───────────────────────────────────────────────── */}
+      <div style={s.footer}>
+        <p style={s.footerLine1}>Smarter than Cyber Café</p>
         {onLogout && (
-          <button onClick={onLogout} style={s.logoutBtn}>Logout</button>
+          <button onClick={onLogout} style={s.logoutBtn}>🚪 Logout</button>
         )}
       </div>
     </div>
@@ -76,19 +83,124 @@ export default function Sidebar({ credits, activeNav, setActiveNav, setShowPrici
 }
 
 const s = {
-  sidebar: { width: 240, background: "#0d1421", borderRight: "1px solid #1e293b", display: "flex", flexDirection: "column", padding: "20px 16px", flexShrink: 0, position: "sticky", top: 0, height: "100vh", overflowY: "auto" },
-  sideBrand: { display: "flex", alignItems: "center", gap: 8, marginBottom: 24, paddingBottom: 20, borderBottom: "1px solid #1e293b" },
-  brandName: { fontSize: 18, fontWeight: 800, color: "#f97316" },
-  sideCredits: { display: "flex", flexDirection: "column", alignItems: "center", marginBottom: 24, padding: "16px 0", borderBottom: "1px solid #1e293b" },
-  creditRing: { position: "relative", width: 60, height: 60, marginBottom: 8 },
-  creditRingText: { position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", color: "#f97316", fontWeight: 800, fontSize: 18 },
-  creditRingLabel: { color: "#64748b", fontSize: 12, marginBottom: 10 },
-  buyCreditsBtn: { background: "linear-gradient(135deg, #f97316, #ea580c)", color: "#fff", border: "none", borderRadius: 8, padding: "7px 16px", fontSize: 12, fontWeight: 700, cursor: "pointer" },
-  sideNav: { display: "flex", flexDirection: "column", gap: 4, flex: 1 },
-  sideNavItem: { display: "flex", alignItems: "center", gap: 8, padding: "10px 12px", border: "none", background: "transparent", color: "#64748b", borderRadius: 10, cursor: "pointer", fontSize: 14, fontWeight: 500, textAlign: "left", transition: "all 0.2s" },
-  sideNavActive: { background: "#f9731618", color: "#f97316", fontWeight: 700 },
-  sideBottom: { borderTop: "1px solid #1e293b", paddingTop: 16, marginTop: 8 },
-  sideTagline: { color: "#f97316", fontSize: 12, fontWeight: 700, marginBottom: 2 },
-  sideTaglineSub: { color: "#475569", fontSize: 11, marginBottom: 10 },
-  logoutBtn: { background: "#1e293b", border: "1px solid #374151", color: "#94a3b8", borderRadius: 8, padding: "6px 12px", cursor: "pointer", fontSize: 12, width: "100%" },
+  sidebar: {
+    width: 220,
+    background: "#0a0f1e",
+    borderRight: "1px solid #1e293b",
+    display: "flex",
+    flexDirection: "column",
+    padding: "20px 14px",
+    flexShrink: 0,
+    position: "sticky",
+    top: 0,
+    height: "100vh",
+    overflowY: "auto",
+  },
+
+  // Brand — all text same size, same weight
+  brand: {
+    display: "flex",
+    alignItems: "center",
+    gap: 10,
+    paddingBottom: 20,
+    marginBottom: 20,
+    borderBottom: "1px solid #1e293b",
+  },
+  brandIconBox: {
+    width: 38,
+    height: 38,
+    borderRadius: 10,
+    background: "#f9731620",
+    border: "1px solid #f9731640",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    fontSize: 20,
+    flexShrink: 0,
+  },
+  brandText: {
+    display: "flex",
+    alignItems: "baseline",
+    flexWrap: "nowrap",
+  },
+  brandWord: {
+    fontSize: 15,
+    fontWeight: 800,
+    color: "#f1f5f9",
+    letterSpacing: -0.3,
+    whiteSpace: "nowrap",
+  },
+  brandWordAI: {
+    fontSize: 15,
+    fontWeight: 800,
+    color: "#f97316",
+    letterSpacing: -0.3,
+  },
+
+  // Credits
+  creditWrap: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    paddingBottom: 20,
+    marginBottom: 16,
+    borderBottom: "1px solid #1e293b",
+  },
+  ringOuter: { position: "relative", width: 76, height: 76, marginBottom: 8 },
+  ringNum: {
+    position: "absolute",
+    inset: 0,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    color: "#f97316",
+    fontWeight: 800,
+    fontSize: 20,
+  },
+  ringLabel: { color: "#64748b", fontSize: 11, margin: "0 0 10px" },
+  buyBtn: {
+    background: "linear-gradient(135deg, #f97316, #ea580c)",
+    color: "#fff",
+    border: "none",
+    borderRadius: 8,
+    padding: "8px 18px",
+    fontSize: 12,
+    fontWeight: 700,
+    cursor: "pointer",
+  },
+
+  // Nav
+  nav: { display: "flex", flexDirection: "column", gap: 2, flex: 1 },
+  navItem: {
+    display: "flex",
+    alignItems: "center",
+    gap: 10,
+    padding: "10px 12px",
+    border: "none",
+    background: "transparent",
+    color: "#64748b",
+    borderRadius: 10,
+    cursor: "pointer",
+    fontSize: 14,
+    fontWeight: 500,
+    textAlign: "left",
+    width: "100%",
+    transition: "all 0.15s",
+  },
+  navActive: { background: "#f9731618", color: "#f97316", fontWeight: 700 },
+
+  // Footer
+  footer: { borderTop: "1px solid #1e293b", paddingTop: 14, marginTop: 8 },
+  footerLine1: { color: "#334155", fontSize: 11, margin: "0 0 10px" },
+  logoutBtn: {
+    background: "#1e293b",
+    border: "1px solid #374151",
+    color: "#64748b",
+    borderRadius: 8,
+    padding: "7px 12px",
+    cursor: "pointer",
+    fontSize: 12,
+    width: "100%",
+    textAlign: "left",
+  },
 };

@@ -2,7 +2,7 @@ const sharp     = require('sharp');
 const User      = require('../models/User');
 const History   = require('../models/ProcessHistory');
 const examSpecs = require('../data/examSpecs');
-const { uploadBuffer } = require('../utils/cloudinary');
+const { cloudinary, uploadBuffer } = require('../utils/cloudinary');
 
 /* ─────────────────────────────────────────────────────────────────────────────
    WHY IMAGES COME OUT TOO SMALL:
