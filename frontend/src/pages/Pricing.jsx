@@ -107,19 +107,30 @@ import { useState } from "react";
 
 const PLANS = [
   {
-    id: "starter", name: "Starter", price: "₹49", period: "/year",
-    credits: 25, color: "#22c55e", badge: null,
-    perks: ["25 Credits", "Valid 1 Year", "All Exam Formats", "Photo + Signature", "PDF Compression"],
+    id: "single", name: "Single Fix", price: "₹9", period: "/download",
+    credits: "1", color: "#64748b", badge: "NO WATERMARK",
+    perks: ["1 Clean Download", "No Watermark", "Instant Download", "For Emergency Use"],
   },
   {
-    id: "pro", name: "Pro", price: "₹299", period: "/year",
-    credits: 100, color: "#f97316", badge: "BEST VALUE",
-    perks: ["100 Credits", "Valid 1 Year", "All Features", "PDF Editor", "Resume Builder", "Priority Support"],
+    id: "daily19", name: "Daily Pass", price: "₹19", period: "/24hrs",
+    credits: 15, color: "#06b6d4", badge: "24 HOURS",
+    perks: ["15 Credits", "Valid 24 Hours", "All Exam Formats", "Photo + Signature", "PDF Compression"],
   },
   {
-    id: "special", name: "Special", price: "₹99", period: "/month",
-    credits: 35, color: "#a855f7", badge: "LIMITED OFFER",
-    perks: ["35 Credits", "Valid 1 Month", "All Features", "PDF Editor", "Resume Builder", "Bonus Templates"],
+    id: "daily29", name: "Daily Unlimited", price: "₹29", period: "/24hrs",
+    credits: "Unlimited*", color: "#22c55e", badge: "24 HOURS",
+    note: "*50 ops/day",
+    perks: ["Unlimited Access", "Fair Usage: 50 ops/day", "Valid 24 Hours", "All Exam Formats", "Photo + Signature", "PDF Compression"],
+  },
+  {
+    id: "monthly59", name: "Monthly", price: "₹59", period: "/month",
+    credits: 60, color: "#3b82f6", badge: null,
+    perks: ["60 Credits", "Valid 1 Month", "All Exam Formats", "Photo + Signature", "PDF Compression"],
+  },
+  {
+    id: "quarterly139", name: "Quarterly", price: "₹139", period: "/3months",
+    credits: 150, color: "#f97316", badge: "BEST VALUE",
+    perks: ["150 Credits", "Valid 3 Months", "All Features", "PDF Editor", "Resume Builder", "Priority Support"],
   },
 ];
 
@@ -194,7 +205,8 @@ export default function Pricing() {
                 {plan.price}
                 <span style={s.planPeriod}>{plan.period}</span>
               </div>
-              <div style={s.planCredits}>{plan.credits} Credits</div>
+              <div style={s.planCredits}>{plan.credits} {typeof plan.credits === 'string' ? '' : 'Credits'}</div>
+              {plan.note && <div style={{...s.planCredits, fontSize: 11, color: '#f97316', marginTop: -12}}>{plan.note}</div>}
               <ul style={s.planPerks}>
                 {plan.perks.map((p) => (
                   <li key={p} style={s.planPerk}>✓ {p}</li>
@@ -229,8 +241,8 @@ const s = {
   sectionTitle: { color: "#f1f5f9", fontWeight: 800, fontSize: 18, margin: 0 },
   sectionSub: { color: "#64748b", fontSize: 14, marginTop: 4 },
   plansGrid: { display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))", gap: 20, padding: "0 28px 20px" },
-  planCard: { background: "#0d1421", border: "2px solid", borderRadius: 20, padding: 24, position: "relative", overflow: "hidden" },
-  planBadge: { position: "absolute", top: 0, right: 0, borderRadius: "0 18px 0 12px", padding: "4px 14px", fontSize: 11, fontWeight: 800, color: "#fff" },
+  planCard: { background: "#0d1421", border: "2px solid", borderRadius: 20, padding: 24, position: "relative", overflow: "visible" },
+  planBadge: { position: "absolute", top: -2, right: -2, borderRadius: "0 18px 0 12px", padding: "4px 14px", fontSize: 11, fontWeight: 800, color: "#fff", zIndex: 1 },
   planName: { fontSize: 20, fontWeight: 800, marginBottom: 4 },
   planPrice: { fontSize: 36, fontWeight: 900, color: "#f1f5f9", margin: "8px 0 4px" },
   planPeriod: { fontSize: 16, color: "#64748b", fontWeight: 500 },

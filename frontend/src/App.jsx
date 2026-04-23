@@ -2,31 +2,45 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Auth            from "./pages/Auth";
 import Dashboard       from "./pages/Dashboard";
 import ToolPage        from "./pages/ToolPage";
-import Pricing         from "./pages/Pricing";
 import PDFCompressPage from "./pages/PDFCompressPage";
 import Support         from "./pages/Support";
 import MergerPage      from "./pages/MergerPage";
+import Pricing         from "./pages/Pricing";
+import Vault           from "./pages/Vault";
 import useStore        from "./store/useStore";
 
-function App() {
+// Protected route wrapper
+function Protected({ children }) {
   const { user } = useStore();
-  const P = ({ children }) => user ? children : <Navigate to="/" />;
+  return user ? children : <Navigate to="/" replace />;
+}
 
+function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/"             element={user ? <Navigate to="/dashboard" /> : <Auth />} />
-        <Route path="/dashboard"    element={<P><Dashboard /></P>} />
-        <Route path="/tool/:toolId" element={<P><ToolPage /></P>} />
-        <Route path="/pricing"      element={<P><Pricing /></P>} />
-        <Route path="/pdf/compress" element={<P><PDFCompressPage /></P>} />
-        <Route path="/support"      element={<P><Support /></P>} />
-        <Route path="/merger"       element={<P><MergerPage /></P>} />
-        <Route path="/vault"        element={<P><Dashboard /></P>} />
-        <Route path="*"             element={<Navigate to="/" />} />
+        {/* Public */}
+        <Route path="/" element={<AuthGate />} />
+
+        {/* Protected */}
+        <Route path="/dashboard"    element={<Protected><Dashboard /></Protected>} />
+        <Route path="/tool/:toolId" element={<Protected><ToolPage /></Protected>} />
+        <Route path="/pdf/compress" element={<Protected><PDFCompressPage /></Protected>} />
+        <Route path="/support"      element={<Protected><Support /></Protected>} />
+        <Route path="/merger"       element={<Protected><MergerPage /></Protected>} />
+        <Route path="/pricing"      element={<Protected><Pricing /></Protected>} />
+        <Route path="/vault"        element={<Protected><Vault /></Protected>} />
+
+        {/* Fallback */}
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
   );
+}
+
+function AuthGate() {
+  const { user } = useStore();
+  return user ? <Navigate to="/dashboard" replace /> : <Auth />;
 }
 
 export default App;

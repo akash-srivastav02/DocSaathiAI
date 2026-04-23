@@ -6,35 +6,39 @@ import useStore from "../store/useStore";
 import Sidebar from "../components/Sidebar";
 import TopBar from "../components/TopBar";
 
-// ─── Correct credits per feature ─────────────────────────────────────────────
-const FEATURES = [
-  { id: "photo",       icon: "📸", label: "Exam Photo",     credit: 3,     color: "#3b82f6", desc: "Resize & compress photo per exam spec" },
-  { id: "signature",   icon: "✍️", label: "Exam Signature", credit: 2,     color: "#8b5cf6", desc: "Format your signature for any exam" },
-  { id: "crop",        icon: "✂️", label: "Crop & Resize",  credit: 1,     color: "#ec4899", desc: "Manual crop with aspect ratio lock" },
-  { id: "pdfeditor",   icon: "📝", label: "PDF Editor",     credit: 2,     color: "#ef4444", desc: "Edit Admit Cards & form PDFs" },
-  { id: "resume",      icon: "📄", label: "Resume Builder", credit: "1–3", color: "#22c55e", desc: "Professional templates, exam-ready CVs" },
-];
+// ── All tools with correct credit costs ──────────────────────────────────────
+const FEATURES = {
+  photo:       { icon: "📸", label: "Exam Photo",       credit: 3, color: "#3b82f6", desc: "Resize & compress photo per exam spec", needsExam: true },
+  signature:   { icon: "✍️", label: "Exam Signature",   credit: 2, color: "#8b5cf6", desc: "Format signature for any exam",         needsExam: true },
+  imgcompress: { icon: "🖼️", label: "Image Compressor", credit: 1, color: "#a78bfa", desc: "Compress image to target KB",           needsExam: false },
+  crop:        { icon: "✂️", label: "Crop & Resize",    credit: 1, color: "#ec4899", desc: "Crop image with aspect ratio lock",     needsExam: false },
+  pdfeditor:   { icon: "📝", label: "PDF Editor",       credit: 2, color: "#ef4444", desc: "Edit Admit Cards & form PDFs",          needsExam: false },
+  resume:      { icon: "📄", label: "Resume Builder",   credit: 3, color: "#22c55e", desc: "Professional exam-ready CV templates",  needsExam: false },
+};
 
 const FALLBACK_EXAMS = [
   "SSC CGL","SSC CHSL","SSC MTS","SSC GD",
   "SBI PO","SBI Clerk","IBPS PO","IBPS Clerk","IBPS RRB",
   "RRB NTPC","RRB Group D","RRB JE",
   "UPSC CSE","UPSC CDS","UPSC NDA",
-  "Delhi Police Constable","Delhi Police SI",
+  "Delhi Police Constable","Delhi Police SI","Delhi Police Head Constable",
   "JEE Main","JEE Advanced","NEET UG","NEET PG",
   "CUET UG","CUET PG",
-  "UP Police","MP Police","Rajasthan Police",
-  "DRDO","ISRO","HAL",
-  "LIC AAO","LIC HFL",
-  "NDA","AFCAT","CDS","GATE","ESE (IES)",
-  "Bihar Police","Haryana Police",
+  "UP Police Constable","UP Police SI","MP Police","Rajasthan Police",
+  "Bihar Police","Haryana Police","HP Police",
+  "DRDO","ISRO","HAL","BEL",
+  "LIC AAO","LIC HFL","NIACL AO",
+  "NDA","AFCAT","CDS",
+  "GATE","ESE (IES)","CSIR NET","UGC NET",
+  "CTET","DSSSB","KVS","NVS",
+  "Agniveer Army","Agniveer Navy","Agniveer Air Force",
 ];
 
 // ─── SpecBox ──────────────────────────────────────────────────────────────────
 function SpecBox({ label, val, icon }) {
   return (
     <div style={s.specBox}>
-      <span style={{ fontSize: 18 }}>{icon}</span>
+      <span style={{ fontSize: 16 }}>{icon}</span>
       <div>
         <div style={s.specLabel}>{label}</div>
         <div style={s.specVal}>{val}</div>
@@ -43,36 +47,29 @@ function SpecBox({ label, val, icon }) {
   );
 }
 
-// ─── WatermarkModal ───────────────────────────────────────────────────────────
-function WatermarkModal({ onDownloadFree, onRemovePaid, onBuyPlan }) {
+// ─── Watermark Modal ──────────────────────────────────────────────────────────
+function WatermarkModal({ onDownloadFree, onBuyPlan }) {
   return (
     <div style={s.overlay}>
       <div style={s.modal}>
-        <div style={{ fontSize: 44, marginBottom: 10 }}>⚠️</div>
+        <div style={{ fontSize: 40, marginBottom: 10 }}>⚠️</div>
         <h3 style={s.modalTitle}>Credits Exhausted</h3>
-        <p style={s.modalDesc}>
-          Your file is processed but will carry a <b>Doc Saathi AI</b> watermark.
-          Choose an option below:
-        </p>
-        <div style={s.modalBtns}>
+        <p style={s.modalDesc}>Your file is ready but will carry a watermark.</p>
+        <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 12 }}>
           <button style={s.modalBtnFree} onClick={onDownloadFree}>
-            <span>📥 Download with Watermark</span>
-            <span style={s.badgeFree}>FREE</span>
+            📥 Download with Watermark <span style={s.badgeFree}>FREE</span>
           </button>
-          <button style={s.modalBtnPaid} onClick={onRemovePaid}>
-            <span>✨ Remove Watermark</span>
-            <span style={s.badgePaid}>₹10 only</span>
+          <button style={s.modalBtnPaid} onClick={() => onBuyPlan()}>
+            ✨ Remove Watermark <span style={s.badgePaid}>₹9 Single Fix</span>
           </button>
         </div>
-        <button style={s.modalLink} onClick={onBuyPlan}>
-          Or buy a plan and save more →
-        </button>
+        <button style={s.modalLink} onClick={onBuyPlan}>Or buy a plan →</button>
       </div>
     </div>
   );
 }
 
-// ─── CameraModal ──────────────────────────────────────────────────────────────
+// ─── Camera Modal ─────────────────────────────────────────────────────────────
 function CameraModal({ onCapture, onClose }) {
   const webcamRef = useRef(null);
   const [camError, setCamError] = useState(false);
@@ -95,39 +92,28 @@ function CameraModal({ onCapture, onClose }) {
   return (
     <div style={s.overlay}>
       <div style={{ ...s.modal, maxWidth: 460, textAlign: "left" }}>
-        <h3 style={{ ...s.modalTitle, textAlign: "left" }}>📷 Live Camera</h3>
-        <p style={{ color: "#64748b", fontSize: 13, marginBottom: 14 }}>
-          Face the camera clearly. Click Capture when ready.
-        </p>
-
+        <h3 style={{ color: "#f1f5f9", fontWeight: 800, fontSize: 17, margin: "0 0 10px" }}>📷 Live Camera</h3>
         {camError ? (
-          <div style={{ background: "#1e293b", borderRadius: 12, padding: 24,
-            color: "#94a3b8", fontSize: 13, textAlign: "center", marginBottom: 14 }}>
-            ❌ Camera permission denied.<br />
-            Allow camera access in browser settings and try again.
+          <div style={{ background: "#1e293b", borderRadius: 10, padding: 20, color: "#94a3b8", fontSize: 13, textAlign: "center", marginBottom: 14 }}>
+            ❌ Camera permission denied.<br />Allow camera in browser settings, then retry.
           </div>
         ) : (
-          <div style={{ borderRadius: 12, overflow: "hidden", marginBottom: 14, background: "#000", lineHeight: 0 }}>
-            <Webcam
-              ref={webcamRef}
-              screenshotFormat="image/jpeg"
-              width="100%"
+          <div style={{ borderRadius: 10, overflow: "hidden", marginBottom: 14, background: "#000", lineHeight: 0 }}>
+            <Webcam ref={webcamRef} screenshotFormat="image/jpeg" width="100%"
               videoConstraints={{ facingMode: "user", width: 420, height: 320 }}
-              onUserMediaError={() => setCamError(true)}
-              style={{ display: "block", width: "100%" }}
-            />
+              onUserMediaError={() => setCamError(true)} style={{ display: "block", width: "100%" }} />
           </div>
         )}
-
         <div style={{ display: "flex", gap: 10 }}>
           {!camError && (
             <button onClick={capture} disabled={capturing}
               style={{ ...s.btnPrimary, flex: 1 }}>
-              {capturing ? "📸 Capturing..." : "📸 Capture Photo"}
+              {capturing ? "Capturing..." : "📸 Capture"}
             </button>
           )}
-          <button onClick={onClose} style={{ ...s.btnSecondary, flex: camError ? 1 : 0 }}>
-            {camError ? "Close" : "✕ Cancel"}
+          <button onClick={onClose}
+            style={{ ...s.btnSecondary, flex: camError ? 1 : "unset" }}>
+            ✕ {camError ? "Close" : "Cancel"}
           </button>
         </div>
       </div>
@@ -140,62 +126,41 @@ export default function ToolPage() {
   const { toolId } = useParams();
   const navigate   = useNavigate();
   const { user, credits, updateCredits, logout } = useStore();
-  const [activeNav, setActiveNav]     = useState("Dashboard");
-  const [showPricing, setShowPricing] = useState(false);
+  const currentCredits = credits ?? user?.credits ?? 0;
 
-  // File & preview
+  const tool = FEATURES[toolId];
+
   const [file, setFile]             = useState(null);
   const [preview, setPreview]       = useState(null);
-
-  // Exam selection
+  const [selectedExam, setSelectedExam] = useState("");
   const [examList, setExamList]     = useState(FALLBACK_EXAMS);
   const [liveSpecs, setLiveSpecs]   = useState({});
   const [specsLoading, setSpecsLoading] = useState(true);
-  const [selectedExam, setSelectedExam] = useState("");
 
-  // Process state
   const [processing, setProcessing] = useState(false);
   const [done, setDone]             = useState(false);
   const [result, setResult]         = useState(null);
   const [error, setError]           = useState("");
+  const [fieldError, setFieldError] = useState(""); // shows when process clicked without fields
 
-  // Modals
-  const [showCamera, setShowCamera]         = useState(false);
-  const [showWatermark, setShowWatermark]   = useState(false);
-
-  const tool         = FEATURES.find((f) => f.id === toolId);
-  const needsExam    = ["photo", "signature"].includes(toolId);
-  const currentCredits = credits ?? user?.credits ?? 0;
-
-  // Safe credit label
-  const creditLabel = (() => {
-    const c = tool?.credit;
-    if (!c) return "1 credit";
-    if (typeof c === "string") return `${c} credits`;
-    return `${c} credit${c !== 1 ? "s" : ""}`;
-  })();
-
-  // Numeric credits needed for this tool
-  const creditsNeeded = (() => {
-    const c = tool?.credit;
-    if (typeof c === "number") return c;
-    return 1; // minimum for string range
-  })();
+  const [showCamera, setShowCamera]   = useState(false);
+  const [showWatermark, setShowWatermark] = useState(false);
 
   // Load exam specs
   useEffect(() => {
     API.get("/process/exams")
       .then(({ data }) => {
-        setExamList(data.map((e) => e.name));
+        setExamList(data.map(e => e.name));
         const map = {};
-        data.forEach((e) => { map[e.name] = e; });
+        data.forEach(e => { map[e.name] = e; });
         setLiveSpecs(map);
       })
       .catch(() => {})
       .finally(() => setSpecsLoading(false));
   }, []);
 
-  const liveSpec = liveSpecs[selectedExam]?.[toolId] ?? null;
+  const liveSpec  = liveSpecs[selectedExam]?.[toolId] ?? null;
+  const needsExam = tool?.needsExam ?? false;
   const specBoxes = liveSpec ? [
     { label: "Dimensions", val: `${liveSpec.w} × ${liveSpec.h} px`,       icon: "📐" },
     { label: "Size Range",  val: `${liveSpec.minKB}–${liveSpec.maxKB} KB`, icon: "📦" },
@@ -203,140 +168,139 @@ export default function ToolPage() {
     { label: "Background",  val: "White (auto-applied)",                    icon: "🎨" },
   ] : null;
 
-  // ── File handlers ─────────────────────────────────────────────────────────
   const handleFileChange = (e) => {
     const f = e.target.files[0];
     if (!f) return;
     setFile(f);
     setPreview(f.type.startsWith("image/") ? URL.createObjectURL(f) : null);
-    setDone(false);
-    setResult(null);
-    setError("");
+    setDone(false); setResult(null); setError(""); setFieldError("");
   };
 
   const handleCameraCapture = (capturedFile, previewUrl) => {
-    setFile(capturedFile);
-    setPreview(previewUrl);
-    setShowCamera(false);
-    setDone(false);
-    setResult(null);
+    setFile(capturedFile); setPreview(previewUrl);
+    setShowCamera(false); setDone(false); setResult(null); setFieldError("");
   };
 
-  // ── Process ───────────────────────────────────────────────────────────────
   const handleProcess = async () => {
-    if (!file || (needsExam && !selectedExam)) return;
-    setProcessing(true);
+    setFieldError("");
     setError("");
+
+    // Validate fields first — show clear message
+    if (!file) {
+      setFieldError("⬆️ Please upload or capture an image first.");
+      return;
+    }
+    if (needsExam && !selectedExam) {
+      setFieldError("📋 Please select your exam from the dropdown.");
+      return;
+    }
+
+    setProcessing(true);
     try {
       const formData = new FormData();
       formData.append("image", file);
       if (needsExam) formData.append("examName", selectedExam);
 
-      const { data } = await API.post(`/process/${toolId}`, formData, {
+      const endpoint = (toolId === "photo" || toolId === "signature")
+        ? `/process/${toolId}`
+        : `/process/photo`; // fallback for unbuilt tools
+
+      const { data } = await API.post(endpoint, formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
       setResult(data);
-
-      // Update credits in store — use actual remaining from server
       if (data.creditsLeft !== undefined) updateCredits(data.creditsLeft);
-
       setDone(true);
-
-      // Show watermark modal if file has watermark
       if (data.hasWatermark) setShowWatermark(true);
 
+      // Save to vault (localStorage)
+      try {
+        const vaultKey = `vault_${user?._id || "guest"}`;
+        const existing = JSON.parse(localStorage.getItem(vaultKey) || "[]");
+        existing.unshift({
+          id: Date.now(),
+          toolType: toolId,
+          examName: selectedExam || toolId,
+          url: data.url,
+          sizeKB: data.sizeKB,
+          date: new Date().toISOString(),
+        });
+        localStorage.setItem(vaultKey, JSON.stringify(existing.slice(0, 50)));
+      } catch {}
+
     } catch (err) {
-      setError(err.response?.data?.message || "Processing failed. Try again.");
+      const msg = err.response?.data?.message || err.message || "Processing failed.";
+      setError(`❌ ${msg}`);
     } finally {
       setProcessing(false);
     }
   };
 
-  // ── Download — blob forced (no new tab) ───────────────────────────────────
-  const handleDownload = async (url) => {
-    const targetUrl = url || result?.url;
-    if (!targetUrl) return;
+  const handleDownload = async () => {
+    if (!result?.url) return;
     try {
-      const response = await fetch(targetUrl);
+      const response = await fetch(result.url);
       const blob     = await response.blob();
       const blobUrl  = URL.createObjectURL(blob);
-      const link     = document.createElement("a");
-      link.href      = blobUrl;
-      link.download  = `docsaathi_${toolId}_${selectedExam || "file"}.jpg`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+      const a        = document.createElement("a");
+      a.href         = blobUrl;
+      a.download     = `docsaathi_${toolId}_${selectedExam || "file"}.jpg`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
       URL.revokeObjectURL(blobUrl);
     } catch {
-      // Fallback if CORS blocks blob fetch
-      const link = document.createElement("a");
-      link.href = targetUrl;
-      link.download = `docsaathi_${toolId}.jpg`;
-      link.click();
+      // CORS fallback
+      const a = document.createElement("a");
+      a.href = result.url; a.download = "docsaathi.jpg"; a.click();
     }
     setShowWatermark(false);
   };
 
   const handleReset = () => {
     setFile(null); setPreview(null); setSelectedExam("");
-    setDone(false); setResult(null); setError("");
-    setShowWatermark(false);
+    setDone(false); setResult(null); setError(""); setFieldError(""); setShowWatermark(false);
   };
 
   if (!tool) return (
     <div style={{ color: "#fff", padding: 40, fontFamily: "Segoe UI" }}>
-      Tool not found. <span style={{ color: "#f97316", cursor: "pointer" }} onClick={() => navigate("/dashboard")}>Go back</span>
+      Tool not found.{" "}
+      <span style={{ color: "#f97316", cursor: "pointer" }} onClick={() => navigate("/dashboard")}>Go back</span>
     </div>
   );
 
   return (
     <div style={s.root}>
-      {/* Watermark modal */}
       {showWatermark && (
         <WatermarkModal
           onDownloadFree={() => { setShowWatermark(false); handleDownload(); }}
-          onRemovePaid={() => { setShowWatermark(false); navigate("/pricing"); }}
           onBuyPlan={() => { setShowWatermark(false); navigate("/pricing"); }}
         />
       )}
-
-      {/* Camera modal */}
       {showCamera && (
-        <CameraModal
-          onCapture={handleCameraCapture}
-          onClose={() => setShowCamera(false)}
-        />
+        <CameraModal onCapture={handleCameraCapture} onClose={() => setShowCamera(false)} />
       )}
 
-      <Sidebar
-        credits={currentCredits} activeNav={activeNav}
-        setActiveNav={setActiveNav} setShowPricing={setShowPricing}
-        onLogout={() => { logout(); navigate("/"); }}
-      />
+      <Sidebar credits={currentCredits} onLogout={() => { logout(); navigate("/"); }} />
 
       <div style={s.main}>
-        <TopBar user={user} credits={currentCredits} setShowPricing={setShowPricing} />
+        <TopBar user={user} credits={currentCredits} />
 
         {/* Header */}
-        <div style={s.toolHeader}>
+        <div style={s.header}>
           <button style={s.backBtn} onClick={() => navigate("/dashboard")}>← Back</button>
-          <div style={{ ...s.toolIconBig, background: tool.color + "20", color: tool.color }}>
-            {tool.icon}
-          </div>
+          <div style={{ ...s.toolIcon, background: tool.color + "20", color: tool.color }}>{tool.icon}</div>
           <div>
-            <h2 style={s.toolTitle}>{tool.label}</h2>
-            <p style={s.toolDesc}>
-              {tool.desc} ·{" "}
-              <b style={{ color: tool.color }}>⚡ {creditLabel}</b>
-            </p>
+            <h2 style={s.title}>{tool.label}</h2>
+            <p style={s.desc}>{tool.desc} · <b style={{ color: tool.color }}>⚡ {tool.credit} credit{tool.credit > 1 ? "s" : ""}</b></p>
           </div>
         </div>
 
-        {/* Low credits warning */}
-        {currentCredits < creditsNeeded && (
+        {/* Not enough credits warning */}
+        {currentCredits < tool.credit && (
           <div style={s.warnBox}>
-            ⚠️ You need <b>{creditsNeeded} credit{creditsNeeded > 1 ? "s" : ""}</b> but only have <b>{currentCredits}</b>.{" "}
+            ⚠️ Need <b>{tool.credit} credits</b>, have <b>{currentCredits}</b>.{" "}
             <span style={s.link} onClick={() => navigate("/pricing")}>Buy credits →</span>
           </div>
         )}
@@ -345,100 +309,76 @@ export default function ToolPage() {
         {needsExam && (
           <div style={s.card}>
             <label style={s.label}>Select Your Exam</label>
-            <select
-              style={{ ...s.select, opacity: done ? 0.5 : 1 }}
-              value={selectedExam}
-              onChange={(e) => setSelectedExam(e.target.value)}
-              disabled={done}
-            >
+            <select style={{ ...s.select, opacity: done ? 0.5 : 1 }}
+              value={selectedExam} onChange={e => setSelectedExam(e.target.value)} disabled={done}>
               <option value="">{specsLoading ? "Loading exams..." : "-- Choose Exam --"}</option>
-              {examList.map((ex) => <option key={ex} value={ex}>{ex}</option>)}
+              {examList.map(ex => <option key={ex} value={ex}>{ex}</option>)}
             </select>
 
             {selectedExam && specBoxes && (
               <div style={s.specGrid}>
-                {specBoxes.map((b) => <SpecBox key={b.label} {...b} />)}
+                {specBoxes.map(b => <SpecBox key={b.label} {...b} />)}
               </div>
             )}
             {selectedExam && liveSpec && (
               <p style={s.specNote}>
-                ✅ Will be resized to <b>{liveSpec.w}×{liveSpec.h}px</b> and
-                compressed to <b>{liveSpec.minKB}–{liveSpec.maxKB} KB</b> with white background.
+                ✅ Will resize to <b>{liveSpec.w}×{liveSpec.h}px</b>, compress to <b>{liveSpec.minKB}–{liveSpec.maxKB} KB</b>, white background.
               </p>
             )}
             {selectedExam && !liveSpec && !specsLoading && (
-              <p style={s.specNote}>📋 Spec will be applied automatically.</p>
+              <p style={s.specNote}>📋 Spec auto-applied during processing.</p>
             )}
           </div>
         )}
 
-        {/* Upload card */}
+        {/* Upload */}
         <div style={s.card}>
           <label style={s.label}>Upload or Capture</label>
-
-          {/* Upload zone — disabled after done */}
           <div
-            style={{
-              ...s.uploadZone,
-              opacity: done ? 0.45 : 1,
-              pointerEvents: done ? "none" : "auto",
-              cursor: done ? "not-allowed" : "pointer",
-              borderColor: preview ? "#f97316" : "#374151",
-            }}
+            style={{ ...s.uploadZone, opacity: done ? 0.4 : 1, pointerEvents: done ? "none" : "auto",
+              borderColor: preview ? "#f97316" : "#374151" }}
             onClick={() => !done && document.getElementById("fileIn").click()}
           >
-            {preview ? (
-              <img src={preview} alt="preview" style={s.preview} />
-            ) : (
-              <>
-                <div style={{ fontSize: 36, marginBottom: 8 }}>⬆️</div>
-                <p style={s.uploadText}>Click to Upload or Drag & Drop</p>
-                <p style={s.uploadSub}>JPG, PNG, WEBP supported</p>
-              </>
-            )}
+            {preview
+              ? <img src={preview} alt="preview" style={s.preview} />
+              : <>
+                  <div style={{ fontSize: 34, marginBottom: 6 }}>⬆️</div>
+                  <p style={s.uploadText}>Click to Upload or Drag & Drop</p>
+                  <p style={s.uploadSub}>JPG, PNG, WEBP supported</p>
+                </>
+            }
           </div>
-
           <input id="fileIn" type="file" accept="image/*" style={{ display: "none" }}
             onChange={handleFileChange} disabled={done} />
-
-          {/* Action buttons — disabled after done */}
           <div style={s.uploadBtns}>
-            <button
-              style={{ ...s.btnSecondary, opacity: done ? 0.4 : 1, cursor: done ? "not-allowed" : "pointer" }}
-              onClick={() => !done && document.getElementById("fileIn").click()}
-              disabled={done}
-            >
+            <button style={{ ...s.btnSecondary, opacity: done ? 0.4 : 1 }}
+              onClick={() => !done && document.getElementById("fileIn").click()} disabled={done}>
               📁 Browse File
             </button>
-            <button
-              style={{ ...s.btnSecondary, opacity: done ? 0.4 : 1, cursor: done ? "not-allowed" : "pointer" }}
-              onClick={() => !done && setShowCamera(true)}
-              disabled={done}
-            >
+            <button style={{ ...s.btnSecondary, opacity: done ? 0.4 : 1 }}
+              onClick={() => !done && setShowCamera(true)} disabled={done}>
               📷 Live Camera
             </button>
           </div>
         </div>
 
-        {/* Error */}
+        {/* Field validation error — shown BEFORE process, bright and clear */}
+        {fieldError && (
+          <div style={s.fieldErrorBox}>{fieldError}</div>
+        )}
+
+        {/* API error */}
         {error && (
-          <div style={s.errorBox}>❌ {error}</div>
+          <div style={s.errorBox}>{error}</div>
         )}
 
         {/* Process button */}
         {!done && (
-          <div style={{ padding: "16px 28px 0" }}>
-            <button
-              style={{
-                ...s.btnPrimary,
-                opacity: (!file || (needsExam && !selectedExam) || processing) ? 0.5 : 1,
-              }}
-              onClick={handleProcess}
-              disabled={processing || !file || (needsExam && !selectedExam)}
-            >
+          <div style={{ padding: "14px 24px 0" }}>
+            <button style={s.btnPrimary} onClick={handleProcess} disabled={processing}>
               {processing
                 ? <><span style={s.spinner} /> Processing...</>
-                : `⚡ Process Now (${creditLabel})`}
+                : `⚡ Process Now (${tool.credit} credit${tool.credit > 1 ? "s" : ""})`}
             </button>
           </div>
         )}
@@ -446,29 +386,21 @@ export default function ToolPage() {
         {/* Result */}
         {done && result && (
           <div style={s.resultCard}>
-            <div style={{ fontSize: 48, marginBottom: 10 }}>✅</div>
+            <div style={{ fontSize: 44, marginBottom: 8 }}>✅</div>
             <h3 style={s.resultTitle}>Your file is ready!</h3>
             <p style={s.resultSub}>
-              Size: <b>{result.sizeKB} KB</b> · Dimensions: <b>{result.dimensions}</b>
+              <b>{result.sizeKB} KB</b> · <b>{result.dimensions}</b>
               {result.withinRange ? " · ✅ Within exam range" : " · ✅ Within max limit"}
-              {result.hasWatermark && " · ⚠️ Has Watermark"}
+              {result.hasWatermark ? " · ⚠️ Has Watermark" : ""}
             </p>
-
-            <div style={s.resultActions}>
-              <button onClick={() => handleDownload()} style={s.btnPrimary}>
-                📥 Download
-              </button>
-              <button style={s.btnSecondary} onClick={handleReset}>
-                🔄 Process Another
-              </button>
+            <div style={s.resultBtns}>
+              <button onClick={handleDownload} style={s.btnPrimary}>📥 Download</button>
+              <button onClick={handleReset} style={s.btnSecondary}>🔄 Process Another</button>
             </div>
-
             {result.hasWatermark && (
-              <p style={{ color: "#fca57a", fontSize: 13, marginTop: 14 }}>
-                Remove watermark for ₹10 →{" "}
-                <span style={s.link} onClick={() => navigate("/pricing")}>
-                  Or buy a plan
-                </span>
+              <p style={{ color: "#fca57a", fontSize: 12, marginTop: 12 }}>
+                Remove watermark →{" "}
+                <span style={s.link} onClick={() => navigate("/pricing")}>Buy a plan (from ₹9)</span>
               </p>
             )}
           </div>
@@ -478,56 +410,54 @@ export default function ToolPage() {
   );
 }
 
-// ─── Styles ───────────────────────────────────────────────────────────────────
 const s = {
   root: { display: "flex", minHeight: "100vh", background: "#070c18", fontFamily: "'Segoe UI', sans-serif" },
   main: { flex: 1, overflowY: "auto", paddingBottom: 48 },
   link: { color: "#f97316", cursor: "pointer", fontWeight: 700 },
 
-  toolHeader: { display: "flex", alignItems: "center", gap: 16, padding: "20px 28px 0" },
+  header: { display: "flex", alignItems: "center", gap: 14, padding: "18px 24px 0" },
   backBtn: { background: "#1e293b", border: "none", color: "#94a3b8", borderRadius: 8, padding: "8px 14px", cursor: "pointer", fontSize: 13, fontWeight: 600, flexShrink: 0 },
-  toolIconBig: { width: 52, height: 52, borderRadius: 13, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 24, flexShrink: 0 },
-  toolTitle: { color: "#f1f5f9", fontWeight: 800, fontSize: 20, margin: 0 },
-  toolDesc: { color: "#64748b", fontSize: 13, marginTop: 4 },
+  toolIcon: { width: 48, height: 48, borderRadius: 12, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 22, flexShrink: 0 },
+  title: { color: "#f1f5f9", fontWeight: 800, fontSize: 18, margin: 0 },
+  desc: { color: "#64748b", fontSize: 13, marginTop: 3 },
 
-  warnBox: { margin: "14px 28px 0", background: "#451a0320", border: "1px solid #92400e", borderRadius: 10, padding: "10px 16px", color: "#fbbf24", fontSize: 13 },
+  warnBox: { margin: "12px 24px 0", background: "#451a0320", border: "1px solid #92400e", borderRadius: 10, padding: "10px 14px", color: "#fbbf24", fontSize: 13 },
 
-  card: { background: "#0d1421", border: "1px solid #1e293b", borderRadius: 16, margin: "18px 28px 0", padding: 20 },
-  label: { display: "block", color: "#94a3b8", fontSize: 12, fontWeight: 700, marginBottom: 10, textTransform: "uppercase", letterSpacing: 0.6 },
+  card: { background: "#0d1421", border: "1px solid #1e293b", borderRadius: 14, margin: "14px 24px 0", padding: 18 },
+  label: { display: "block", color: "#94a3b8", fontSize: 11, fontWeight: 700, marginBottom: 10, textTransform: "uppercase", letterSpacing: 0.6 },
   select: { width: "100%", background: "#111827", border: "1px solid #374151", borderRadius: 10, padding: "11px 14px", color: "#f1f5f9", fontSize: 14, outline: "none" },
-
-  specGrid: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginTop: 14 },
-  specBox: { background: "#111827", borderRadius: 10, padding: "10px 14px", display: "flex", alignItems: "center", gap: 10 },
-  specLabel: { color: "#64748b", fontSize: 11, marginBottom: 2 },
+  specGrid: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginTop: 12 },
+  specBox: { background: "#111827", borderRadius: 9, padding: "9px 12px", display: "flex", alignItems: "center", gap: 9 },
+  specLabel: { color: "#64748b", fontSize: 10, marginBottom: 1 },
   specVal: { color: "#f97316", fontWeight: 700, fontSize: 13 },
-  specNote: { color: "#86efac", fontSize: 13, marginTop: 10, lineHeight: 1.5 },
+  specNote: { color: "#86efac", fontSize: 12, marginTop: 10, lineHeight: 1.5 },
 
-  uploadZone: { border: "2px dashed", borderRadius: 14, minHeight: 160, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", background: "#111827", marginBottom: 12, overflow: "hidden", transition: "all 0.2s" },
+  uploadZone: { border: "2px dashed", borderRadius: 12, minHeight: 150, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", background: "#111827", marginBottom: 10, overflow: "hidden", transition: "all 0.2s", cursor: "pointer" },
   uploadText: { color: "#94a3b8", fontWeight: 600, fontSize: 14, margin: 0 },
-  uploadSub: { color: "#475569", fontSize: 12, marginTop: 4 },
-  preview: { maxWidth: "100%", maxHeight: 220, display: "block" },
+  uploadSub: { color: "#475569", fontSize: 11, marginTop: 3 },
+  preview: { maxWidth: "100%", maxHeight: 200, display: "block" },
   uploadBtns: { display: "flex", gap: 10 },
 
-  errorBox: { margin: "10px 28px 0", background: "#450a0a20", border: "1px solid #7f1d1d", borderRadius: 10, padding: "10px 16px", color: "#fca5a5", fontSize: 14 },
+  // Field error — bright yellow, prominent
+  fieldErrorBox: { margin: "10px 24px 0", background: "#451a0380", border: "1px solid #f59e0b", borderRadius: 10, padding: "12px 16px", color: "#fbbf24", fontSize: 14, fontWeight: 600 },
+  errorBox: { margin: "10px 24px 0", background: "#450a0a40", border: "1px solid #ef4444", borderRadius: 10, padding: "12px 16px", color: "#fca5a5", fontSize: 14 },
 
-  btnPrimary: { background: "linear-gradient(135deg, #f97316, #ea580c)", color: "#fff", border: "none", borderRadius: 12, padding: "13px 20px", fontWeight: 700, fontSize: 15, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 8, width: "100%", transition: "opacity 0.2s" },
+  btnPrimary: { background: "linear-gradient(135deg,#f97316,#ea580c)", color: "#fff", border: "none", borderRadius: 12, padding: "13px 20px", fontWeight: 700, fontSize: 15, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 8, width: "100%" },
   btnSecondary: { background: "#1e293b", color: "#94a3b8", border: "1px solid #374151", borderRadius: 12, padding: "11px 16px", fontWeight: 600, fontSize: 14, cursor: "pointer", display: "flex", alignItems: "center", gap: 6 },
-  spinner: { display: "inline-block", width: 16, height: 16, border: "2px solid #ffffff44", borderTop: "2px solid #fff", borderRadius: "50%", animation: "spin 0.8s linear infinite" },
+  spinner: { display: "inline-block", width: 15, height: 15, border: "2px solid #ffffff44", borderTop: "2px solid #fff", borderRadius: "50%", animation: "spin 0.8s linear infinite" },
 
-  resultCard: { margin: "18px 28px 0", background: "#052e16", border: "1px solid #14532d", borderRadius: 16, padding: 28, textAlign: "center" },
-  resultTitle: { color: "#86efac", fontWeight: 800, fontSize: 20, margin: 0 },
-  resultSub: { color: "#64748b", fontSize: 13, marginTop: 6, marginBottom: 0 },
-  resultActions: { display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap", marginTop: 18 },
+  resultCard: { margin: "14px 24px 0", background: "#052e16", border: "1px solid #14532d", borderRadius: 14, padding: 24, textAlign: "center" },
+  resultTitle: { color: "#86efac", fontWeight: 800, fontSize: 18, margin: 0 },
+  resultSub: { color: "#64748b", fontSize: 13, marginTop: 5, marginBottom: 0 },
+  resultBtns: { display: "flex", gap: 10, justifyContent: "center", flexWrap: "wrap", marginTop: 16 },
 
-  // Modals
   overlay: { position: "fixed", inset: 0, background: "#000000aa", zIndex: 1000, display: "flex", alignItems: "center", justifyContent: "center", padding: 16 },
-  modal: { background: "#0d1421", border: "1px solid #374151", borderRadius: 20, padding: "28px 24px", maxWidth: 380, width: "100%", textAlign: "center" },
-  modalTitle: { color: "#f1f5f9", fontWeight: 800, fontSize: 19, margin: "0 0 8px" },
-  modalDesc: { color: "#94a3b8", fontSize: 13, marginBottom: 20, lineHeight: 1.5 },
-  modalBtns: { display: "flex", flexDirection: "column", gap: 10, marginBottom: 14 },
-  modalBtnFree: { background: "#1e293b", border: "1px solid #374151", color: "#f1f5f9", borderRadius: 12, padding: "12px 16px", cursor: "pointer", fontSize: 14, fontWeight: 600, display: "flex", justifyContent: "space-between", alignItems: "center" },
-  modalBtnPaid: { background: "linear-gradient(135deg,#f97316,#ea580c)", border: "none", color: "#fff", borderRadius: 12, padding: "12px 16px", cursor: "pointer", fontSize: 14, fontWeight: 700, display: "flex", justifyContent: "space-between", alignItems: "center" },
-  badgeFree: { background: "#22c55e", color: "#fff", borderRadius: 6, padding: "2px 8px", fontSize: 11 },
-  badgePaid: { background: "#ffffff22", borderRadius: 6, padding: "2px 8px", fontSize: 11 },
+  modal: { background: "#0d1421", border: "1px solid #374151", borderRadius: 18, padding: "26px 22px", maxWidth: 360, width: "100%", textAlign: "center" },
+  modalTitle: { color: "#f1f5f9", fontWeight: 800, fontSize: 18, margin: "0 0 8px" },
+  modalDesc: { color: "#94a3b8", fontSize: 13, marginBottom: 18, lineHeight: 1.5 },
+  modalBtnFree: { background: "#1e293b", border: "1px solid #374151", color: "#f1f5f9", borderRadius: 11, padding: "12px 16px", cursor: "pointer", fontSize: 14, fontWeight: 600, display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%" },
+  modalBtnPaid: { background: "linear-gradient(135deg,#f97316,#ea580c)", border: "none", color: "#fff", borderRadius: 11, padding: "12px 16px", cursor: "pointer", fontSize: 14, fontWeight: 700, display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%" },
+  badgeFree: { background: "#22c55e", color: "#fff", borderRadius: 5, padding: "2px 7px", fontSize: 11 },
+  badgePaid: { background: "#ffffff22", borderRadius: 5, padding: "2px 7px", fontSize: 11 },
   modalLink: { background: "transparent", border: "none", color: "#f97316", fontSize: 13, cursor: "pointer", fontWeight: 600 },
 };
