@@ -3,10 +3,19 @@ const crypto      = require('crypto');
 const User        = require('../models/User');
 const Transaction = require('../models/Transaction');
 
-const razorpay = new Razorpay({
-  key_id:     process.env.RAZORPAY_KEY_ID,
-  key_secret: process.env.RAZORPAY_KEY_SECRET,
-});
+const getRazorpayClient = () => {
+  const keyId = process.env.RAZORPAY_KEY_ID;
+  const keySecret = process.env.RAZORPAY_KEY_SECRET;
+
+  if (!keyId || !keySecret) {
+    return null;
+  }
+
+  return new Razorpay({
+    key_id: keyId,
+    key_secret: keySecret,
+  });
+};
 
 // ─── Plan definitions — single source of truth ────────────────────────────────
 // amount is in PAISE (₹1 = 100 paise)
@@ -24,6 +33,11 @@ const PLANS = {
 ───────────────────────────────────────────────────────────────────────────── */
 const createOrder = async (req, res) => {
   try {
+    const razorpay = getRazorpayClient();
+    if (!razorpay) {
+      return res.status(503).json({ message: 'Payments are not configured yet.' });
+    }
+
     const { planId } = req.body;
     const plan = PLANS[planId];
 
@@ -70,6 +84,10 @@ const createOrder = async (req, res) => {
 ───────────────────────────────────────────────────────────────────────────── */
 const verifyPayment = async (req, res) => {
   try {
+    if (!process.env.RAZORPAY_KEY_SECRET) {
+      return res.status(503).json({ message: 'Payments are not configured yet.' });
+    }
+
     const { razorpayOrderId, razorpayPaymentId, razorpaySignature } = req.body;
 
     // 1. Verify signature
