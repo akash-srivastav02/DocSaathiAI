@@ -1,10 +1,39 @@
-import { useState } from "react";
+import { memo, useCallback, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { GoogleLogin } from "@react-oauth/google";
 import API from "../api/axios";
 import useStore from "../store/useStore";
 
 const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+
+const GoogleAuthCard = memo(function GoogleAuthCard({ authMode, onSuccess, onError }) {
+  return (
+    <div style={s.googleCard}>
+      <div style={s.googleCardHeader}>
+        <div>
+          <p style={s.googleTitle}>Continue with Google</p>
+          <p style={s.googleSub}>Fast, secure sign in for your exam document workspace.</p>
+        </div>
+        <div style={s.googleBadge}>Quick Access</div>
+      </div>
+      <div style={s.googleButtonShell}>
+        <div style={s.googleWrap}>
+          <GoogleLogin
+            onSuccess={onSuccess}
+            onError={onError}
+            useOneTap={false}
+            theme="outline"
+            size="large"
+            width={340}
+            text={authMode === "login" ? "signin_with" : "signup_with"}
+            shape="pill"
+            logo_alignment="left"
+          />
+        </div>
+      </div>
+    </div>
+  );
+});
 
 export default function Auth() {
   const [authMode, setAuthMode] = useState("login");
@@ -32,7 +61,7 @@ export default function Auth() {
   };
 
   // ── Google OAuth success ──────────────────────────────────────────────────
-  const handleGoogleSuccess = async (credentialResponse) => {
+  const handleGoogleSuccess = useCallback(async (credentialResponse) => {
     setLoading(true);
     setError("");
     try {
@@ -46,11 +75,11 @@ export default function Auth() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [navigate, setUser]);
 
-  const handleGoogleError = () => {
+  const handleGoogleError = useCallback(() => {
     setError("Google login was cancelled or failed. Please try again.");
-  };
+  }, []);
 
   const field = (key, type, placeholder) => (
     <input
@@ -92,28 +121,7 @@ export default function Auth() {
 
         {/* Google button — full width, prominent */}
         {googleClientId ? (
-          <div style={s.googleCard}>
-            <div style={s.googleCardHeader}>
-              <div>
-                <p style={s.googleTitle}>Continue with Google</p>
-                <p style={s.googleSub}>Fast, secure sign in for your exam document workspace.</p>
-              </div>
-              <div style={s.googleBadge}>Quick Access</div>
-            </div>
-            <div style={s.googleWrap}>
-              <GoogleLogin
-                onSuccess={handleGoogleSuccess}
-                onError={handleGoogleError}
-                useOneTap={false}
-                theme="outline"
-                size="large"
-                width={340}
-                text={authMode === "login" ? "signin_with" : "signup_with"}
-                shape="pill"
-                logo_alignment="left"
-              />
-            </div>
-          </div>
+          <GoogleAuthCard authMode={authMode} onSuccess={handleGoogleSuccess} onError={handleGoogleError} />
         ) : (
           <div style={s.googleNotice}>
             Google login is unavailable until <code>VITE_GOOGLE_CLIENT_ID</code> is added to your frontend <code>.env</code>.
@@ -220,7 +228,14 @@ const s = {
     fontWeight: 700,
     whiteSpace: "nowrap",
   },
-  googleWrap: { width: "100%", display: "flex", justifyContent: "center" },
+  googleButtonShell: {
+    borderRadius: 999,
+    overflow: "hidden",
+    background: "#ffffff",
+    padding: 4,
+    boxShadow: "inset 0 0 0 1px rgba(148,163,184,0.12)",
+  },
+  googleWrap: { width: "100%", display: "flex", justifyContent: "center", minHeight: 48 },
   googleNotice: { width: "100%", marginBottom: 16, border: "1px solid #374151", borderRadius: 10, padding: "12px 14px", color: "#94a3b8", background: "#111827", fontSize: 13, textAlign: "center", boxSizing: "border-box" },
 
   divider: { display: "flex", alignItems: "center", gap: 10, margin: "0 0 16px" },
