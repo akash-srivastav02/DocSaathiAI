@@ -49,7 +49,9 @@ export default function Sidebar({ credits, onLogout, activeNav }) {
         }}
       >
         <div style={s.brand}>
-          <div style={s.iconBox}>🤖</div>
+          <div style={s.iconBox}>
+            <img src="/favicon.png" alt="Doc Saathi AI logo" style={s.iconImage} />
+          </div>
           <div>
             <span style={s.brandMain}>Doc Saathi </span>
             <span style={s.brandAI}>AI</span>
@@ -176,9 +178,10 @@ const s = {
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    fontSize: 19,
     flexShrink: 0,
+    overflow: "hidden",
   },
+  iconImage: { width: 24, height: 24, objectFit: "contain", display: "block" },
   brandMain: { fontSize: 15, fontWeight: 800, color: "#f1f5f9", letterSpacing: -0.3 },
   brandAI: { fontSize: 15, fontWeight: 800, color: "#f97316", letterSpacing: -0.3 },
   creditBlock: {

@@ -70,7 +70,9 @@ export default function Auth() {
       <div style={s.card}>
         {/* Brand */}
         <div style={s.brand}>
-          <span style={s.brandIcon}>🤖</span>
+          <span style={s.brandIconWrap}>
+            <img src="/favicon.png" alt="Doc Saathi AI logo" style={s.brandIcon} />
+          </span>
           <div>
             <span style={s.brandName}>Doc Saathi </span>
             <span style={s.brandAI}>AI</span>
@@ -90,17 +92,27 @@ export default function Auth() {
 
         {/* Google button — full width, prominent */}
         {googleClientId ? (
-          <div style={s.googleWrap}>
-            <GoogleLogin
-              onSuccess={handleGoogleSuccess}
-              onError={handleGoogleError}
-              useOneTap={false}
-              theme="filled_black"
-              size="large"
-              width={360}
-              text={authMode === "login" ? "signin_with" : "signup_with"}
-              shape="rectangular"
-            />
+          <div style={s.googleCard}>
+            <div style={s.googleCardHeader}>
+              <div>
+                <p style={s.googleTitle}>Continue with Google</p>
+                <p style={s.googleSub}>Fast, secure sign in for your exam document workspace.</p>
+              </div>
+              <div style={s.googleBadge}>Quick Access</div>
+            </div>
+            <div style={s.googleWrap}>
+              <GoogleLogin
+                onSuccess={handleGoogleSuccess}
+                onError={handleGoogleError}
+                useOneTap={false}
+                theme="outline"
+                size="large"
+                width={340}
+                text={authMode === "login" ? "signin_with" : "signup_with"}
+                shape="pill"
+                logo_alignment="left"
+              />
+            </div>
           </div>
         ) : (
           <div style={s.googleNotice}>
@@ -164,7 +176,19 @@ const s = {
   card: { background: "#0d1421", border: "1px solid #1e293b", borderRadius: 20, padding: "32px 28px", width: "100%", maxWidth: 400, position: "relative", zIndex: 1, boxShadow: "0 20px 60px #00000060" },
 
   brand: { display: "flex", alignItems: "center", gap: 10, justifyContent: "center", marginBottom: 4 },
-  brandIcon: { fontSize: 28 },
+  brandIconWrap: {
+    width: 34,
+    height: 34,
+    borderRadius: 10,
+    background: "#f9731620",
+    border: "1px solid #f9731638",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    overflow: "hidden",
+    flexShrink: 0,
+  },
+  brandIcon: { width: 24, height: 24, objectFit: "contain", display: "block" },
   brandName: { fontSize: 22, fontWeight: 800, color: "#f1f5f9" },
   brandAI:   { fontSize: 22, fontWeight: 800, color: "#f97316" },
   tagline: { textAlign: "center", color: "#64748b", fontSize: 13, margin: "0 0 22px" },
@@ -173,8 +197,30 @@ const s = {
   tab: { flex: 1, padding: "8px 0", border: "none", background: "transparent", color: "#64748b", fontWeight: 600, borderRadius: 8, cursor: "pointer", fontSize: 14, transition: "all 0.2s" },
   tabActive: { background: "#f97316", color: "#fff" },
 
-  // Google button wrapper — forces full width
-  googleWrap: { width: "100%", marginBottom: 16, display: "flex", justifyContent: "center" },
+  googleCard: {
+    width: "100%",
+    marginBottom: 16,
+    borderRadius: 16,
+    border: "1px solid #263246",
+    background: "linear-gradient(180deg, #111827, #0f172a)",
+    padding: "14px 14px 16px",
+    boxSizing: "border-box",
+    boxShadow: "inset 0 1px 0 rgba(255,255,255,0.03)",
+  },
+  googleCardHeader: { display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 10, marginBottom: 12 },
+  googleTitle: { color: "#f8fafc", fontWeight: 700, fontSize: 14, margin: 0 },
+  googleSub: { color: "#94a3b8", fontSize: 12, lineHeight: 1.5, margin: "4px 0 0" },
+  googleBadge: {
+    background: "#f9731618",
+    color: "#fdba74",
+    border: "1px solid #f9731635",
+    borderRadius: 999,
+    padding: "5px 9px",
+    fontSize: 11,
+    fontWeight: 700,
+    whiteSpace: "nowrap",
+  },
+  googleWrap: { width: "100%", display: "flex", justifyContent: "center" },
   googleNotice: { width: "100%", marginBottom: 16, border: "1px solid #374151", borderRadius: 10, padding: "12px 14px", color: "#94a3b8", background: "#111827", fontSize: 13, textAlign: "center", boxSizing: "border-box" },
 
   divider: { display: "flex", alignItems: "center", gap: 10, margin: "0 0 16px" },
