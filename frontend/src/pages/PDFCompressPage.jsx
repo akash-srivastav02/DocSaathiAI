@@ -183,7 +183,7 @@ export default function PDFCompressPage() {
     <div style={s.root}>
       <Sidebar credits={currentCredits} onLogout={() => { logout(); navigate("/"); }} />
       <div style={s.main}>
-        <TopBar user={user} credits={currentCredits} />
+        <TopBar user={user} credits={currentCredits} onLogout={() => { logout(); navigate("/"); }} />
 
         <div style={s.toolHeader}>
           <button style={s.backBtn} onClick={() => navigate("/dashboard")}>← Back</button>

@@ -132,7 +132,7 @@ export default function Support() {
         onLogout={() => { logout(); navigate("/"); }}
       />
       <div style={s.main}>
-        <TopBar user={user} credits={currentCredits} setShowPricing={setShowPricing} />
+        <TopBar user={user} credits={currentCredits} onLogout={() => { logout(); navigate("/"); }} />
         <div style={s.content}>
 
           {/* Header */}

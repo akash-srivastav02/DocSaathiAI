@@ -9,6 +9,26 @@ const NAV_ITEMS = [
   { label: "Support", icon: "💬", path: "/support" },
 ];
 
+const MOBILE_TOOL_SECTIONS = [
+  {
+    title: "Exam",
+    items: [
+      { label: "Exam Photo", icon: "ðŸ“¸", path: "/tool/photo" },
+      { label: "Exam Signature", icon: "âœï¸", path: "/tool/signature" },
+      { label: "Photo + Sign / Date", icon: "ðŸªª", path: "/merger" },
+      { label: "Document Size Changer", icon: "ðŸ“", path: "/pdf/compress" },
+    ],
+  },
+  {
+    title: "Document & Utility",
+    items: [
+      { label: "Crop & Resize", icon: "âœ‚ï¸", path: "/tool/crop" },
+      { label: "Image Compressor", icon: "ðŸ—œï¸", path: "/tool/imgcompress" },
+      { label: "PDF Compressor", icon: "ðŸ“¦", path: "/pdf/compress" },
+    ],
+  },
+];
+
 export default function Sidebar({ credits, onLogout, activeNav }) {
   const navigate = useNavigate();
   const location = useLocation();
@@ -85,39 +105,61 @@ export default function Sidebar({ credits, onLogout, activeNav }) {
               </button>
             </div>
           </>
-        ) : (
-          <div style={s.mobileSection}>
-            <p style={s.mobileSectionLabel}>Main Category</p>
-            <p style={s.mobileSectionSub}>Open your main pages from here.</p>
-          </div>
-        )}
+        ) : null}
 
-        <nav style={s.nav}>
-          {NAV_ITEMS.map(({ label, icon, path }) => (
-            <button
-              key={label}
-              style={{ ...s.navBtn, ...(activeLabel === label ? s.navActive : null) }}
-              onClick={() => navigate(path)}
-            >
-              <span style={{ width: 20, textAlign: "center" }}>{icon}</span>
-              {label}
-            </button>
-          ))}
-        </nav>
+        {isMobile ? (
+          <div style={s.mobileToolWrap}>
+            <div style={s.mobileSection}>
+              <p style={s.mobileSectionLabel}>Tools</p>
+              <p style={s.mobileSectionSub}>Choose a tool category and continue.</p>
+            </div>
+
+            <div style={s.mobileToolSections}>
+              {MOBILE_TOOL_SECTIONS.map((section) => (
+                <div key={section.title} style={s.toolSection}>
+                  <p style={s.toolSectionTitle}>{section.title}</p>
+                  <div style={s.toolList}>
+                    {section.items.map(({ label, icon, path }) => (
+                      <button
+                        key={label}
+                        style={{
+                          ...s.toolBtn,
+                          ...(location.pathname.startsWith(path) ? s.toolBtnActive : null),
+                        }}
+                        onClick={() => navigate(path)}
+                      >
+                        <span style={s.toolBtnIcon}>{icon}</span>
+                        <span>{label}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        ) : (
+          <nav style={s.nav}>
+            {NAV_ITEMS.map(({ label, icon, path }) => (
+              <button
+                key={label}
+                style={{ ...s.navBtn, ...(activeLabel === label ? s.navActive : null) }}
+                onClick={() => navigate(path)}
+              >
+                <span style={{ width: 20, textAlign: "center" }}>{icon}</span>
+                {label}
+              </button>
+            ))}
+          </nav>
+        )}
 
         <div style={s.footer}>
           {isMobile ? (
             <>
-              <p style={s.mobileSectionLabel}>Tools</p>
+              <p style={s.mobileSectionLabel}>Quick Action</p>
               <div style={s.mobileActionStack}>
                 <button style={{ ...s.buyBtn, width: "100%" }} onClick={() => navigate("/pricing")}>
                   + Buy Credits
                 </button>
-                {onLogout && (
-                  <button onClick={onLogout} style={s.logoutBtn}>
-                    🚪 Logout
-                  </button>
-                )}
               </div>
             </>
           ) : (
@@ -214,6 +256,28 @@ const s = {
   mobileSection: { paddingBottom: 12, marginBottom: 10, borderBottom: "1px solid #1e293b" },
   mobileSectionLabel: { color: "#94a3b8", fontSize: 11, fontWeight: 800, textTransform: "uppercase", letterSpacing: 0.8, margin: "0 0 5px" },
   mobileSectionSub: { color: "#64748b", fontSize: 13, lineHeight: 1.5, margin: 0 },
+  mobileToolWrap: { display: "flex", flexDirection: "column", gap: 12, flex: 1 },
+  mobileToolSections: { display: "flex", flexDirection: "column", gap: 16 },
+  toolSection: { display: "flex", flexDirection: "column", gap: 9 },
+  toolSectionTitle: { color: "#f1f5f9", fontSize: 13, fontWeight: 800, margin: 0 },
+  toolList: { display: "grid", gap: 8 },
+  toolBtn: {
+    display: "flex",
+    alignItems: "center",
+    gap: 10,
+    padding: "11px 12px",
+    border: "1px solid #1e293b",
+    background: "#0f172a",
+    color: "#cbd5e1",
+    borderRadius: 10,
+    cursor: "pointer",
+    fontSize: 14,
+    fontWeight: 600,
+    textAlign: "left",
+    width: "100%",
+  },
+  toolBtnActive: { borderColor: "#f9731650", background: "#f9731618", color: "#f97316" },
+  toolBtnIcon: { width: 20, textAlign: "center", flexShrink: 0 },
   creditBlock: {
     display: "flex",
     flexDirection: "column",

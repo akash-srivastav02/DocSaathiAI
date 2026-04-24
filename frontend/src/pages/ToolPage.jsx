@@ -707,7 +707,7 @@ export default function ToolPage() {
       <Sidebar credits={currentCredits} onLogout={() => { logout(); navigate("/"); }} />
 
       <div style={s.main}>
-        <TopBar user={user} credits={currentCredits} />
+        <TopBar user={user} credits={currentCredits} onLogout={() => { logout(); navigate("/"); }} />
 
         <div style={s.header}>
           <button style={s.backBtn} onClick={() => navigate("/dashboard")}>← Back</button>

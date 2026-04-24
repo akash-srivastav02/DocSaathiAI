@@ -250,7 +250,7 @@ export default function Pricing() {
     <div style={s.root}>
       <Sidebar credits={currentCredits} onLogout={() => { logout(); navigate("/"); }} />
       <div style={s.main}>
-        <TopBar user={user} credits={currentCredits} />
+        <TopBar user={user} credits={currentCredits} onLogout={() => { logout(); navigate("/"); }} />
         <div style={{ ...s.content, ...(isMobile ? s.contentMobile : null) }}>
           <div style={s.pageHdr}>
             <h1 style={{ ...s.pageTitle, ...(isMobile ? s.pageTitleMobile : null) }}>Choose Your Plan</h1>

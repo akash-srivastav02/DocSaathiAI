@@ -63,7 +63,7 @@ export default function Vault() {
         onLogout={() => { logout(); navigate("/"); }}
       />
       <div style={s.main}>
-        <TopBar user={user} credits={currentCredits} />
+        <TopBar user={user} credits={currentCredits} onLogout={() => { logout(); navigate("/"); }} />
 
         <div style={s.header}>
           <h2 style={s.title}>🗄️ Your Vault</h2>
