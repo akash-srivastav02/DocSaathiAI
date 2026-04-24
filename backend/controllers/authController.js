@@ -34,7 +34,13 @@ const signup = async (req, res) => {
     if (await User.findOne({ email }))
       return res.status(400).json({ message: 'Email already registered. Please login.' });
 
-    const user  = await User.create({ name, email, password, credits: 15 });
+    const user  = await User.create({
+      name,
+      email,
+      password,
+      credits: 15,
+      lastWeeklyRefill: new Date(),
+    });
     const token = generateToken(user._id);
 
     res.status(201).json(userResponse(user, token));
@@ -60,11 +66,16 @@ const login = async (req, res) => {
       return res.status(401).json({ message: 'Incorrect password.' });
 
     // Weekly free refill — give 5 credits if 7 days passed
-    const now          = new Date();
-    const lastRefill   = user.lastWeeklyRefill;
-    const daysSince    = lastRefill
-      ? (now - lastRefill) / (1000 * 60 * 60 * 24)
-      : 999;
+    const now = new Date();
+
+    // Backfill old accounts that were created before weekly refill tracking was set.
+    if (!user.lastWeeklyRefill) {
+      user.lastWeeklyRefill = user.createdAt || now;
+      await user.save();
+    }
+
+    const lastRefill = user.lastWeeklyRefill;
+    const daysSince = (now - lastRefill) / (1000 * 60 * 60 * 24);
 
     if (daysSince >= 7) {
       user.credits         += 5;
@@ -113,10 +124,14 @@ const googleAuth = async (req, res) => {
       }
 
       // Weekly free refill check
-      const now       = new Date();
-      const daysSince = user.lastWeeklyRefill
-        ? (now - user.lastWeeklyRefill) / (1000 * 60 * 60 * 24)
-        : 999;
+      const now = new Date();
+
+      if (!user.lastWeeklyRefill) {
+        user.lastWeeklyRefill = user.createdAt || now;
+        await user.save();
+      }
+
+      const daysSince = (now - user.lastWeeklyRefill) / (1000 * 60 * 60 * 24);
       if (daysSince >= 7) {
         user.credits         += 5;
         user.lastWeeklyRefill = now;
