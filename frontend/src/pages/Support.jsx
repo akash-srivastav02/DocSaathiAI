@@ -56,7 +56,7 @@ const FAQS = [
     items: [
       {
         q: "How do credits work on Doc Saathi AI?",
-        a: "Each tool usage costs a specific number of credits: Exam Photo costs 6 credits, Exam Signature costs 2 credits, Photo+Sign/Date merger costs 6 credits, and Document Size Changer costs 4 credits. New users get 15 free credits. Every 7 days, you get 5 free credits automatically.",
+        a: "Each tool usage costs a specific number of credits: Exam Photo costs 2 credits, Exam Signature costs 2 credits, Photo+Sign/Date merger costs 6 credits, and Document Size Changer costs 2 credits. Crop, Image Compressor, and PDF Compressor also cost 2 credits each. New users get 15 free credits. Every 7 days, you get 5 free credits automatically.",
       },
       {
         q: "What happens when my credits run out?",

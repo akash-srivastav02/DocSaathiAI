@@ -4,6 +4,8 @@ import { GoogleLogin } from "@react-oauth/google";
 import API from "../api/axios";
 import useStore from "../store/useStore";
 
+const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+
 export default function Auth() {
   const [authMode, setAuthMode] = useState("login");
   const [form, setForm]         = useState({ name: "", email: "", password: "" });
@@ -87,18 +89,24 @@ export default function Auth() {
         </div>
 
         {/* Google button — full width, prominent */}
-        <div style={s.googleWrap}>
-          <GoogleLogin
-            onSuccess={handleGoogleSuccess}
-            onError={handleGoogleError}
-            useOneTap={false}
-            theme="filled_black"
-            size="large"
-            width="100%"
-            text={authMode === "login" ? "signin_with" : "signup_with"}
-            shape="rectangular"
-          />
-        </div>
+        {googleClientId ? (
+          <div style={s.googleWrap}>
+            <GoogleLogin
+              onSuccess={handleGoogleSuccess}
+              onError={handleGoogleError}
+              useOneTap={false}
+              theme="filled_black"
+              size="large"
+              width={360}
+              text={authMode === "login" ? "signin_with" : "signup_with"}
+              shape="rectangular"
+            />
+          </div>
+        ) : (
+          <div style={s.googleNotice}>
+            Google login is unavailable until <code>VITE_GOOGLE_CLIENT_ID</code> is added to your frontend <code>.env</code>.
+          </div>
+        )}
 
         {/* Divider */}
         <div style={s.divider}>
@@ -167,6 +175,7 @@ const s = {
 
   // Google button wrapper — forces full width
   googleWrap: { width: "100%", marginBottom: 16, display: "flex", justifyContent: "center" },
+  googleNotice: { width: "100%", marginBottom: 16, border: "1px solid #374151", borderRadius: 10, padding: "12px 14px", color: "#94a3b8", background: "#111827", fontSize: 13, textAlign: "center", boxSizing: "border-box" },
 
   divider: { display: "flex", alignItems: "center", gap: 10, margin: "0 0 16px" },
   dividerLine: { flex: 1, height: 1, background: "#1e293b" },

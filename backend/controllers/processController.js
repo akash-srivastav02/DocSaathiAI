@@ -4,6 +4,15 @@ const History   = require('../models/ProcessHistory');
 const examSpecs = require('../data/examSpecs');
 const { cloudinary, uploadBuffer } = require('../utils/cloudinary');
 
+const TOOL_CREDIT_COST = {
+  photo: 2,
+  signature: 2,
+  crop: 2,
+  imgcompress: 2,
+  pdfcompress: 2,
+  merger: 6,
+};
+
 /* ─────────────────────────────────────────────────────────────────────────────
    WHY IMAGES COME OUT TOO SMALL:
    JPEG efficiently compresses smooth areas (white backgrounds, even skin tones).
@@ -157,8 +166,7 @@ const processImage = async (req, res) => {
   const withinRange = finalSizeKB <= spec.maxKB; // portals reject OVER max, not under
 
   // ── Credits ─────────────────────────────────────────────────────────────
-  const hasCredits   = user.credits > 0;
-  const addWatermark = !hasCredits;
+  const creditCost = TOOL_CREDIT_COST[toolType] || 2;
 
   // ── Upload to Cloudinary ────────────────────────────────────────────────
   let uploadResult;
@@ -169,23 +177,6 @@ const processImage = async (req, res) => {
     return res.status(500).json({ message: 'Upload failed. Check Cloudinary credentials.' });
   }
 
-  // ── Deduct 1 credit ─────────────────────────────────────────────────────
-  let newCredits = user.credits;
-  if (hasCredits) {
-    await User.findByIdAndUpdate(user._id, { $inc: { credits: -1 } });
-    newCredits = user.credits - 1;
-  }
-
-  // ── Save history ────────────────────────────────────────────────────────
-  await History.create({
-    user:         user._id,
-    toolType,
-    examName,
-    processedUrl: uploadResult.secure_url,
-    creditsUsed:  hasCredits ? 1 : 0,
-    hasWatermark: addWatermark,
-  });
-
   res.json({
     url:         uploadResult.secure_url,
     sizeKB:      finalSizeKB,
@@ -193,11 +184,56 @@ const processImage = async (req, res) => {
     targetMaxKB: spec.maxKB,
     targetMinKB: spec.minKB,
     withinRange,
-    hasWatermark: addWatermark,
-    creditsLeft:  newCredits,
+    hasWatermark: true,
+    creditsLeft:  user.credits,
+    creditCost,
     exam:         examName,
     type:         toolType,
   });
+};
+
+const confirmDownload = async (req, res) => {
+  try {
+    const { toolType, examName, processedUrl } = req.body;
+    const creditCost = TOOL_CREDIT_COST[toolType];
+
+    if (!creditCost) {
+      return res.status(400).json({ message: 'Unsupported tool type for download confirmation.' });
+    }
+
+    const user = await User.findById(req.user._id);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found.' });
+    }
+
+    if (user.credits < creditCost) {
+      return res.status(400).json({
+        message: `Need ${creditCost} credits to download this file.`,
+        creditsLeft: user.credits,
+      });
+    }
+
+    user.credits -= creditCost;
+    await user.save();
+
+    await History.create({
+      user: user._id,
+      toolType,
+      examName: examName || toolType,
+      processedUrl: processedUrl || '',
+      creditsUsed: creditCost,
+      hasWatermark: false,
+    });
+
+    res.json({
+      success: true,
+      creditCost,
+      creditsLeft: user.credits,
+    });
+  } catch (error) {
+    console.error('[Process] confirmDownload error:', error.message);
+    res.status(500).json({ message: 'Could not confirm download.' });
+  }
 };
 
 /* ─────────────────────────────────────────────────────────────────────────────
@@ -222,4 +258,4 @@ const getExams = async (req, res) => {
   res.json(list);
 };
 
-module.exports = { processImage, getHistory, getExams };
+module.exports = { processImage, confirmDownload, getHistory, getExams };
