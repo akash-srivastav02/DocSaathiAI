@@ -3,28 +3,28 @@ import { useLocation, useNavigate } from "react-router-dom";
 import useIsMobile from "../hooks/useIsMobile";
 
 const NAV_ITEMS = [
-  { label: "Dashboard", icon: "🏠", path: "/dashboard" },
-  { label: "Vault", icon: "🗄️", path: "/vault" },
-  { label: "Pricing", icon: "💳", path: "/pricing" },
-  { label: "Support", icon: "💬", path: "/support" },
+  { label: "Dashboard", icon: "DB", path: "/dashboard" },
+  { label: "Vault", icon: "VT", path: "/vault" },
+  { label: "Pricing", icon: "INR", path: "/pricing" },
+  { label: "Support", icon: "SP", path: "/support" },
 ];
 
 const MOBILE_TOOL_SECTIONS = [
   {
     title: "Exam",
     items: [
-      { label: "Exam Photo", icon: "ðŸ“¸", path: "/tool/photo" },
-      { label: "Exam Signature", icon: "âœï¸", path: "/tool/signature" },
-      { label: "Photo + Sign / Date", icon: "ðŸªª", path: "/merger" },
-      { label: "Document Size Changer", icon: "ðŸ“", path: "/pdf/compress" },
+      { label: "Exam Photo", icon: "PH", path: "/tool/photo" },
+      { label: "Exam Signature", icon: "SG", path: "/tool/signature" },
+      { label: "Photo + Sign / Date", icon: "MX", path: "/merger" },
+      { label: "Document Size Changer", icon: "PDF", path: "/pdf/compress" },
     ],
   },
   {
     title: "Document & Utility",
     items: [
-      { label: "Crop & Resize", icon: "âœ‚ï¸", path: "/tool/crop" },
-      { label: "Image Compressor", icon: "ðŸ—œï¸", path: "/tool/imgcompress" },
-      { label: "PDF Compressor", icon: "ðŸ“¦", path: "/pdf/compress" },
+      { label: "Crop & Resize", icon: "CR", path: "/tool/crop" },
+      { label: "Image Compressor", icon: "IM", path: "/tool/imgcompress" },
+      { label: "PDF Compressor", icon: "PC", path: "/pdf/compress" },
     ],
   },
 ];
@@ -55,7 +55,7 @@ export default function Sidebar({ credits, onLogout, activeNav }) {
           style={s.mobileToggle}
           aria-label={isOpen ? "Close menu" : "Open menu"}
         >
-          {isOpen ? "✕" : "☰"}
+          {isOpen ? "×" : "☰"}
         </button>
       )}
 
@@ -145,7 +145,7 @@ export default function Sidebar({ credits, onLogout, activeNav }) {
                 style={{ ...s.navBtn, ...(activeLabel === label ? s.navActive : null) }}
                 onClick={() => navigate(path)}
               >
-                <span style={{ width: 20, textAlign: "center" }}>{icon}</span>
+                <span style={s.navBtnIcon}>{icon}</span>
                 {label}
               </button>
             ))}
@@ -167,7 +167,7 @@ export default function Sidebar({ credits, onLogout, activeNav }) {
               <p style={s.footerText}>Smarter than Cyber Cafe</p>
               {onLogout && (
                 <button onClick={onLogout} style={s.logoutBtn}>
-                  🚪 Logout
+                  Logout
                 </button>
               )}
             </>
@@ -254,7 +254,14 @@ const s = {
   brandMain: { fontSize: 15, fontWeight: 800, color: "#f1f5f9", letterSpacing: -0.3 },
   brandAI: { fontSize: 15, fontWeight: 800, color: "#f97316", letterSpacing: -0.3 },
   mobileSection: { paddingBottom: 12, marginBottom: 10, borderBottom: "1px solid #1e293b" },
-  mobileSectionLabel: { color: "#94a3b8", fontSize: 11, fontWeight: 800, textTransform: "uppercase", letterSpacing: 0.8, margin: "0 0 5px" },
+  mobileSectionLabel: {
+    color: "#94a3b8",
+    fontSize: 11,
+    fontWeight: 800,
+    textTransform: "uppercase",
+    letterSpacing: 0.8,
+    margin: "0 0 5px",
+  },
   mobileSectionSub: { color: "#64748b", fontSize: 13, lineHeight: 1.5, margin: 0 },
   mobileToolWrap: { display: "flex", flexDirection: "column", gap: 12, flex: 1 },
   mobileToolSections: { display: "flex", flexDirection: "column", gap: 16 },
@@ -277,7 +284,16 @@ const s = {
     width: "100%",
   },
   toolBtnActive: { borderColor: "#f9731650", background: "#f9731618", color: "#f97316" },
-  toolBtnIcon: { width: 20, textAlign: "center", flexShrink: 0 },
+  toolBtnIcon: {
+    width: 28,
+    minWidth: 28,
+    textAlign: "center",
+    flexShrink: 0,
+    fontSize: 11,
+    fontWeight: 800,
+    color: "inherit",
+    letterSpacing: 0.2,
+  },
   creditBlock: {
     display: "flex",
     flexDirection: "column",
@@ -324,6 +340,14 @@ const s = {
     width: "100%",
     textAlign: "left",
     transition: "all 0.15s",
+  },
+  navBtnIcon: {
+    width: 26,
+    minWidth: 26,
+    textAlign: "center",
+    fontSize: 11,
+    fontWeight: 800,
+    color: "inherit",
   },
   navActive: { background: "#f9731618", color: "#f97316", fontWeight: 700 },
   footer: { borderTop: "1px solid #1e293b", paddingTop: 14, marginTop: "auto", paddingBottom: 18, flexShrink: 0 },
