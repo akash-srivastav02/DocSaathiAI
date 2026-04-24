@@ -3,10 +3,11 @@ import { useNavigate } from "react-router-dom";
 import { GoogleLogin } from "@react-oauth/google";
 import API from "../api/axios";
 import useStore from "../store/useStore";
+import useIsMobile from "../hooks/useIsMobile";
 
 const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
-const GoogleAuthCard = memo(function GoogleAuthCard({ authMode, onSuccess, onError }) {
+const GoogleAuthCard = memo(function GoogleAuthCard({ authMode, onSuccess, onError, buttonWidth, isMobile }) {
   return (
     <div style={s.googleCard}>
       <div style={s.googleCardHeader}>
@@ -16,15 +17,15 @@ const GoogleAuthCard = memo(function GoogleAuthCard({ authMode, onSuccess, onErr
         </div>
         <div style={s.googleBadge}>Quick Access</div>
       </div>
-      <div style={s.googleButtonShell}>
-        <div style={s.googleWrap}>
+      <div style={{ ...s.googleButtonShell, ...(isMobile ? s.googleButtonShellMobile : null) }}>
+        <div style={{ ...s.googleWrap, width: buttonWidth }}>
           <GoogleLogin
             onSuccess={onSuccess}
             onError={onError}
             useOneTap={false}
             theme="outline"
             size="large"
-            width={340}
+            width={buttonWidth}
             text={authMode === "login" ? "signin_with" : "signup_with"}
             shape="pill"
             logo_alignment="left"
@@ -36,12 +37,14 @@ const GoogleAuthCard = memo(function GoogleAuthCard({ authMode, onSuccess, onErr
 });
 
 export default function Auth() {
+  const isMobile = useIsMobile(520);
   const [authMode, setAuthMode] = useState("login");
   const [form, setForm]         = useState({ name: "", email: "", password: "" });
   const [error, setError]       = useState("");
   const [loading, setLoading]   = useState(false);
   const { setUser }             = useStore();
   const navigate                = useNavigate();
+  const googleButtonWidth       = isMobile ? 294 : 340;
 
   // ── Email/Password submit ─────────────────────────────────────────────────
   const handleSubmit = async (e) => {
@@ -121,7 +124,13 @@ export default function Auth() {
 
         {/* Google button — full width, prominent */}
         {googleClientId ? (
-          <GoogleAuthCard authMode={authMode} onSuccess={handleGoogleSuccess} onError={handleGoogleError} />
+          <GoogleAuthCard
+            authMode={authMode}
+            onSuccess={handleGoogleSuccess}
+            onError={handleGoogleError}
+            buttonWidth={googleButtonWidth}
+            isMobile={isMobile}
+          />
         ) : (
           <div style={s.googleNotice}>
             Google login is unavailable until <code>VITE_GOOGLE_CLIENT_ID</code> is added to your frontend <code>.env</code>.
@@ -181,7 +190,7 @@ const s = {
   glow1: { position: "absolute", width: 400, height: 400, borderRadius: "50%", background: "#f9731614", filter: "blur(80px)", top: "-10%", left: "-10%", pointerEvents: "none" },
   glow2: { position: "absolute", width: 400, height: 400, borderRadius: "50%", background: "#3b82f610", filter: "blur(80px)", bottom: "-10%", right: "-10%", pointerEvents: "none" },
 
-  card: { background: "#0d1421", border: "1px solid #1e293b", borderRadius: 20, padding: "32px 28px", width: "100%", maxWidth: 400, position: "relative", zIndex: 1, boxShadow: "0 20px 60px #00000060" },
+  card: { background: "#0d1421", border: "1px solid #1e293b", borderRadius: 20, padding: "32px 28px", width: "100%", maxWidth: 400, position: "relative", zIndex: 1, boxShadow: "0 20px 60px #00000060", boxSizing: "border-box" },
 
   brand: { display: "flex", alignItems: "center", gap: 10, justifyContent: "center", marginBottom: 4 },
   brandIconWrap: {
@@ -208,16 +217,16 @@ const s = {
   googleCard: {
     width: "100%",
     marginBottom: 16,
-    borderRadius: 16,
+    borderRadius: 13,
     border: "1px solid #263246",
     background: "linear-gradient(180deg, #111827, #0f172a)",
-    padding: "14px 14px 16px",
+    padding: "11px 11px 12px",
     boxSizing: "border-box",
     boxShadow: "inset 0 1px 0 rgba(255,255,255,0.03)",
   },
-  googleCardHeader: { display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 10, marginBottom: 12 },
+  googleCardHeader: { display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 10, marginBottom: 10 },
   googleTitle: { color: "#f8fafc", fontWeight: 700, fontSize: 14, margin: 0 },
-  googleSub: { color: "#94a3b8", fontSize: 12, lineHeight: 1.5, margin: "4px 0 0" },
+  googleSub: { color: "#94a3b8", fontSize: 11, lineHeight: 1.45, margin: "3px 0 0" },
   googleBadge: {
     background: "#f9731618",
     color: "#fdba74",
@@ -232,10 +241,13 @@ const s = {
     borderRadius: 999,
     overflow: "hidden",
     background: "#ffffff",
-    padding: 4,
+    padding: 2,
     boxShadow: "inset 0 0 0 1px rgba(148,163,184,0.12)",
+    display: "flex",
+    justifyContent: "center",
   },
-  googleWrap: { width: "100%", display: "flex", justifyContent: "center", minHeight: 48 },
+  googleButtonShellMobile: { padding: 2 },
+  googleWrap: { display: "flex", justifyContent: "center", minHeight: 42, maxWidth: "100%" },
   googleNotice: { width: "100%", marginBottom: 16, border: "1px solid #374151", borderRadius: 10, padding: "12px 14px", color: "#94a3b8", background: "#111827", fontSize: 13, textAlign: "center", boxSizing: "border-box" },
 
   divider: { display: "flex", alignItems: "center", gap: 10, margin: "0 0 16px" },

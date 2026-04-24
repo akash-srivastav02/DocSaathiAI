@@ -23,13 +23,14 @@ const OTHER_TOOLS = [
 
 const creditLabel = (credit) => `${credit} cr`;
 
-function ExamCard({ tool, onClick }) {
+function ExamCard({ tool, onClick, compact }) {
   const [isHovered, setIsHovered] = useState(false);
 
   return (
     <div
       style={{
         ...s.examCard,
+        ...(compact ? s.examCardCompact : null),
         borderColor: isHovered ? tool.color : "#1e293b",
         boxShadow: isHovered ? `0 8px 22px ${tool.color}22` : "none",
         transform: isHovered ? "translateY(-4px)" : "translateY(0)",
@@ -47,8 +48,8 @@ function ExamCard({ tool, onClick }) {
         )}
       </div>
 
-      <p style={s.examLabel}>{tool.label}</p>
-      <p style={s.examDesc}>{tool.desc}</p>
+      <p style={{ ...s.examLabel, ...(compact ? s.examLabelCompact : null) }}>{tool.label}</p>
+      <p style={{ ...s.examDesc, ...(compact ? s.examDescCompact : null) }}>{tool.desc}</p>
 
       <div style={s.examFooter}>
         <span style={{ ...s.chip, color: tool.color, borderColor: `${tool.color}40` }}>⚡ {creditLabel(tool.credit)}</span>
@@ -58,13 +59,14 @@ function ExamCard({ tool, onClick }) {
   );
 }
 
-function OtherCard({ tool, onClick }) {
+function OtherCard({ tool, onClick, compact }) {
   const [isHovered, setIsHovered] = useState(false);
 
   return (
     <div
       style={{
         ...s.otherCard,
+        ...(compact ? s.otherCardCompact : null),
         borderColor: isHovered && !tool.soon ? tool.color : "#1e293b",
         boxShadow: isHovered && !tool.soon ? `0 8px 18px ${tool.color}18` : "none",
         opacity: tool.soon ? 0.55 : 1,
@@ -77,10 +79,10 @@ function OtherCard({ tool, onClick }) {
       <div style={{ ...s.otherIcon, background: `${tool.color}18`, color: tool.color }}>{tool.icon}</div>
       <div style={s.otherBody}>
         <div style={s.otherRow}>
-          <p style={s.otherLabel}>{tool.label}</p>
+          <p style={{ ...s.otherLabel, ...(compact ? s.otherLabelCompact : null) }}>{tool.label}</p>
           {tool.soon && <span style={s.soonBadge}>Soon</span>}
         </div>
-        <p style={s.otherDesc}>{tool.desc}</p>
+        <p style={{ ...s.otherDesc, ...(compact ? s.otherDescCompact : null) }}>{tool.desc}</p>
       </div>
       <span style={{ ...s.chipSm, color: tool.color, borderColor: `${tool.color}40` }}>{creditLabel(tool.credit)}</span>
     </div>
@@ -102,9 +104,11 @@ export default function Dashboard() {
           <div style={{ ...s.welcomeRow, ...(isMobile ? s.welcomeRowMobile : null) }}>
             <div>
               <h2 style={{ ...s.welcomeTitle, ...(isMobile ? s.welcomeTitleMobile : null) }}>
-                Namaste, {user?.name?.split(" ")[0]} 🙏
+                {isMobile ? "Choose a tool" : `Namaste, ${user?.name?.split(" ")[0]} 🙏`}
               </h2>
-              <p style={s.welcomeSub}>What do you want to prepare today?</p>
+              <p style={{ ...s.welcomeSub, ...(isMobile ? s.welcomeSubMobile : null) }}>
+                {isMobile ? "Open any tool below and continue in seconds." : "What do you want to prepare today?"}
+              </p>
             </div>
             <div style={{ ...s.creditCard, ...(isMobile ? s.creditCardMobile : null) }} onClick={() => navigate("/pricing")}>
               <span style={{ fontSize: 22 }}>⚡</span>
@@ -131,7 +135,7 @@ export default function Dashboard() {
               </div>
             </div>
             <div style={{ ...s.examGrid, ...(isMobile ? s.examGridMobile : null) }}>
-              {EXAM_TOOLS.map((tool) => <ExamCard key={tool.id} tool={tool} onClick={navigate} />)}
+              {EXAM_TOOLS.map((tool) => <ExamCard key={tool.id} tool={tool} onClick={navigate} compact={isMobile} />)}
             </div>
           </section>
 
@@ -146,7 +150,7 @@ export default function Dashboard() {
               </div>
             </div>
             <div style={{ ...s.otherGrid, ...(isMobile ? s.otherGridMobile : null) }}>
-              {OTHER_TOOLS.map((tool) => <OtherCard key={tool.id} tool={tool} onClick={navigate} />)}
+              {OTHER_TOOLS.map((tool) => <OtherCard key={tool.id} tool={tool} onClick={navigate} compact={isMobile} />)}
             </div>
           </section>
 
@@ -171,39 +175,46 @@ const s = {
   welcomeTitle: { color: "#f1f5f9", fontSize: 20, fontWeight: 800, margin: 0 },
   welcomeTitleMobile: { fontSize: 18, lineHeight: 1.25 },
   welcomeSub: { color: "#64748b", fontSize: 13, marginTop: 3 },
+  welcomeSubMobile: { fontSize: 14, lineHeight: 1.45, marginTop: 6 },
   creditCard: { background: "#0d1421", border: "1px solid #1e293b", borderRadius: 12, padding: "10px 18px", display: "flex", alignItems: "center", gap: 8, cursor: "pointer" },
-  creditCardMobile: { width: "100%", justifyContent: "center" },
+  creditCardMobile: { width: "100%", justifyContent: "center", padding: "12px 16px" },
   creditNum: { color: "#f97316", fontWeight: 900, fontSize: 24 },
-  creditLbl: { color: "#64748b", fontSize: 12 },
+  creditLbl: { color: "#64748b", fontSize: 13 },
 
   lowBanner: { background: "#7c2d1220", border: "1px solid #7c2d12", borderRadius: 10, padding: "10px 16px", color: "#fca57a", fontSize: 13 },
 
   secHead: { display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 14, gap: 10, flexWrap: "wrap" },
   secHeadLeft: { display: "flex", alignItems: "flex-start", gap: 10 },
-  secTitle: { color: "#f1f5f9", fontWeight: 800, fontSize: 15, margin: "0 0 2px" },
-  secSub: { color: "#64748b", fontSize: 12, margin: 0 },
+  secTitle: { color: "#f1f5f9", fontWeight: 800, fontSize: 16, margin: "0 0 2px" },
+  secSub: { color: "#64748b", fontSize: 13, margin: 0, lineHeight: 1.45 },
 
   examGrid: { display: "grid", gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: 12 },
   examGridMobile: { gridTemplateColumns: "1fr" },
   examCard: { background: "#0d1421", border: "1px solid", borderRadius: 13, padding: 14, display: "flex", flexDirection: "column", cursor: "pointer", transition: "transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease", minHeight: 168, boxSizing: "border-box" },
+  examCardCompact: { minHeight: 138, padding: 14 },
   examTop: { display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10, gap: 8 },
   examTag: { borderRadius: 6, padding: "2px 8px", fontSize: 10, fontWeight: 700, whiteSpace: "nowrap" },
   examIcon: { width: 36, height: 36, borderRadius: 9, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18, flexShrink: 0 },
   examLabel: { color: "#f1f5f9", fontWeight: 700, fontSize: 13, margin: "0 0 4px" },
+  examLabelCompact: { fontSize: 18, lineHeight: 1.25, marginBottom: 8 },
   examDesc: { color: "#64748b", fontSize: 11, margin: 0, lineHeight: 1.5, flex: 1 },
+  examDescCompact: { fontSize: 14, lineHeight: 1.55 },
   examFooter: { display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 10 },
-  chip: { fontSize: 11, fontWeight: 700, border: "1px solid", borderRadius: 6, padding: "2px 8px" },
+  chip: { fontSize: 12, fontWeight: 700, border: "1px solid", borderRadius: 6, padding: "4px 10px" },
 
   otherGrid: { display: "grid", gridTemplateColumns: "repeat(3, minmax(0, 1fr))", gap: 10 },
   otherGridMobile: { gridTemplateColumns: "1fr" },
   otherCard: { background: "#0d1421", border: "1px solid", borderRadius: 12, padding: "12px 14px", display: "flex", alignItems: "center", gap: 11, transition: "box-shadow 0.15s ease, border-color 0.15s ease", minHeight: 64, boxSizing: "border-box" },
+  otherCardCompact: { padding: "14px 15px", minHeight: 78, gap: 12 },
   otherIcon: { width: 36, height: 36, borderRadius: 9, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 17, flexShrink: 0 },
   otherBody: { flex: 1, minWidth: 0 },
   otherRow: { display: "flex", alignItems: "center", gap: 6, marginBottom: 2, flexWrap: "wrap" },
   otherLabel: { color: "#f1f5f9", fontWeight: 700, fontSize: 12, margin: 0 },
+  otherLabelCompact: { fontSize: 15 },
   otherDesc: { color: "#64748b", fontSize: 11, margin: 0, lineHeight: 1.3 },
+  otherDescCompact: { fontSize: 13, lineHeight: 1.45 },
   soonBadge: { background: "#1e293b", color: "#64748b", fontSize: 9, fontWeight: 700, borderRadius: 4, padding: "1px 6px", flexShrink: 0 },
-  chipSm: { fontSize: 10, fontWeight: 700, border: "1px solid", borderRadius: 5, padding: "2px 6px", flexShrink: 0, whiteSpace: "nowrap" },
+  chipSm: { fontSize: 11, fontWeight: 700, border: "1px solid", borderRadius: 5, padding: "3px 7px", flexShrink: 0, whiteSpace: "nowrap" },
 
   strip: { background: "#052e1618", border: "1px solid #14532d44", borderRadius: 12, padding: "12px 16px", color: "#86efac", fontSize: 12, lineHeight: 1.5 },
 };
