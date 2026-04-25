@@ -2,10 +2,30 @@ import { useNavigate } from "react-router-dom";
 import useStore from "../store/useStore";
 
 const FEATURES = [
-  { title: "Exam Photo Resize", desc: "Fix SSC, SBI, IBPS, JEE and NEET photo size in seconds.", tag: "Photo" },
-  { title: "Signature Resize", desc: "Prepare exact signature dimensions and file size for exam forms.", tag: "Sign" },
-  { title: "PDF Compression", desc: "Compress certificates, marksheets and forms to exact upload limits.", tag: "PDF" },
-  { title: "Photo + Sign Merger", desc: "Merge photo, signature and date into one clean upload-ready file.", tag: "Merge" },
+  {
+    title: "Exam Photo Resize",
+    desc: "Fix SSC, SBI, IBPS, JEE and NEET photo size in seconds.",
+    tag: "Photo",
+    route: "/tool/photo",
+  },
+  {
+    title: "Signature Resize",
+    desc: "Prepare exact signature dimensions and file size for exam forms.",
+    tag: "Sign",
+    route: "/tool/signature",
+  },
+  {
+    title: "PDF Compression",
+    desc: "Compress certificates, marksheets and forms to exact upload limits.",
+    tag: "PDF",
+    route: "/pdf/compress",
+  },
+  {
+    title: "Photo + Sign Merger",
+    desc: "Merge photo, signature and date into one clean upload-ready file.",
+    tag: "Merge",
+    route: "/merger",
+  },
 ];
 
 const EXAMS = ["SSC CGL", "SSC CHSL", "SBI PO", "IBPS Clerk", "RRB NTPC", "JEE Main", "NEET UG", "UP Police"];
@@ -75,13 +95,22 @@ export default function Landing() {
           </div>
           <div style={s.featureGrid}>
             {FEATURES.map((feature) => (
-              <div key={feature.title} style={s.featureCard}>
+              <button
+                key={feature.title}
+                type="button"
+                style={s.featureCard}
+                onClick={() => navigate(feature.route)}
+              >
                 <span style={s.featureTag}>{feature.tag}</span>
                 <h3 style={s.featureTitle}>{feature.title}</h3>
                 <p style={s.featureDesc}>{feature.desc}</p>
-              </div>
+                <span style={s.featureLink}>Explore tool →</span>
+              </button>
             ))}
           </div>
+          <p style={s.exploreNote}>
+            Users can explore these tools first. Login or signup can happen later when they want a clean download.
+          </p>
         </section>
 
         <section style={s.ctaSection}>
@@ -222,6 +251,11 @@ const s = {
     display: "flex",
     flexDirection: "column",
     gap: 10,
+    textAlign: "left",
+    cursor: "pointer",
+    fontFamily: "inherit",
+    appearance: "none",
+    width: "100%",
   },
   featureTag: {
     color: "#f97316",
@@ -235,6 +269,8 @@ const s = {
   },
   featureTitle: { fontSize: 18, fontWeight: 800, margin: 0 },
   featureDesc: { color: "#94a3b8", fontSize: 14, lineHeight: 1.6, margin: 0 },
+  featureLink: { color: "#f97316", fontSize: 13, fontWeight: 800, marginTop: "auto" },
+  exploreNote: { color: "#64748b", fontSize: 14, lineHeight: 1.6, margin: "4px 0 0" },
   ctaSection: {
     background: "linear-gradient(180deg,#0d1421,#0b1220)",
     border: "1px solid #1e293b",
