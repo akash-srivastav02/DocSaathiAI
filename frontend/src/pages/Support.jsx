@@ -89,7 +89,7 @@ const FAQS = [
       },
       {
         q: "Is FormFixer available as a mobile app?",
-        a: "Currently FormFixer is a web application that works on all mobile browsers. Open docsaathi.in in Chrome on your Android or Safari on iPhone — it works fully. A dedicated Android and iOS app is on our roadmap.",
+        a: "Currently FormFixer is a web application that works on all mobile browsers. Open formfixer.in in Chrome on your Android or Safari on iPhone — it works fully. A dedicated Android and iOS app is on our roadmap.",
       },
       {
         q: "Which exams does FormFixer support?",
@@ -189,7 +189,7 @@ export default function Support() {
               Can't find your answer? Send us a message and we'll reply within 24 hours.
             </p>
             <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
-              <a href="mailto:supportformfixer@gmail.in" style={s.mailBtn}>
+              <a href="mailto:supportformfixer@gmail.com" style={s.mailBtn}>
                 📧 Email Us
               </a>
               <button style={s.backBtn} onClick={() => navigate("/dashboard")}>

@@ -1,0 +1,25 @@
+{
+  "name": "FormFixer - Exam Photo and Document Tool",
+  "short_name": "FormFixer",
+  "description": "Resize exam photos, signatures, PDFs and form documents in seconds.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#070c18",
+  "theme_color": "#f97316",
+  "lang": "en-IN",
+  "categories": ["utilities", "productivity", "education"],
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/favicon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
