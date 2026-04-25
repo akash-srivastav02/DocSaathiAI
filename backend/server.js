@@ -7,6 +7,16 @@ dotenv.config();
 connectDB();
 
 const app = express();
+app.use((req, res, next) => {
+  const start = Date.now();
+
+  res.on('finish', () => {
+    const ms = Date.now() - start;
+    console.log(`[Timing] ${req.method} ${req.originalUrl} -> ${ms}ms`);
+  });
+
+  next();
+});
 
 // ── Middleware ────────────────────────────────────────────────────────────────
 app.use(cors({

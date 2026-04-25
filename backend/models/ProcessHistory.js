@@ -11,4 +11,6 @@ const historySchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now }
 });
 
+historySchema.index({ user: 1, createdAt: -1 });
+
 module.exports = mongoose.model('ProcessHistory', historySchema);

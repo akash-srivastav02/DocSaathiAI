@@ -130,6 +130,8 @@ async function compressToRange(inputBuffer, width, height, maxKB, minKB) {
    POST /api/process/signature
 ───────────────────────────────────────────────────────────────────────────── */
 const processImage = async (req, res) => {
+  console.time(`process-${toolType}-total`);
+
   const toolType     = req.path.replace('/', ''); // "photo" or "signature"
   const { examName } = req.body;
   const user         = req.user;
@@ -152,6 +154,9 @@ const processImage = async (req, res) => {
   // ── Process ─────────────────────────────────────────────────────────────
   let processedBuffer;
   try {
+    console.time(`process-${toolType}-sharp`);
+    console.timeEnd(`process-${toolType}-sharp`);
+
     processedBuffer = await compressToRange(
       req.file.buffer,
       spec.w, spec.h,
@@ -171,11 +176,17 @@ const processImage = async (req, res) => {
   // ── Upload to Cloudinary ────────────────────────────────────────────────
   let uploadResult;
   try {
+    console.time(`process-${toolType}-cloudinary`);
+
     uploadResult = await uploadBuffer(processedBuffer, `docsaathi/${toolType}`);
+    console.timeEnd(`process-${toolType}-cloudinary`);
+
   } catch (err) {
     console.error('Cloudinary error:', err.message);
     return res.status(500).json({ message: 'Upload failed. Check Cloudinary credentials.' });
   }
+
+  console.timeEnd(`process-${toolType}-total`);
 
   res.json({
     url:         uploadResult.secure_url,

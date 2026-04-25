@@ -32,6 +32,7 @@ const PLANS = {
    Body: { planId }
 ───────────────────────────────────────────────────────────────────────────── */
 const createOrder = async (req, res) => {
+  console.time('payment-create-order-total');
   try {
     const razorpay = getRazorpayClient();
     if (!razorpay) {
@@ -45,6 +46,9 @@ const createOrder = async (req, res) => {
       return res.status(400).json({ message: `Invalid plan: "${planId}"` });
 
     // Create Razorpay order
+    console.time('payment-razorpay-order');
+    console.timeEnd('payment-razorpay-order');
+
     const order = await razorpay.orders.create({
       amount:   plan.amount,
       currency: 'INR',
@@ -53,6 +57,9 @@ const createOrder = async (req, res) => {
     });
 
     // Save pending transaction
+    console.time('payment-transaction-save');
+    console.timeEnd('payment-transaction-save');
+
     await Transaction.create({
       user:            req.user._id,
       razorpayOrderId: order.id,
@@ -73,6 +80,7 @@ const createOrder = async (req, res) => {
     });
 
   } catch (err) {
+    console.timeEnd('payment-create-order-total');
     console.error('[Payment] createOrder error:', err.message);
     res.status(500).json({ message: 'Could not create payment order. Try again.' });
   }

@@ -20,4 +20,7 @@ const transactionSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now },
 });
 
+transactionSchema.index({ razorpayOrderId: 1 });
+transactionSchema.index({ user: 1, status: 1, createdAt: -1 });
+
 module.exports = mongoose.model('Transaction', transactionSchema);
