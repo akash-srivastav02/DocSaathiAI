@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import Landing         from "./pages/Landing";
 import Auth            from "./pages/Auth";
 import Dashboard       from "./pages/Dashboard";
 import ToolPage        from "./pages/ToolPage";
@@ -20,7 +21,7 @@ function App() {
     <BrowserRouter>
       <Routes>
         {/* Public */}
-        <Route path="/" element={<Dashboard />} />
+        <Route path="/" element={<Landing />} />
         <Route path="/auth" element={<Auth />} />
 
         <Route path="/tool/:toolId" element={<ToolPage />} />
