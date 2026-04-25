@@ -20,7 +20,8 @@ function App() {
     <BrowserRouter>
       <Routes>
         {/* Public */}
-        <Route path="/" element={<AuthGate />} />
+        <Route path="/" element={<Dashboard />} />
+        <Route path="/auth" element={<Auth />} />
 
         <Route path="/tool/:toolId" element={<ToolPage />} />
         <Route path="/pdf/compress" element={<PDFCompressPage />} />
@@ -37,11 +38,6 @@ function App() {
       </Routes>
     </BrowserRouter>
   );
-}
-
-function AuthGate() {
-  const { user } = useStore();
-  return user ? <Navigate to="/dashboard" replace /> : <Auth />;
 }
 
 export default App;

@@ -196,24 +196,42 @@ export default function Dashboard() {
   const { user, credits, logout } = useStore();
   const navigate = useNavigate();
   const isMobile = useIsMobile(900);
-  const currentCredits = credits ?? user?.credits ?? 0;
-  const firstName = user?.name?.split(" ")[0] || "User";
+  const currentCredits = user ? (credits ?? user?.credits ?? 0) : 0;
+  const firstName = user?.name?.split(" ")[0] || "Guest";
+  const isGuest = !user;
 
   return (
     <div style={s.root}>
-      <Sidebar credits={currentCredits} onLogout={() => { logout(); navigate("/"); }} />
+      {user && (
+        <Sidebar credits={currentCredits} onLogout={() => { logout(); navigate("/"); }} />
+      )}
       <div style={s.main}>
-        <TopBar user={user} credits={currentCredits} onLogout={() => { logout(); navigate("/"); }} />
+        {user ? (
+          <TopBar user={user} credits={currentCredits} onLogout={() => { logout(); navigate("/"); }} />
+        ) : (
+          <div style={s.guestBar}>
+            <span>Explore FormFixer freely. Login only when you need to unlock downloads.</span>
+              <button style={s.guestLoginBtn} onClick={() => navigate("/auth")}>
+                Login / Sign Up
+              </button>
+          </div>
+        )}
         <div style={{ ...s.content, ...(isMobile ? s.contentMobile : null) }}>
           <div style={{ ...s.welcomeRow, ...(isMobile ? s.welcomeRowMobile : null) }}>
             <div>
               <h2 style={{ ...s.welcomeTitle, ...(isMobile ? s.welcomeTitleMobile : null) }}>
-                {isMobile ? "Choose a tool" : `Namaste, ${firstName}`}
+                {isMobile
+                  ? "Choose a tool"
+                  : user
+                    ? `Namaste, ${firstName}`
+                    : "Choose a tool"}
               </h2>
               <p style={{ ...s.welcomeSub, ...(isMobile ? s.welcomeSubMobile : null) }}>
                 {isMobile
                   ? "Open any tool below and continue in seconds."
-                  : "Pick the tool you need and prepare your documents quickly."}
+                  : user
+                    ? "Pick the tool you need and prepare your documents quickly."
+                    : "Explore tools, generate previews, and login only when you download."}
               </p>
             </div>
             <div
@@ -226,7 +244,7 @@ export default function Dashboard() {
             </div>
           </div>
 
-          {currentCredits <= 5 && (
+          {user && currentCredits <= 5 && (
             <div style={s.lowBanner}>
               Warning: Only <b>{currentCredits} credits</b> left.{" "}
               <span style={s.link} onClick={() => navigate("/pricing")}>Buy a plan →</span>
@@ -291,6 +309,8 @@ const s = {
   },
   contentMobile: { padding: "16px", gap: 18 },
   link: { color: "#f97316", cursor: "pointer", fontWeight: 700 },
+  guestBar: { display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, padding: "20px 28px 0", color: "#94a3b8", fontSize: 13, flexWrap: "wrap" },
+  guestLoginBtn: { background: "#f97316", color: "#fff", border: "none", borderRadius: 999, padding: "10px 16px", fontWeight: 700, cursor: "pointer" },
 
   welcomeRow: { display: "flex", alignItems: "center", justifyContent: "space-between", gap: 14, flexWrap: "wrap" },
   welcomeRowMobile: { alignItems: "stretch" },
@@ -309,6 +329,7 @@ const s = {
     cursor: "pointer",
   },
   creditCardMobile: { width: "100%", justifyContent: "center", padding: "12px 16px" },
+  creditCardGuest: { borderColor: "#334155" },
   creditNum: { color: "#f97316", fontWeight: 900, fontSize: 24 },
   creditLbl: { color: "#64748b", fontSize: 13 },
 
