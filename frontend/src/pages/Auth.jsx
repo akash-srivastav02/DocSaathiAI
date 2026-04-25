@@ -7,18 +7,20 @@ import useIsMobile from "../hooks/useIsMobile";
 
 const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
-const GoogleAuthCard = memo(function GoogleAuthCard({ authMode, onSuccess, onError, buttonWidth, isMobile }) {
+const GoogleAuthCard = memo(function GoogleAuthCard({ onSuccess, onError, buttonWidth, isMobile }) {
   return (
     <div style={s.googleCard}>
       <div style={s.googleCardHeader}>
-        <div>
+        <p style={s.googleEyebrow}>Google sign in</p>
+        <div style={s.googleTitleRow}>
           <p style={s.googleTitle}>Continue with Google</p>
-          <p style={s.googleSub}>Fast, secure sign in for your exam document workspace.</p>
+          {!isMobile && <div style={s.googleBadge}>Quick Access</div>}
         </div>
-        <div style={s.googleBadge}>Quick Access</div>
+        <p style={s.googleSub}>Fast, secure sign in for your exam document workspace.</p>
       </div>
-      <div style={{ ...s.googleButtonShell, ...(isMobile ? s.googleButtonShellMobile : null) }}>
-        <div style={{ ...s.googleWrap, width: buttonWidth }}>
+      <div style={s.googleButtonFrame}>
+        <div style={{ ...s.googlePill, width: buttonWidth + 4 }}>
+          <div style={{ ...s.googleWrap, width: buttonWidth }}>
           <GoogleLogin
             onSuccess={onSuccess}
             onError={onError}
@@ -26,10 +28,11 @@ const GoogleAuthCard = memo(function GoogleAuthCard({ authMode, onSuccess, onErr
             theme="outline"
             size="large"
             width={buttonWidth}
-            text={authMode === "login" ? "signin_with" : "signup_with"}
+            text="continue_with"
             shape="pill"
             logo_alignment="left"
           />
+          </div>
         </div>
       </div>
     </div>
@@ -124,7 +127,6 @@ export default function Auth() {
         {/* Google button — full width, prominent */}
         {googleClientId ? (
           <GoogleAuthCard
-            authMode={authMode}
             onSuccess={handleGoogleSuccess}
             onError={handleGoogleError}
             buttonWidth={googleButtonWidth}
@@ -215,37 +217,49 @@ const s = {
   googleCard: {
     width: "100%",
     marginBottom: 16,
-    borderRadius: 13,
+    borderRadius: 16,
     border: "1px solid #263246",
     background: "linear-gradient(180deg, #111827, #0f172a)",
-    padding: "11px 11px 12px",
+    padding: "14px 14px 14px",
     boxSizing: "border-box",
     boxShadow: "inset 0 1px 0 rgba(255,255,255,0.03)",
   },
-  googleCardHeader: { display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 10, marginBottom: 10 },
-  googleTitle: { color: "#f8fafc", fontWeight: 700, fontSize: 14, margin: 0 },
-  googleSub: { color: "#94a3b8", fontSize: 11, lineHeight: 1.45, margin: "3px 0 0" },
+  googleCardHeader: { display: "flex", flexDirection: "column", gap: 4, marginBottom: 10, alignItems: "center", textAlign: "center" },
+  googleEyebrow: { color: "#fb923c", fontSize: 10, fontWeight: 800, letterSpacing: "0.16em", textTransform: "uppercase", margin: 0 },
+  googleTitleRow: { display: "flex", alignItems: "center", justifyContent: "center", gap: 10, flexWrap: "wrap" },
+  googleTitle: { color: "#f8fafc", fontWeight: 800, fontSize: 16, margin: 0 },
+  googleSub: { color: "#94a3b8", fontSize: 12, lineHeight: 1.45, margin: 0, maxWidth: 280 },
   googleBadge: {
     background: "#f9731618",
     color: "#fdba74",
     border: "1px solid #f9731635",
     borderRadius: 999,
-    padding: "5px 9px",
-    fontSize: 11,
+    padding: "5px 10px",
+    fontSize: 10,
     fontWeight: 700,
     whiteSpace: "nowrap",
   },
-  googleButtonShell: {
-    borderRadius: 999,
-    overflow: "hidden",
-    background: "#ffffff",
-    padding: 2,
-    boxShadow: "inset 0 0 0 1px rgba(148,163,184,0.12)",
+  googleButtonFrame: {
+     display: "flex",
+     justifyContent: "center",
+     alignItems: "center",
+     padding: "2px 0 0",
+  },
+  googlePill: {
     display: "flex",
     justifyContent: "center",
+    alignItems: "center",
+    minHeight: 54,
+    maxWidth: "100%",
+    padding: "5px",
+    borderRadius: 999,
+    background: "linear-gradient(180deg, #f8fafc, #eef2f7)",
+    border: "1px solid #d8e0ea",
+    boxShadow: "0 8px 24px rgba(15, 23, 42, 0.18)",
+    overflow: "hidden",
+    boxSizing: "border-box",
   },
-  googleButtonShellMobile: { padding: 2 },
-  googleWrap: { display: "flex", justifyContent: "center", minHeight: 42, maxWidth: "100%" },
+  googleWrap: { display: "flex", justifyContent: "center", minHeight: 42, maxWidth: "100%", borderRadius: 999, overflow: "hidden" },
   googleNotice: { width: "100%", marginBottom: 16, border: "1px solid #374151", borderRadius: 10, padding: "12px 14px", color: "#94a3b8", background: "#111827", fontSize: 13, textAlign: "center", boxSizing: "border-box" },
 
   divider: { display: "flex", alignItems: "center", gap: 10, margin: "0 0 16px" },

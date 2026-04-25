@@ -5,6 +5,7 @@ import useStore from "../store/useStore";
 import AuthModal from "../components/AuthModal";
 import Sidebar from "../components/Sidebar";
 import TopBar from "../components/TopBar";
+import useIsMobile from "../hooks/useIsMobile";
 
 const FALLBACK_EXAMS = [
   "SSC CGL", "SSC CHSL", "SSC MTS", "SSC GD",
@@ -33,9 +34,9 @@ function UploadBox({ label, icon, preview, onFile, disabled }) {
           <img src={preview} alt={label} style={s.uploadPreview} />
         ) : (
           <>
-            <span style={{ fontSize: 30, marginBottom: 6 }}>{icon}</span>
-            <p style={{ color: "#94a3b8", fontSize: 12, fontWeight: 600, margin: 0 }}>Click to upload</p>
-            <p style={{ color: "#475569", fontSize: 11, marginTop: 3 }}>JPG, PNG, WEBP</p>
+            <span style={s.uploadIcon}>{icon}</span>
+            <p style={s.uploadPrimaryText}>Click to upload</p>
+            <p style={s.uploadSecondaryText}>JPG, PNG, WEBP</p>
           </>
         )}
       </div>
@@ -56,16 +57,38 @@ function WatermarkedPreview({ src }) {
       <img src={src} alt="merged output preview" style={s.resultPreview} />
       <div style={s.previewWatermarkLayer}>
         {Array.from({ length: 12 }).map((_, index) => (
-        <span key={index} style={s.previewWatermarkText}>FORMFIXER PREVIEW</span>
+          <span key={index} style={s.previewWatermarkText}>FORMFIXER PREVIEW</span>
         ))}
       </div>
     </div>
   );
 }
 
+function ModeCard({ accent, badge, title, description, selected, onClick, isMobile }) {
+  return (
+    <button
+      style={{
+        ...s.modeBtn,
+        ...(isMobile ? s.modeBtnMobile : {}),
+        borderColor: selected ? accent : "#374151",
+        background: selected ? `${accent}18` : "#111827",
+      }}
+      onClick={onClick}
+    >
+      <span style={{ ...s.modeIcon, color: accent, background: `${accent}18` }}>{badge}</span>
+      <div style={s.modeCopy}>
+        <p style={{ ...s.modeTitle, color: selected ? accent : "#f1f5f9" }}>{title}</p>
+        <p style={s.modeDescription}>{description}</p>
+        <span style={{ ...s.creditBadge, color: accent, borderColor: `${accent}44` }}>6 credits on download</span>
+      </div>
+    </button>
+  );
+}
+
 export default function MergerPage() {
   const navigate = useNavigate();
   const { user, credits, updateCredits, logout } = useStore();
+  const isMobile = useIsMobile(640);
   const currentCredits = user ? (credits ?? user?.credits ?? 0) : 0;
   const canvasRef = useRef(null);
 
@@ -252,7 +275,7 @@ export default function MergerPage() {
 
       const a = document.createElement("a");
       a.href = outputUrl;
-    a.download = `formfixer_merged_${exam}.jpg`;
+      a.download = `formfixer_merged_${exam}.jpg`;
       a.click();
     } catch (err) {
       setError(err.response?.data?.message || "Download failed. Please try again.");
@@ -298,68 +321,68 @@ export default function MergerPage() {
           subtitle="Merged preview guest mode me available hai. Final clean JPG download ke liye login chahiye."
         />
       )}
+
       <canvas ref={canvasRef} style={{ display: "none" }} />
       {user && <Sidebar credits={currentCredits} onLogout={() => { logout(); navigate("/"); }} />}
+
       <div style={s.main}>
         {user ? (
           <TopBar user={user} credits={currentCredits} onLogout={() => { logout(); navigate("/"); }} />
         ) : (
-          <div style={s.guestBar}>
-            <span>Preview freely. Login sirf final merged JPG download par chahiye.</span>
+          <div style={{ ...s.guestBar, ...(isMobile ? s.guestBarMobile : {}) }}>
+            <span style={s.guestBarText}>Preview freely. Login sirf final merged JPG download par chahiye.</span>
             <button style={s.guestLoginBtn} onClick={() => setShowAuthModal(true)}>Login / Sign Up</button>
           </div>
         )}
-        <div style={s.content}>
-          <div style={s.header}>
-            <button style={s.backBtn} onClick={() => navigate("/dashboard")}>← Back</button>
-            <div style={s.headerIcon}>🪪</div>
-            <div>
+
+        <div style={{ ...s.content, ...(isMobile ? s.contentMobile : {}) }}>
+          <div style={{ ...s.header, ...(isMobile ? s.headerMobile : {}) }}>
+            <div style={{ ...s.headerActions, ...(isMobile ? s.headerActionsMobile : {}) }}>
+              <button style={s.backBtn} onClick={() => navigate(user ? "/dashboard" : "/")}>Back</button>
+              <div style={s.headerIcon}>MX</div>
+            </div>
+            <div style={{ ...s.headerCopy, ...(isMobile ? s.headerCopyMobile : {}) }}>
               <h2 style={s.headerTitle}>Photo + Sign / Date Merger</h2>
-              <p style={s.headerDesc}>Preview watermarked rahega. Final JPG download par hi 6 credits cut honge.</p>
+              <p style={s.headerDesc}>Preview watermarked rahega. Final JPG download par hi {creditCost} credits cut honge.</p>
             </div>
           </div>
 
-          {!downloadUnlocked && user && currentCredits < 6 && mode && (
+          {!downloadUnlocked && user && currentCredits < creditCost && mode && (
             <div style={s.warnBox}>
-              Download ke liye <b>6 credits</b> chahiye, aapke paas <b>{currentCredits}</b> hain.{" "}
-              <span style={s.link} onClick={() => navigate("/pricing")}>Buy credits →</span>
+              Download ke liye <b>{creditCost} credits</b> chahiye, aapke paas <b>{currentCredits}</b> hain.{" "}
+              <span style={s.link} onClick={() => navigate("/pricing")}>Buy credits</span>
             </div>
           )}
 
           <div style={s.card}>
             <div style={s.stepBadge}>Step 1 - Choose What to Merge</div>
-            <div style={s.modeGrid}>
-              <button
-                style={{ ...s.modeBtn, borderColor: mode === "date" ? "#f59e0b" : "#374151", background: mode === "date" ? "#f59e0b18" : "#111827" }}
+            <div style={{ ...s.modeGrid, ...(isMobile ? s.modeGridMobile : {}) }}>
+              <ModeCard
+                accent="#f59e0b"
+                badge="DT"
+                title="Photo + Date"
+                description="Passport-style photo on top, date in bottom strip."
+                selected={mode === "date"}
                 onClick={() => { setMode("date"); setDone(false); setOutputUrl(null); setDownloadUnlocked(false); }}
-              >
-                <span style={{ fontSize: 28 }}>📅</span>
-                <div>
-                  <p style={{ color: mode === "date" ? "#f59e0b" : "#f1f5f9", fontWeight: 700, fontSize: 14, margin: "0 0 3px" }}>Photo + Date</p>
-                  <p style={{ color: "#64748b", fontSize: 12, margin: 0 }}>Passport-style photo on top, date in bottom strip.</p>
-                  <span style={{ ...s.creditBadge, color: "#f59e0b", borderColor: "#f59e0b44" }}>6 credits on download</span>
-                </div>
-              </button>
-
-              <button
-                style={{ ...s.modeBtn, borderColor: mode === "sign" ? "#8b5cf6" : "#374151", background: mode === "sign" ? "#8b5cf618" : "#111827" }}
+                isMobile={isMobile}
+              />
+              <ModeCard
+                accent="#8b5cf6"
+                badge="SG"
+                title="Photo + Signature"
+                description="Passport-style photo on top, signature in bottom strip."
+                selected={mode === "sign"}
                 onClick={() => { setMode("sign"); setDone(false); setOutputUrl(null); setDownloadUnlocked(false); }}
-              >
-                <span style={{ fontSize: 28 }}>✍️</span>
-                <div>
-                  <p style={{ color: mode === "sign" ? "#8b5cf6" : "#f1f5f9", fontWeight: 700, fontSize: 14, margin: "0 0 3px" }}>Photo + Signature</p>
-                  <p style={{ color: "#64748b", fontSize: 12, margin: 0 }}>Passport-style photo on top, signature in bottom strip.</p>
-                  <span style={{ ...s.creditBadge, color: "#8b5cf6", borderColor: "#8b5cf644" }}>6 credits on download</span>
-                </div>
-              </button>
+                isMobile={isMobile}
+              />
             </div>
           </div>
 
           {mode === "date" && (
             <div style={s.card}>
               <div style={s.stepBadge}>Step 2 - Upload Photo & Select Date</div>
-              <div style={s.twoCol}>
-                <UploadBox label="Your Photo" icon="📸" preview={photoPreview} onFile={handlePhoto} disabled={done} />
+              <div style={{ ...s.twoCol, ...(isMobile ? s.twoColMobile : {}) }}>
+                <UploadBox label="Your Photo" icon="PH" preview={photoPreview} onFile={handlePhoto} disabled={done} />
                 <div>
                   <p style={s.inputLabel}>Date Type</p>
                   <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
@@ -393,9 +416,9 @@ export default function MergerPage() {
           {mode === "sign" && (
             <div style={s.card}>
               <div style={s.stepBadge}>Step 2 - Upload Photo & Signature</div>
-              <div style={s.twoCol}>
-                <UploadBox label="Your Photo" icon="📸" preview={photoPreview} onFile={handlePhoto} disabled={done} />
-                <UploadBox label="Your Signature" icon="✍️" preview={signPreview} onFile={handleSign} disabled={done} />
+              <div style={{ ...s.twoCol, ...(isMobile ? s.twoColMobile : {}) }}>
+                <UploadBox label="Your Photo" icon="PH" preview={photoPreview} onFile={handlePhoto} disabled={done} />
+                <UploadBox label="Your Signature" icon="SG" preview={signPreview} onFile={handleSign} disabled={done} />
               </div>
             </div>
           )}
@@ -456,27 +479,45 @@ const s = {
   root: { display: "flex", minHeight: "100vh", background: "#070c18", fontFamily: "'Segoe UI', sans-serif" },
   main: { flex: 1, overflowY: "auto", paddingBottom: 48 },
   guestBar: { display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, padding: "16px 24px 0", color: "#94a3b8", fontSize: 13, flexWrap: "wrap" },
-  guestLoginBtn: { background: "#f97316", color: "#fff", border: "none", borderRadius: 999, padding: "10px 16px", fontWeight: 700, cursor: "pointer" },
-  content: { padding: "18px 24px", display: "flex", flexDirection: "column", gap: 16, maxWidth: 820 },
+  guestBarMobile: { padding: "14px 16px 0", gap: 10, alignItems: "flex-start" },
+  guestBarText: { lineHeight: 1.55 },
+  guestLoginBtn: { background: "#f97316", color: "#fff", border: "none", borderRadius: 999, padding: "10px 16px", fontWeight: 700, cursor: "pointer", flexShrink: 0 },
+  content: { padding: "18px 24px", display: "flex", flexDirection: "column", gap: 16, maxWidth: 880 },
+  contentMobile: { padding: "16px", gap: 14 },
   link: { color: "#f97316", cursor: "pointer", fontWeight: 700 },
-  header: { display: "flex", alignItems: "center", gap: 12 },
-  backBtn: { background: "#1e293b", border: "none", color: "#94a3b8", borderRadius: 8, padding: "8px 14px", cursor: "pointer", fontSize: 13, fontWeight: 600, flexShrink: 0 },
-  headerIcon: { width: 46, height: 46, borderRadius: 12, background: "#f59e0b18", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 22, flexShrink: 0 },
-  headerTitle: { color: "#f1f5f9", fontWeight: 800, fontSize: 18, margin: 0 },
-  headerDesc: { color: "#64748b", fontSize: 13, marginTop: 2 },
-  warnBox: { background: "#451a0320", border: "1px solid #92400e", borderRadius: 10, padding: "10px 14px", color: "#fbbf24", fontSize: 13 },
-  card: { background: "#0d1421", border: "1px solid #1e293b", borderRadius: 14, padding: 18 },
-  stepBadge: { display: "inline-block", background: "#f59e0b", color: "#000", borderRadius: 6, padding: "3px 12px", fontSize: 11, fontWeight: 800, marginBottom: 14 },
+  header: { display: "flex", alignItems: "center", gap: 16 },
+  headerMobile: { flexDirection: "column", alignItems: "stretch", gap: 12 },
+  headerActions: { display: "flex", alignItems: "center", gap: 12, flexShrink: 0 },
+  headerActionsMobile: { justifyContent: "flex-start" },
+  headerCopy: { display: "flex", flexDirection: "column", gap: 4 },
+  headerCopyMobile: { textAlign: "left" },
+  backBtn: { background: "#1e293b", border: "none", color: "#cbd5e1", borderRadius: 10, padding: "10px 14px", cursor: "pointer", fontSize: 13, fontWeight: 700, flexShrink: 0 },
+  headerIcon: { width: 46, height: 46, borderRadius: 12, background: "#f59e0b18", color: "#f59e0b", border: "1px solid #f59e0b2d", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 15, fontWeight: 800, flexShrink: 0 },
+  headerTitle: { color: "#f1f5f9", fontWeight: 800, fontSize: 18, margin: 0, lineHeight: 1.25 },
+  headerDesc: { color: "#64748b", fontSize: 13, margin: 0, lineHeight: 1.5, maxWidth: 520 },
+  warnBox: { background: "#451a0320", border: "1px solid #92400e", borderRadius: 10, padding: "10px 14px", color: "#fbbf24", fontSize: 13, lineHeight: 1.5 },
+  card: { background: "#0d1421", border: "1px solid #1e293b", borderRadius: 16, padding: 18 },
+  stepBadge: { display: "inline-block", background: "#f59e0b", color: "#000", borderRadius: 8, padding: "5px 12px", fontSize: 11, fontWeight: 800, marginBottom: 14 },
   modeGrid: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 },
-  modeBtn: { border: "2px solid", borderRadius: 12, padding: "16px 14px", cursor: "pointer", display: "flex", alignItems: "flex-start", gap: 12, textAlign: "left", transition: "all 0.15s" },
-  creditBadge: { display: "inline-block", border: "1px solid", borderRadius: 5, padding: "2px 8px", fontSize: 11, fontWeight: 700, marginTop: 6 },
+  modeGridMobile: { gridTemplateColumns: "1fr" },
+  modeBtn: { border: "2px solid", borderRadius: 14, padding: "18px 16px", cursor: "pointer", display: "flex", alignItems: "flex-start", gap: 14, textAlign: "left", transition: "all 0.15s", minHeight: 112, width: "100%", boxSizing: "border-box" },
+  modeBtnMobile: { minHeight: 0, padding: "16px 14px" },
+  modeIcon: { width: 44, height: 44, borderRadius: 12, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, fontWeight: 800, flexShrink: 0, border: "1px solid rgba(255,255,255,0.04)" },
+  modeCopy: { display: "flex", flexDirection: "column", alignItems: "flex-start", justifyContent: "center", gap: 4, flex: 1, minWidth: 0 },
+  modeTitle: { fontWeight: 700, fontSize: 16, margin: 0, lineHeight: 1.25 },
+  modeDescription: { color: "#64748b", fontSize: 12, margin: 0, lineHeight: 1.45 },
+  creditBadge: { display: "inline-block", border: "1px solid", borderRadius: 999, padding: "4px 8px", fontSize: 11, fontWeight: 700, marginTop: 6 },
   twoCol: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 },
+  twoColMobile: { gridTemplateColumns: "1fr" },
   inputLabel: { color: "#94a3b8", fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: 0.5, margin: "0 0 8px" },
   uploadBox: { border: "2px dashed", borderRadius: 12, minHeight: 130, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", background: "#111827", overflow: "hidden", transition: "border-color 0.2s" },
+  uploadIcon: { width: 44, height: 44, borderRadius: 12, background: "#1e293b", color: "#f8fafc", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, fontWeight: 800, marginBottom: 8 },
+  uploadPrimaryText: { color: "#94a3b8", fontSize: 12, fontWeight: 600, margin: 0 },
+  uploadSecondaryText: { color: "#475569", fontSize: 11, marginTop: 3 },
   uploadPreview: { maxHeight: 120, maxWidth: "100%", borderRadius: 6 },
   dateOption: { border: "1px solid", borderRadius: 10, padding: "10px 14px", cursor: "pointer", display: "flex", flexDirection: "column", gap: 3, transition: "all 0.15s", textAlign: "left" },
   dateInput: { background: "#111827", border: "1px solid #374151", borderRadius: 8, padding: "10px 12px", color: "#f1f5f9", fontSize: 14, outline: "none", width: "100%", marginTop: 4, boxSizing: "border-box" },
-  select: { width: "100%", background: "#111827", border: "1px solid #374151", borderRadius: 10, padding: "11px 14px", color: "#f1f5f9", fontSize: 14, outline: "none" },
+  select: { width: "100%", background: "#111827", border: "1px solid #374151", borderRadius: 10, padding: "11px 14px", color: "#f1f5f9", fontSize: 14, outline: "none", boxSizing: "border-box" },
   errorBox: { background: "#450a0a40", border: "1px solid #ef4444", borderRadius: 10, padding: "12px 16px", color: "#fca5a5", fontSize: 14 },
   btnPrimary: { background: "linear-gradient(135deg,#f59e0b,#d97706)", color: "#000", border: "none", borderRadius: 12, padding: "13px 20px", fontWeight: 800, fontSize: 15, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 8, width: "100%" },
   btnSecondary: { background: "#1e293b", color: "#94a3b8", border: "1px solid #374151", borderRadius: 12, padding: "11px 16px", fontWeight: 600, fontSize: 14, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 6 },

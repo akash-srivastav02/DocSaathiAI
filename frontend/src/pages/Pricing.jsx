@@ -274,13 +274,7 @@ export default function Pricing() {
             </div>
             <div style={{ ...s.singleActionWrap, ...(isMobile ? s.singleActionWrapMobile : null) }}>
               <span style={s.singleBadge}>ONE-TIME</span>
-              <button
-                onClick={() => handleBuy(singleFixPlan)}
-                disabled={loadingPlan === singleFixPlan.id}
-                style={{ ...s.singleBtn, ...(isMobile ? s.singleBtnMobile : null), opacity: loadingPlan === singleFixPlan.id ? 0.6 : 1 }}
-              >
-                {loadingPlan === singleFixPlan.id ? "Opening..." : "Get Single Fix"}
-              </button>
+              <span style={s.singleInfo}>Shown only when a user needs one clean download after preview.</span>
             </div>
           </div>
 
@@ -327,8 +321,9 @@ export default function Pricing() {
           </div>
 
           <div style={{ ...s.cta, ...(isMobile ? s.ctaMobile : null) }}>
-            <p style={{ color: "#94a3b8", fontSize: isMobile ? 15 : 14, lineHeight: 1.5, margin: 0 }}>Still not sure? Start with Single Fix for one watermark-free download.</p>
-            <button onClick={() => handleBuy(singleFixPlan)} style={{ ...s.ctaBtn, ...(isMobile ? s.ctaBtnMobile : null) }}>Get Single Fix for Rs.{singleFixPlan.price}</button>
+            <p style={{ color: "#94a3b8", fontSize: isMobile ? 15 : 14, lineHeight: 1.5, margin: 0 }}>
+              Paid plans are for repeat use. Single Fix is shown separately only when someone needs one final download without watermark.
+            </p>
           </div>
         </div>
       </div>

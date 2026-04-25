@@ -42,9 +42,8 @@ export default function Landing() {
           <span style={s.brandText}>FormFixer</span>
         </div>
         <div style={s.navActions}>
-          <button style={s.secondaryBtn} onClick={() => navigate("/pricing")}>Pricing</button>
           <button style={s.primaryBtn} onClick={() => navigate(user ? "/dashboard" : "/auth")}>
-            {user ? "Open Dashboard" : "Start Free"}
+            {user ? "Open Dashboard" : "Login / Sign Up"}
           </button>
         </div>
       </header>
@@ -62,9 +61,8 @@ export default function Landing() {
           </p>
           <div style={s.heroActions}>
             <button style={s.primaryBtnLarge} onClick={() => navigate(user ? "/dashboard" : "/auth")}>
-              {user ? "Continue to Dashboard" : "Get 15 Free Credits"}
+              {user ? "Continue to Dashboard" : "Start Exploring"}
             </button>
-            <button style={s.secondaryBtnLarge} onClick={() => navigate("/pricing")}>See Plans</button>
           </div>
           <div style={s.examStrip}>
             {EXAMS.map((exam) => (
@@ -116,10 +114,10 @@ export default function Landing() {
         <section style={s.ctaSection}>
           <h2 style={s.sectionTitle}>Start free, upgrade only when needed</h2>
           <p style={s.sectionSub}>
-            Try the product, explore the tools, and use credits only when you want clean downloads.
+            Explore the tools first, see the output, and continue only when you actually need a clean download.
           </p>
           <button style={s.primaryBtnLarge} onClick={() => navigate(user ? "/dashboard" : "/auth")}>
-            {user ? "Go to Dashboard" : "Create Free Account"}
+            {user ? "Go to Dashboard" : "Try Tools Now"}
           </button>
         </section>
       </main>
