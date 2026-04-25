@@ -8,8 +8,8 @@ const { processImage, confirmDownload, getHistory, getExams } = require('../cont
 router.get('/exams', getExams);
 
 // Protected — actual processing
-router.post('/photo',     protect, upload.single('image'), processImage);
-router.post('/signature', protect, upload.single('image'), processImage);
+router.post('/photo',     upload.single('image'), processImage);
+router.post('/signature', upload.single('image'), processImage);
 router.post('/confirm-download', protect, confirmDownload);
 
 // History

@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import Webcam from "react-webcam";
 import API from "../api/axios";
 import useStore from "../store/useStore";
+import AuthModal from "../components/AuthModal";
 import Sidebar from "../components/Sidebar";
 import TopBar from "../components/TopBar";
 
@@ -410,7 +411,7 @@ export default function ToolPage() {
   const { toolId } = useParams();
   const navigate = useNavigate();
   const { user, credits, updateCredits, logout } = useStore();
-  const currentCredits = credits ?? user?.credits ?? 0;
+  const currentCredits = user ? (credits ?? user?.credits ?? 0) : 0;
   const tool = FEATURES[toolId];
 
   const [file, setFile] = useState(null);
@@ -425,6 +426,7 @@ export default function ToolPage() {
   const [error, setError] = useState("");
   const [fieldError, setFieldError] = useState("");
   const [showCamera, setShowCamera] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
   const [downloadUnlocked, setDownloadUnlocked] = useState(false);
   const [downloading, setDownloading] = useState(false);
 
@@ -626,7 +628,7 @@ export default function ToolPage() {
     }
   };
 
-  const handleDownload = async () => {
+  const handleDownloadAfterAuth = async () => {
     if (!result?.url) return;
     setError("");
 
@@ -678,6 +680,15 @@ export default function ToolPage() {
     }
   };
 
+  const handleDownload = async () => {
+    if (!user) {
+      setShowAuthModal(true);
+      return;
+    }
+
+    await handleDownloadAfterAuth();
+  };
+
   const handleReset = () => {
     setFile(null);
     setPreview(null);
@@ -703,11 +714,29 @@ export default function ToolPage() {
   return (
     <div style={s.root}>
       {showCamera && <CameraModal onCapture={handleCameraCapture} onClose={() => setShowCamera(false)} />}
+      {showAuthModal && (
+        <AuthModal
+          onClose={() => setShowAuthModal(false)}
+          onSuccess={async () => {
+            setShowAuthModal(false);
+            await handleDownloadAfterAuth();
+          }}
+          title="Login to Download"
+          subtitle="Preview abhi dekh sakte ho. Final file download karne ke liye quick login chahiye."
+        />
+      )}
 
-      <Sidebar credits={currentCredits} onLogout={() => { logout(); navigate("/"); }} />
+      {user && <Sidebar credits={currentCredits} onLogout={() => { logout(); navigate("/"); }} />}
 
       <div style={s.main}>
-        <TopBar user={user} credits={currentCredits} onLogout={() => { logout(); navigate("/"); }} />
+        {user ? (
+          <TopBar user={user} credits={currentCredits} onLogout={() => { logout(); navigate("/"); }} />
+        ) : (
+          <div style={s.guestBar}>
+            <span>Explore freely. Login sirf final download par chahiye.</span>
+            <button style={s.guestLoginBtn} onClick={() => setShowAuthModal(true)}>Login / Sign Up</button>
+          </div>
+        )}
 
         <div style={s.header}>
           <button style={s.backBtn} onClick={() => navigate("/dashboard")}>← Back</button>
@@ -726,7 +755,7 @@ export default function ToolPage() {
           </div>
         )}
 
-        {!tool.soon && currentCredits < tool.credit && (
+        {!tool.soon && user && currentCredits < tool.credit && (
           <div style={s.warnBox}>
             Need <b>{tool.credit} credits</b>, have <b>{currentCredits}</b>.{" "}
             <span style={s.link} onClick={() => navigate("/pricing")}>Buy credits →</span>
@@ -938,7 +967,7 @@ export default function ToolPage() {
               </button>
               <button onClick={handleReset} style={{ ...s.btnSecondary, justifyContent: "center" }}>Process Another</button>
             </div>
-            {!downloadUnlocked && currentCredits < tool.credit && (
+            {!downloadUnlocked && user && currentCredits < tool.credit && (
               <p style={{ color: "#fca57a", fontSize: 12, marginTop: 12 }}>
                 Need more credits for download? <span style={s.link} onClick={() => navigate("/pricing")}>Buy a plan →</span>
               </p>
@@ -953,6 +982,8 @@ export default function ToolPage() {
 const s = {
   root: { display: "flex", minHeight: "100vh", background: "#070c18", fontFamily: "'Segoe UI', sans-serif" },
   main: { flex: 1, overflowY: "auto", paddingBottom: 48 },
+  guestBar: { display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, padding: "16px 24px 0", color: "#94a3b8", fontSize: 13, flexWrap: "wrap" },
+  guestLoginBtn: { background: "#f97316", color: "#fff", border: "none", borderRadius: 999, padding: "10px 16px", fontWeight: 700, cursor: "pointer" },
   link: { color: "#f97316", cursor: "pointer", fontWeight: 700 },
   header: { display: "flex", alignItems: "center", gap: 14, padding: "18px 24px 0" },
   backBtn: { background: "#1e293b", border: "none", color: "#94a3b8", borderRadius: 8, padding: "8px 14px", cursor: "pointer", fontSize: 13, fontWeight: 600, flexShrink: 0 },

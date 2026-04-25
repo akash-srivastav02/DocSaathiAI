@@ -22,12 +22,13 @@ function App() {
         {/* Public */}
         <Route path="/" element={<AuthGate />} />
 
+        <Route path="/tool/:toolId" element={<ToolPage />} />
+        <Route path="/pdf/compress" element={<PDFCompressPage />} />
+        <Route path="/merger"       element={<MergerPage />} />
+
         {/* Protected */}
         <Route path="/dashboard"    element={<Protected><Dashboard /></Protected>} />
-        <Route path="/tool/:toolId" element={<Protected><ToolPage /></Protected>} />
-        <Route path="/pdf/compress" element={<Protected><PDFCompressPage /></Protected>} />
         <Route path="/support"      element={<Protected><Support /></Protected>} />
-        <Route path="/merger"       element={<Protected><MergerPage /></Protected>} />
         <Route path="/pricing"      element={<Protected><Pricing /></Protected>} />
         <Route path="/vault"        element={<Protected><Vault /></Protected>} />
 

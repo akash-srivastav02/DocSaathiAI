@@ -2,6 +2,7 @@ import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import API from "../api/axios";
 import useStore from "../store/useStore";
+import AuthModal from "../components/AuthModal";
 import Sidebar from "../components/Sidebar";
 import TopBar from "../components/TopBar";
 
@@ -65,7 +66,7 @@ function WatermarkedPreview({ src }) {
 export default function MergerPage() {
   const navigate = useNavigate();
   const { user, credits, updateCredits, logout } = useStore();
-  const currentCredits = credits ?? user?.credits ?? 0;
+  const currentCredits = user ? (credits ?? user?.credits ?? 0) : 0;
   const canvasRef = useRef(null);
 
   const [mode, setMode] = useState(null);
@@ -80,6 +81,7 @@ export default function MergerPage() {
   const [done, setDone] = useState(false);
   const [outputUrl, setOutputUrl] = useState(null);
   const [error, setError] = useState("");
+  const [showAuthModal, setShowAuthModal] = useState(false);
   const [downloadUnlocked, setDownloadUnlocked] = useState(false);
   const [downloading, setDownloading] = useState(false);
 
@@ -233,7 +235,7 @@ export default function MergerPage() {
     }
   };
 
-  const handleDownload = async () => {
+  const handleDownloadAfterAuth = async () => {
     if (!outputUrl) return;
     setError("");
 
@@ -259,6 +261,15 @@ export default function MergerPage() {
     }
   };
 
+  const handleDownload = async () => {
+    if (!user) {
+      setShowAuthModal(true);
+      return;
+    }
+
+    await handleDownloadAfterAuth();
+  };
+
   const handleReset = () => {
     setMode(null);
     setPhotoFile(null);
@@ -276,10 +287,28 @@ export default function MergerPage() {
 
   return (
     <div style={s.root}>
+      {showAuthModal && (
+        <AuthModal
+          onClose={() => setShowAuthModal(false)}
+          onSuccess={async () => {
+            setShowAuthModal(false);
+            await handleDownloadAfterAuth();
+          }}
+          title="Login to Download JPG"
+          subtitle="Merged preview guest mode me available hai. Final clean JPG download ke liye login chahiye."
+        />
+      )}
       <canvas ref={canvasRef} style={{ display: "none" }} />
-      <Sidebar credits={currentCredits} onLogout={() => { logout(); navigate("/"); }} />
+      {user && <Sidebar credits={currentCredits} onLogout={() => { logout(); navigate("/"); }} />}
       <div style={s.main}>
-        <TopBar user={user} credits={currentCredits} onLogout={() => { logout(); navigate("/"); }} />
+        {user ? (
+          <TopBar user={user} credits={currentCredits} onLogout={() => { logout(); navigate("/"); }} />
+        ) : (
+          <div style={s.guestBar}>
+            <span>Preview freely. Login sirf final merged JPG download par chahiye.</span>
+            <button style={s.guestLoginBtn} onClick={() => setShowAuthModal(true)}>Login / Sign Up</button>
+          </div>
+        )}
         <div style={s.content}>
           <div style={s.header}>
             <button style={s.backBtn} onClick={() => navigate("/dashboard")}>← Back</button>
@@ -290,7 +319,7 @@ export default function MergerPage() {
             </div>
           </div>
 
-          {!downloadUnlocked && currentCredits < 6 && mode && (
+          {!downloadUnlocked && user && currentCredits < 6 && mode && (
             <div style={s.warnBox}>
               Download ke liye <b>6 credits</b> chahiye, aapke paas <b>{currentCredits}</b> hain.{" "}
               <span style={s.link} onClick={() => navigate("/pricing")}>Buy credits →</span>
@@ -426,6 +455,8 @@ export default function MergerPage() {
 const s = {
   root: { display: "flex", minHeight: "100vh", background: "#070c18", fontFamily: "'Segoe UI', sans-serif" },
   main: { flex: 1, overflowY: "auto", paddingBottom: 48 },
+  guestBar: { display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, padding: "16px 24px 0", color: "#94a3b8", fontSize: 13, flexWrap: "wrap" },
+  guestLoginBtn: { background: "#f97316", color: "#fff", border: "none", borderRadius: 999, padding: "10px 16px", fontWeight: 700, cursor: "pointer" },
   content: { padding: "18px 24px", display: "flex", flexDirection: "column", gap: 16, maxWidth: 820 },
   link: { color: "#f97316", cursor: "pointer", fontWeight: 700 },
   header: { display: "flex", alignItems: "center", gap: 12 },

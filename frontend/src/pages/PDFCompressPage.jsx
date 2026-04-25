@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import API from "../api/axios";
 import useStore from "../store/useStore";
+import AuthModal from "../components/AuthModal";
 import Sidebar from "../components/Sidebar";
 import TopBar from "../components/TopBar";
 
@@ -39,7 +40,7 @@ function WatermarkedPdfPreview({ fileName }) {
 export default function PDFCompressPage() {
   const navigate = useNavigate();
   const { user, credits, updateCredits, logout } = useStore();
-  const currentCredits = credits ?? user?.credits ?? 0;
+  const currentCredits = user ? (credits ?? user?.credits ?? 0) : 0;
 
   const [file, setFile] = useState(null);
   const [fileError, setFileError] = useState("");
@@ -50,6 +51,7 @@ export default function PDFCompressPage() {
   const [result, setResult] = useState(null);
   const [error, setError] = useState("");
   const [done, setDone] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
   const [downloadUnlocked, setDownloadUnlocked] = useState(false);
   const [downloading, setDownloading] = useState(false);
 
@@ -129,7 +131,7 @@ export default function PDFCompressPage() {
     }
   };
 
-  const handleDownload = async () => {
+  const handleDownloadAfterAuth = async () => {
     if (!result?.url) return;
     setError("");
 
@@ -166,6 +168,15 @@ export default function PDFCompressPage() {
     }
   };
 
+  const handleDownload = async () => {
+    if (!user) {
+      setShowAuthModal(true);
+      return;
+    }
+
+    await handleDownloadAfterAuth();
+  };
+
   const handleReset = () => {
     setFile(null);
     setResult(null);
@@ -181,9 +192,27 @@ export default function PDFCompressPage() {
 
   return (
     <div style={s.root}>
-      <Sidebar credits={currentCredits} onLogout={() => { logout(); navigate("/"); }} />
+      {showAuthModal && (
+        <AuthModal
+          onClose={() => setShowAuthModal(false)}
+          onSuccess={async () => {
+            setShowAuthModal(false);
+            await handleDownloadAfterAuth();
+          }}
+          title="Login to Download PDF"
+          subtitle="PDF preview guest mode me available hai. Final watermark-free PDF ke liye login chahiye."
+        />
+      )}
+      {user && <Sidebar credits={currentCredits} onLogout={() => { logout(); navigate("/"); }} />}
       <div style={s.main}>
-        <TopBar user={user} credits={currentCredits} onLogout={() => { logout(); navigate("/"); }} />
+        {user ? (
+          <TopBar user={user} credits={currentCredits} onLogout={() => { logout(); navigate("/"); }} />
+        ) : (
+          <div style={s.guestBar}>
+            <span>PDF preview bina login dekh sakte ho. Final download par login lagega.</span>
+            <button style={s.guestLoginBtn} onClick={() => setShowAuthModal(true)}>Login / Sign Up</button>
+          </div>
+        )}
 
         <div style={s.toolHeader}>
           <button style={s.backBtn} onClick={() => navigate("/dashboard")}>← Back</button>
@@ -399,7 +428,7 @@ export default function PDFCompressPage() {
               <button onClick={handleReset} style={s.btnSecondary}>Process Another</button>
             </div>
 
-            {!downloadUnlocked && currentCredits < 2 && (
+            {!downloadUnlocked && user && currentCredits < 2 && (
               <p style={s.previewNote}>
                 Download ke liye 2 credits chahiye. <span style={s.buyLink} onClick={() => navigate("/pricing")}>Buy credits →</span>
               </p>
@@ -414,6 +443,8 @@ export default function PDFCompressPage() {
 const s = {
   root: { display: "flex", minHeight: "100vh", background: "#070c18", fontFamily: "'Segoe UI', sans-serif" },
   main: { flex: 1, overflowY: "auto", paddingBottom: 60 },
+  guestBar: { display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, padding: "16px 28px 0", color: "#94a3b8", fontSize: 13, flexWrap: "wrap" },
+  guestLoginBtn: { background: "#f97316", color: "#fff", border: "none", borderRadius: 999, padding: "10px 16px", fontWeight: 700, cursor: "pointer" },
   toolHeader: { display: "flex", alignItems: "center", gap: 16, padding: "20px 28px 0" },
   backBtn: { background: "#1e293b", border: "none", color: "#94a3b8", borderRadius: 8, padding: "8px 14px", cursor: "pointer", fontSize: 13, fontWeight: 600, flexShrink: 0 },
   toolIcon: { width: 56, height: 56, borderRadius: 14, background: "#f9731618", color: "#f97316", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 26, flexShrink: 0 },

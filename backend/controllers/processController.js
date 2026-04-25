@@ -130,11 +130,10 @@ async function compressToRange(inputBuffer, width, height, maxKB, minKB) {
    POST /api/process/signature
 ───────────────────────────────────────────────────────────────────────────── */
 const processImage = async (req, res) => {
-  console.time(`process-${toolType}-total`);
-
   const toolType     = req.path.replace('/', ''); // "photo" or "signature"
   const { examName } = req.body;
-  const user         = req.user;
+  const user         = req.user || null;
+  console.time(`process-${toolType}-total`);
 
   // ── Validation ─────────────────────────────────────────────────────────
   if (!req.file)
@@ -155,13 +154,12 @@ const processImage = async (req, res) => {
   let processedBuffer;
   try {
     console.time(`process-${toolType}-sharp`);
-    console.timeEnd(`process-${toolType}-sharp`);
-
     processedBuffer = await compressToRange(
       req.file.buffer,
       spec.w, spec.h,
       spec.maxKB, spec.minKB
     );
+    console.timeEnd(`process-${toolType}-sharp`);
   } catch (err) {
     console.error('Sharp error:', err.message);
     return res.status(500).json({ message: 'Image processing failed.' });
@@ -196,7 +194,7 @@ const processImage = async (req, res) => {
     targetMinKB: spec.minKB,
     withinRange,
     hasWatermark: true,
-    creditsLeft:  user.credits,
+    creditsLeft:  user ? user.credits : null,
     creditCost,
     exam:         examName,
     type:         toolType,

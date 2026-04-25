@@ -113,7 +113,7 @@ async function compressPDFBuffer(buffer, qualityPreset) {
 
 const compressPDF = async (req, res) => {
   try {
-    const user = req.user;
+    const user = req.user || null;
 
     if (!req.file) {
       return res.status(400).json({ message: 'No PDF file uploaded.' });
@@ -153,7 +153,7 @@ const compressPDF = async (req, res) => {
       hitTarget,
       targetKB: targetKB || compressedKB,
       hasWatermark: true,
-      creditsLeft: user.credits,
+      creditsLeft: user ? user.credits : null,
       creditCost: 2,
       engine: compressed.engine,
       engineLabel,

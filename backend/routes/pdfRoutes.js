@@ -10,6 +10,6 @@ router.get('/test', (req, res) => {
 });
 
 // POST /api/pdf/compress
-router.post('/compress', protect, upload.single('pdf'), compressPDF);
+router.post('/compress', upload.single('pdf'), compressPDF);
 
 module.exports = router;
