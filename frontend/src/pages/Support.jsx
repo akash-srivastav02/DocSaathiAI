@@ -149,7 +149,7 @@ export default function Support() {
               <span style={{ fontSize: 20 }}>📧</span>
               <div>
                 <p style={s.contactLabel}>Email Support</p>
-                <p style={s.contactVal}>support@docsaathi.in</p>
+                <p style={s.contactVal}>supportformfixer@gmail.com</p>
               </div>
             </div>
             <div style={s.contactItem}>
