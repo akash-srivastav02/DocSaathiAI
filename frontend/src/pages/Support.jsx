@@ -10,11 +10,11 @@ const FAQS = [
     items: [
       {
         q: "What is the correct photo size for SSC CGL exam form?",
-        a: "SSC CGL requires a photo of 200×230 pixels, in JPG format, between 20 KB and 50 KB. The background must be white. Doc Saathi AI automatically resizes and compresses your photo to these exact specifications — no manual editing needed.",
+        a: "SSC CGL requires a photo of 200×230 pixels, in JPG format, between 20 KB and 50 KB. The background must be white. FormFixer automatically resizes and compresses your photo to these exact specifications — no manual editing needed.",
       },
       {
         q: "What photo size is required for SBI PO and SBI Clerk?",
-        a: "SBI PO and SBI Clerk exam forms require a photo of 200×200 pixels, JPG format, 20–50 KB with a white background. The signature should be 200×80 pixels, 10–20 KB. Doc Saathi AI handles both in seconds.",
+        a: "SBI PO and SBI Clerk exam forms require a photo of 200×200 pixels, JPG format, 20–50 KB with a white background. The signature should be 200×80 pixels, 10–20 KB. FormFixer handles both in seconds.",
       },
       {
         q: "What are JEE Main photo and signature requirements?",
@@ -22,15 +22,15 @@ const FAQS = [
       },
       {
         q: "My photo is getting rejected on the exam portal. Why?",
-        a: "Exam portals reject photos that exceed the maximum KB limit, have the wrong dimensions, or are in the wrong format (e.g., PNG instead of JPG). Doc Saathi AI ensures your photo meets all three criteria — correct pixels, correct KB size, and JPG format with white background.",
+        a: "Exam portals reject photos that exceed the maximum KB limit, have the wrong dimensions, or are in the wrong format (e.g., PNG instead of JPG). FormFixer ensures your photo meets all three criteria — correct pixels, correct KB size, and JPG format with white background.",
       },
       {
         q: "Can I use a mobile selfie for exam photo?",
         a: "Yes! Use our Live Camera feature to capture directly from your phone or laptop camera. The photo is automatically cropped, resized, and compressed to exam specifications. Make sure you are in front of a white wall or use a plain background.",
       },
       {
-        q: "How is Doc Saathi AI different from other photo resize tools?",
-        a: "Most tools only resize the image. They don't guarantee the file falls within the KB range required by exam portals. Doc Saathi AI uses an intelligent compression algorithm to ensure the output is within the exact KB range — not just the right dimensions.",
+        q: "How is FormFixer different from other photo resize tools?",
+        a: "Most tools only resize the image. They don't guarantee the file falls within the KB range required by exam portals. FormFixer uses an intelligent compression algorithm to ensure the output is within the exact KB range — not just the right dimensions.",
       },
     ],
   },
@@ -38,12 +38,12 @@ const FAQS = [
     category: "📄 PDF Compression",
     items: [
       {
-        q: "How much can Doc Saathi AI compress my PDF?",
+        q: "How much can FormFixer compress my PDF?",
         a: "Scanned PDFs (photos of documents) can be compressed by 50–80%. Text-based (digital) PDFs can be compressed by 10–30%. The exact reduction depends on the content. Our tool always shows you the before and after size honestly — if your target cannot be achieved, we tell you clearly.",
       },
       {
         q: "The portal requires PDF under 500 KB but my file is 2 MB. Can this tool help?",
-        a: "Yes, this is exactly the use case Doc Saathi AI is built for. Upload your PDF, enter 500 as the target KB, and select Max Compression. For scanned documents (certificates, marksheets), we can typically achieve 70–80% reduction.",
+        a: "Yes, this is exactly the use case FormFixer is built for. Upload your PDF, enter 500 as the target KB, and select Max Compression. For scanned documents (certificates, marksheets), we can typically achieve 70–80% reduction.",
       },
       {
         q: "Will compressing my PDF damage the text or make it unreadable?",
@@ -55,7 +55,7 @@ const FAQS = [
     category: "💳 Credits & Pricing",
     items: [
       {
-        q: "How do credits work on Doc Saathi AI?",
+        q: "How do credits work on FormFixer?",
         a: "Each tool usage costs a specific number of credits: Exam Photo costs 2 credits, Exam Signature costs 2 credits, Photo+Sign/Date merger costs 6 credits, and Document Size Changer costs 2 credits. Crop, Image Compressor, and PDF Compressor also cost 2 credits each. New users get 15 free credits. Every 7 days, you get 5 free credits automatically.",
       },
       {
@@ -72,7 +72,7 @@ const FAQS = [
       },
       {
         q: "Are payments secure?",
-        a: "Yes. All payments are processed via Razorpay, which is RBI-compliant and supports UPI, credit/debit cards, net banking, and wallets. Doc Saathi AI never stores your payment details.",
+        a: "Yes. All payments are processed via Razorpay, which is RBI-compliant and supports UPI, credit/debit cards, net banking, and wallets. FormFixer never stores your payment details.",
       },
     ],
   },
@@ -88,11 +88,11 @@ const FAQS = [
         a: "This can happen on certain browsers. Right-click the Download button and select 'Save link as'. Alternatively, after the file opens in a new tab, right-click the image and select 'Save image as'. We are working on a fix for all browsers.",
       },
       {
-        q: "Is Doc Saathi AI available as a mobile app?",
-        a: "Currently Doc Saathi AI is a web application that works on all mobile browsers. Open docsaathi.in in Chrome on your Android or Safari on iPhone — it works fully. A dedicated Android and iOS app is on our roadmap.",
+        q: "Is FormFixer available as a mobile app?",
+        a: "Currently FormFixer is a web application that works on all mobile browsers. Open docsaathi.in in Chrome on your Android or Safari on iPhone — it works fully. A dedicated Android and iOS app is on our roadmap.",
       },
       {
-        q: "Which exams does Doc Saathi AI support?",
+        q: "Which exams does FormFixer support?",
         a: "We support 40+ Indian competitive exams including SSC CGL, SSC CHSL, SSC MTS, SSC GD, SBI PO, SBI Clerk, IBPS PO, IBPS Clerk, IBPS RRB, RRB NTPC, RRB Group D, UPSC CSE, UPSC CDS, NDA, JEE Main, NEET UG, Delhi Police, UP Police, GATE, and many more. New exams are added regularly.",
       },
     ],
@@ -139,7 +139,7 @@ export default function Support() {
           <div style={s.hero}>
             <h1 style={s.heroTitle}>💬 Help & Support</h1>
             <p style={s.heroSub}>
-              Everything you need to know about using Doc Saathi AI for your exam form preparation.
+              Everything you need to know about using FormFixer for your exam form preparation.
             </p>
           </div>
 
@@ -189,7 +189,7 @@ export default function Support() {
               Can't find your answer? Send us a message and we'll reply within 24 hours.
             </p>
             <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
-              <a href="mailto:support@docsaathi.in" style={s.mailBtn}>
+              <a href="mailto:supportformfixer@gmail.in" style={s.mailBtn}>
                 📧 Email Us
               </a>
               <button style={s.backBtn} onClick={() => navigate("/dashboard")}>
