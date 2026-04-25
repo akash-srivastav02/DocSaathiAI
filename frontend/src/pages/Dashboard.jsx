@@ -268,7 +268,7 @@ export default function Dashboard() {
           </section>
 
           <div style={s.strip}>
-            <b>Doc Saathi AI vs Cyber Cafe:</b> They often charge Rs.20-Rs.50 for one small task. You can
+            <b>FormFixer vs Cyber Cafe:</b> They often charge Rs.20-Rs.50 for one small task. You can
             do the same work here faster, from home, and even late at night.
           </div>
         </div>

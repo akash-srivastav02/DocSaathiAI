@@ -29,7 +29,7 @@ app.use('/api/payment', require('./routes/paymentRoutes'));
 
 // ── Health check ──────────────────────────────────────────────────────────────
 app.get('/', (req, res) =>
-  res.json({ message: 'Doc Saathi AI API Running ✅', version: '1.0.0' })
+res.json({ message: 'FormFixer API Running ✅', version: '1.0.0' })
 );
 
 // ── 404 handler ───────────────────────────────────────────────────────────────
@@ -44,4 +44,4 @@ app.use((err, req, res, next) => {
 });
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`🚀 Doc Saathi AI server running on port ${PORT}`));
+app.listen(PORT, () => console.log(`🚀 FormFixer server running on port ${PORT}`));

@@ -72,11 +72,10 @@ export default function Sidebar({ credits, onLogout, activeNav }) {
           <>
             <div style={s.brand}>
               <div style={s.iconBox}>
-                <img src="/favicon.png" alt="Doc Saathi AI logo" style={s.iconImage} />
+                <img src="/favicon.png" alt="FormFixer logo" style={s.iconImage} />
               </div>
               <div>
-                <span style={s.brandMain}>Doc Saathi </span>
-                <span style={s.brandAI}>AI</span>
+                <span style={s.brandMain}>FormFixer</span>
               </div>
             </div>
 
@@ -252,7 +251,6 @@ const s = {
   },
   iconImage: { width: 24, height: 24, objectFit: "contain", display: "block" },
   brandMain: { fontSize: 15, fontWeight: 800, color: "#f1f5f9", letterSpacing: -0.3 },
-  brandAI: { fontSize: 15, fontWeight: 800, color: "#f97316", letterSpacing: -0.3 },
   mobileSection: { paddingBottom: 12, marginBottom: 10, borderBottom: "1px solid #1e293b" },
   mobileSectionLabel: {
     color: "#94a3b8",

@@ -25,12 +25,12 @@ export default function TopBar({ user, credits, onLogout }) {
       <div style={{ ...s.left, ...(isMobile ? s.leftMobile : null) }}>
         {isMobile && (
           <div style={s.mobileBrandIcon}>
-            <img src="/favicon.png" alt="Doc Saathi AI logo" style={s.mobileBrandImage} />
+            <img src="/favicon.png" alt="FormFixer logo" style={s.mobileBrandImage} />
           </div>
         )}
         {isMobile ? (
           <div style={s.mobileIntro}>
-            <p style={s.mobileIntroLabel}>Doc Saathi AI</p>
+            <p style={s.mobileIntroLabel}>FormFixer</p>
             <p style={s.mobileIntroName}>Welcome, {firstName}</p>
           </div>
         ) : (
@@ -62,7 +62,7 @@ export default function TopBar({ user, credits, onLogout }) {
           {showMenu && (
             <div style={{ ...s.accountMenu, ...(isMobile ? s.accountMenuMobile : null) }}>
               <div style={s.accountHead}>
-                <p style={s.accountBrand}>Doc Saathi AI</p>
+                <p style={s.accountBrand}>FormFixer</p>
                 <p style={s.accountName}>{firstName}</p>
               </div>
               <div style={s.accountLinks}>

@@ -111,7 +111,7 @@ async function openRazorpay({ order, plan, user, onSuccess, onFailure }) {
     key: order.keyId,
     amount: order.amount,
     currency: "INR",
-    name: "Doc Saathi AI",
+    name: "FormFixer",
     description: plan.name,
     order_id: order.orderId,
     prefill: {
@@ -309,12 +309,12 @@ export default function Pricing() {
 
           <div>
             <h2 style={{ ...s.tableTitle, ...(isMobile ? s.tableTitleMobile : null) }}>Hum Behtar Kyun Hain?</h2>
-            <p style={{ ...s.tableSub, ...(isMobile ? s.tableSubMobile : null) }}>Doc Saathi AI vs Cyber Cafe - Apna Faisla Khud Karo</p>
+            <p style={{ ...s.tableSub, ...(isMobile ? s.tableSubMobile : null) }}>FormFixer vs Cyber Cafe - Apna Faisla Khud Karo</p>
             <div style={{ ...s.table, ...(isMobile ? s.tableMobile : null) }}>
               <div style={s.tableHead}>
                 <div style={{ ...s.cell, flex: 2, color: "#64748b", fontWeight: 700, fontSize: 11, textTransform: "uppercase" }}>Feature</div>
                 <div style={{ ...s.cell, color: "#ef4444", fontWeight: 700, fontSize: 11 }}>Cyber Cafe</div>
-                <div style={{ ...s.cell, color: "#22c55e", fontWeight: 700, fontSize: 11 }}>Doc Saathi AI</div>
+                <div style={{ ...s.cell, color: "#22c55e", fontWeight: 700, fontSize: 11 }}>FormFixer</div>
               </div>
               {COMPARISON.map((row, index) => (
                 <div key={row.feature} style={{ ...s.tableRow, background: index % 2 === 0 ? "#0d1421" : "#070c18" }}>

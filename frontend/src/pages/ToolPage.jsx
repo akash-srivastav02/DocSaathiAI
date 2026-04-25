@@ -110,7 +110,7 @@ function WatermarkPreview({ src, label, compact = false }) {
       <img src={src} alt={label} style={s.resultImage} />
       <div style={s.previewWatermarkLayer}>
         {Array.from({ length: 12 }).map((_, index) => (
-          <span key={index} style={s.previewWatermarkText}>DOCSAATHI PREVIEW</span>
+          <span key={index} style={s.previewWatermarkText}>FORMFIXER PREVIEW</span>
         ))}
       </div>
     </div>
@@ -645,7 +645,7 @@ export default function ToolPage() {
       if (result.url.startsWith("data:")) {
         const anchor = document.createElement("a");
         anchor.href = result.url;
-        anchor.download = `docsaathi_${toolId}.${result.extension || "jpg"}`;
+      anchor.download = `formfixer_${toolId}.${result.extension || "jpg"}`;
         anchor.click();
         return;
       }
@@ -655,7 +655,7 @@ export default function ToolPage() {
       const blobUrl = URL.createObjectURL(blob);
       const anchor = document.createElement("a");
       anchor.href = blobUrl;
-      anchor.download = `docsaathi_${toolId}_${selectedExam || "file"}.jpg`;
+      anchor.download = `formfixer_${toolId}_${selectedExam || "file"}.jpg`;
       document.body.appendChild(anchor);
       anchor.click();
       document.body.removeChild(anchor);
@@ -668,7 +668,7 @@ export default function ToolPage() {
       try {
         const anchor = document.createElement("a");
         anchor.href = result.url;
-        anchor.download = "docsaathi.jpg";
+      anchor.download = "formfixer.jpg";
         anchor.click();
       } catch {
         setError("Download failed. Please try again.");

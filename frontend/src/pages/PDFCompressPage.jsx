@@ -28,7 +28,7 @@ function WatermarkedPdfPreview({ fileName }) {
         </div>
         <div style={s.previewWatermarkLayer}>
           {Array.from({ length: 10 }).map((_, index) => (
-            <span key={index} style={s.previewWatermarkText}>DOCSAATHI PREVIEW</span>
+        <span key={index} style={s.previewWatermarkText}>FORMFIXER PREVIEW</span>
           ))}
         </div>
       </div>
@@ -150,7 +150,7 @@ export default function PDFCompressPage() {
       const blobUrl = URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = blobUrl;
-      link.download = `docsaathi_${file?.name || "compressed.pdf"}`;
+    link.download = `formfixer_${file?.name || "compressed.pdf"}`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);

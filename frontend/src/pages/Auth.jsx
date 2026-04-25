@@ -103,11 +103,10 @@ export default function Auth() {
         {/* Brand */}
         <div style={s.brand}>
           <span style={s.brandIconWrap}>
-            <img src="/favicon.png" alt="Doc Saathi AI logo" style={s.brandIcon} />
+            <img src="/favicon.png" alt="FormFixer logo" style={s.brandIcon} />
           </span>
           <div>
-            <span style={s.brandName}>Doc Saathi </span>
-            <span style={s.brandAI}>AI</span>
+            <span style={s.brandName}>FormFixer</span>
           </div>
         </div>
         <p style={s.tagline}>India's Exam Document Assistant</p>
@@ -207,7 +206,6 @@ const s = {
   },
   brandIcon: { width: 24, height: 24, objectFit: "contain", display: "block" },
   brandName: { fontSize: 22, fontWeight: 800, color: "#f1f5f9" },
-  brandAI:   { fontSize: 22, fontWeight: 800, color: "#f97316" },
   tagline: { textAlign: "center", color: "#64748b", fontSize: 13, margin: "0 0 22px" },
 
   tabs: { display: "flex", background: "#111827", borderRadius: 10, padding: 4, marginBottom: 20 },

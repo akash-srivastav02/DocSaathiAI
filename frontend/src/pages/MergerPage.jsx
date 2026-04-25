@@ -55,7 +55,7 @@ function WatermarkedPreview({ src }) {
       <img src={src} alt="merged output preview" style={s.resultPreview} />
       <div style={s.previewWatermarkLayer}>
         {Array.from({ length: 12 }).map((_, index) => (
-          <span key={index} style={s.previewWatermarkText}>DOCSAATHI PREVIEW</span>
+        <span key={index} style={s.previewWatermarkText}>FORMFIXER PREVIEW</span>
         ))}
       </div>
     </div>
@@ -250,7 +250,7 @@ export default function MergerPage() {
 
       const a = document.createElement("a");
       a.href = outputUrl;
-      a.download = `docsaathi_merged_${exam}.jpg`;
+    a.download = `formfixer_merged_${exam}.jpg`;
       a.click();
     } catch (err) {
       setError(err.response?.data?.message || "Download failed. Please try again.");

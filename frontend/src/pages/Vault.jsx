@@ -44,7 +44,7 @@ export default function Vault() {
   const handleDownload = (item) => {
     const a = document.createElement("a");
     a.href = item.url;
-    a.download = `docsaathi_${item.toolType}_${item.examName || "file"}.jpg`;
+    a.download = `formfixer_${item.toolType}_${item.examName || "file"}.jpg`;
     a.click();
   };
 
