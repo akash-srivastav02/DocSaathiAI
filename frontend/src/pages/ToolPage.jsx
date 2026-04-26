@@ -197,6 +197,93 @@ async function loadImage(src) {
   });
 }
 
+async function detectPrimaryFace(src) {
+  if (typeof window === "undefined" || typeof window.FaceDetector === "undefined") {
+    return null;
+  }
+
+  try {
+    const img = await loadImage(src);
+    const bitmap = await createImageBitmap(img);
+    const detector = new window.FaceDetector({ fastMode: true, maxDetectedFaces: 1 });
+    const detections = await detector.detect(bitmap);
+    bitmap.close();
+    return detections?.[0]?.boundingBox || null;
+  } catch {
+    return null;
+  }
+}
+
+async function dataUrlToFile(dataUrl, filename, mimeType = "image/jpeg") {
+  const response = await fetch(dataUrl);
+  const blob = await response.blob();
+  return new File([blob], filename, { type: mimeType });
+}
+
+async function renderExamPhotoInput({ src, spec }) {
+  const original = await loadImage(src);
+  const faceBox = await detectPrimaryFace(src);
+  const transparentResult = await renderBackgroundRemovedImage({
+    src,
+    outputMode: "transparent",
+    bgColor: "#ffffff",
+    edgeStrength: "balanced",
+  });
+  const isolated = await loadImage(transparentResult.url);
+
+  const aspect = spec.w / spec.h;
+  const sourceW = original.width;
+  const sourceH = original.height;
+
+  let cropW = sourceW;
+  let cropH = cropW / aspect;
+
+  if (cropH > sourceH) {
+    cropH = sourceH;
+    cropW = cropH * aspect;
+  }
+
+  let cropX = (sourceW - cropW) / 2;
+  let cropY = (sourceH - cropH) / 2;
+  let faceDetected = false;
+
+  if (faceBox) {
+    faceDetected = true;
+    const faceCenterX = faceBox.x + faceBox.width / 2;
+    const faceCenterY = faceBox.y + faceBox.height / 2;
+    const desiredCropH = Math.min(sourceH, Math.max(faceBox.height * 3.5, faceBox.width * 3.8));
+    const desiredCropW = Math.min(sourceW, desiredCropH * aspect);
+    const resolvedCropH = Math.min(sourceH, desiredCropW / aspect);
+    const resolvedCropW = resolvedCropH * aspect;
+
+    cropW = resolvedCropW;
+    cropH = resolvedCropH;
+    cropX = clamp(faceCenterX - cropW / 2, 0, sourceW - cropW);
+    cropY = clamp(faceCenterY - cropH * 0.38, 0, sourceH - cropH);
+  }
+
+  const canvas = document.createElement("canvas");
+  canvas.width = spec.w * 3;
+  canvas.height = spec.h * 3;
+  const ctx = canvas.getContext("2d");
+  ctx.fillStyle = "#ffffff";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.drawImage(
+    isolated,
+    cropX,
+    cropY,
+    cropW,
+    cropH,
+    0,
+    0,
+    canvas.width,
+    canvas.height,
+  );
+
+  const url = canvas.toDataURL("image/jpeg", 0.96);
+  return { url, faceDetected };
+}
+
 async function renderCropImage({ src, cropMode, zoom, offsetX, offsetY, manualSize }) {
   const config = getCropModeConfig(cropMode, manualSize);
   const img = await loadImage(src);
@@ -711,7 +798,22 @@ export default function ToolPage() {
         };
       } else {
         const formData = new FormData();
-        formData.append("image", file);
+        let uploadFile = file;
+        let photoMeta = {};
+
+        if (toolId === "photo" && preview && liveSpec) {
+          const preparedPhoto = await renderExamPhotoInput({
+            src: preview,
+            spec: liveSpec,
+          });
+          uploadFile = await dataUrlToFile(preparedPhoto.url, "formfixer_exam_photo.jpg");
+          photoMeta = {
+            faceDetected: preparedPhoto.faceDetected,
+            whiteBackgroundApplied: true,
+          };
+        }
+
+        formData.append("image", uploadFile);
         if (needsExam) formData.append("examName", selectedExam);
 
         const endpoint =
@@ -723,7 +825,7 @@ export default function ToolPage() {
           headers: { "Content-Type": "multipart/form-data" },
         });
 
-        data = response.data;
+        data = { ...response.data, ...photoMeta };
       }
 
       setResult(data);
@@ -969,13 +1071,16 @@ export default function ToolPage() {
               <div style={s.cropPanel}>
                 <div style={s.cropHeaderRow}>
                   <div>
-                    <p style={s.cropTitle}>Background Option</p>
-                    <p style={s.cropSub}>Exam Photo always exports with a clean white background for portal compatibility.</p>
+                    <p style={s.cropTitle}>Face Detection + White Background</p>
+                    <p style={s.cropSub}>We auto-detect the face, improve portrait framing, and place the result on a clean white background for exam portals.</p>
                   </div>
-                  <div style={s.cropBadge}>White only</div>
+                  <div style={s.cropBadge}>Auto enabled</div>
                 </div>
 
                 <div style={s.bgOptionLock}>
+                  <button style={{ ...s.bgModeBtn, ...s.bgModeBtnActive, cursor: "default" }} disabled>
+                    Face Detection
+                  </button>
                   <button style={{ ...s.bgModeBtn, ...s.bgModeBtnActive, cursor: "default" }} disabled>
                     Add White Background
                   </button>
@@ -1172,6 +1277,12 @@ export default function ToolPage() {
                 <span style={s.cropInfoPill}>Target: {result.targetKB} KB</span>
                 <span style={s.cropInfoPill}>Style: {compressQuality}</span>
                 <span style={s.cropInfoPill}>{result.withinRange ? "Target hit" : "Closest possible result"}</span>
+              </div>
+            )}
+            {toolId === "photo" && (
+              <div style={s.cropInfoRow}>
+                <span style={s.cropInfoPill}>{result.faceDetected ? "Face detected" : "Center framing used"}</span>
+                <span style={s.cropInfoPill}>White background applied</span>
               </div>
             )}
             <div style={s.resultBtns}>
