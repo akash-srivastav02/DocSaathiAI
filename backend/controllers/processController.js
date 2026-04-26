@@ -14,6 +14,10 @@ const TOOL_CREDIT_COST = {
   merger: 6,
 };
 
+const ADDON_CREDIT_COST = {
+  photoBgCleanup: 1,
+};
+
 /* ─────────────────────────────────────────────────────────────────────────────
    WHY IMAGES COME OUT TOO SMALL:
    JPEG efficiently compresses smooth areas (white backgrounds, even skin tones).
@@ -204,11 +208,16 @@ const processImage = async (req, res) => {
 
 const confirmDownload = async (req, res) => {
   try {
-    const { toolType, examName, processedUrl } = req.body;
-    const creditCost = TOOL_CREDIT_COST[toolType];
+    const { toolType, examName, processedUrl, addon } = req.body;
+    const baseCost = TOOL_CREDIT_COST[toolType];
 
-    if (!creditCost) {
+    if (!baseCost) {
       return res.status(400).json({ message: 'Unsupported tool type for download confirmation.' });
+    }
+
+    let creditCost = baseCost;
+    if (toolType === 'photo' && addon === 'photoBgCleanup') {
+      creditCost += ADDON_CREDIT_COST.photoBgCleanup;
     }
 
     const user = await User.findById(req.user._id);

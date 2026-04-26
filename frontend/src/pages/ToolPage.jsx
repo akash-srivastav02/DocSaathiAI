@@ -220,16 +220,18 @@ async function dataUrlToFile(dataUrl, filename, mimeType = "image/jpeg") {
   return new File([blob], filename, { type: mimeType });
 }
 
-async function renderExamPhotoInput({ src, spec }) {
+async function renderExamPhotoInput({ src, spec, applyBgCleanup }) {
   const original = await loadImage(src);
   const faceBox = await detectPrimaryFace(src);
-  const transparentResult = await renderBackgroundRemovedImage({
-    src,
-    outputMode: "transparent",
-    bgColor: "#ffffff",
-    edgeStrength: "balanced",
-  });
-  const isolated = await loadImage(transparentResult.url);
+  const preparedSource = applyBgCleanup
+    ? await renderBackgroundRemovedImage({
+        src,
+        outputMode: "transparent",
+        bgColor: "#ffffff",
+        edgeStrength: "balanced",
+      })
+    : { url: src };
+  const isolated = await loadImage(preparedSource.url);
 
   const aspect = spec.w / spec.h;
   const sourceW = original.width;
@@ -397,21 +399,57 @@ async function renderBackgroundRemovedImage({ src, outputMode, bgColor, edgeStre
   const imageData = sourceCtx.getImageData(0, 0, width, height);
   const data = imageData.data;
   const sampledBg = sampleBackgroundColor(data, width, height);
-  const threshold = edgeStrength === "strong" ? 78 : edgeStrength === "soft" ? 46 : 62;
-  const fadeRange = 26;
+  const threshold = edgeStrength === "strong" ? 70 : edgeStrength === "soft" ? 42 : 56;
+  const fadeRange = 22;
+  const visited = new Uint8Array(width * height);
+  const queue = [];
 
-  for (let i = 0; i < data.length; i += 4) {
-    const distance = rgbDistance(data[i], data[i + 1], data[i + 2], sampledBg.r, sampledBg.g, sampledBg.b);
+  const pushIfMatch = (x, y) => {
+    if (x < 0 || y < 0 || x >= width || y >= height) return;
+    const pixelIndex = y * width + x;
+    if (visited[pixelIndex]) return;
+    const dataIndex = pixelIndex * 4;
+    const distance = rgbDistance(
+      data[dataIndex],
+      data[dataIndex + 1],
+      data[dataIndex + 2],
+      sampledBg.r,
+      sampledBg.g,
+      sampledBg.b,
+    );
+
+    if (distance <= threshold + fadeRange) {
+      visited[pixelIndex] = 1;
+      queue.push([x, y, distance]);
+    }
+  };
+
+  for (let x = 0; x < width; x += 1) {
+    pushIfMatch(x, 0);
+    pushIfMatch(x, height - 1);
+  }
+
+  for (let y = 0; y < height; y += 1) {
+    pushIfMatch(0, y);
+    pushIfMatch(width - 1, y);
+  }
+
+  while (queue.length) {
+    const [x, y, distance] = queue.shift();
+    const pixelIndex = y * width + x;
+    const dataIndex = pixelIndex * 4;
 
     if (distance <= threshold) {
-      data[i + 3] = 0;
-      continue;
+      data[dataIndex + 3] = 0;
+    } else {
+      const alphaRatio = (distance - threshold) / fadeRange;
+      data[dataIndex + 3] = Math.round(data[dataIndex + 3] * alphaRatio);
     }
 
-    if (distance < threshold + fadeRange) {
-      const alphaRatio = (distance - threshold) / fadeRange;
-      data[i + 3] = Math.round(data[i + 3] * alphaRatio);
-    }
+    pushIfMatch(x + 1, y);
+    pushIfMatch(x - 1, y);
+    pushIfMatch(x, y + 1);
+    pushIfMatch(x, y - 1);
   }
 
   sourceCtx.putImageData(imageData, 0, 0);
@@ -624,6 +662,7 @@ export default function ToolPage() {
   const [bgOutputMode, setBgOutputMode] = useState("transparent");
   const [bgColor, setBgColor] = useState("#ffffff");
   const [bgRemoveStrength, setBgRemoveStrength] = useState("balanced");
+  const [photoBgCleanupEnabled, setPhotoBgCleanupEnabled] = useState(false);
 
   useEffect(() => {
     API.get("/process/exams")
@@ -662,6 +701,7 @@ export default function ToolPage() {
   const isCropTool = toolId === "crop";
   const isImageCompressTool = toolId === "imgcompress";
   const isBackgroundRemoveTool = toolId === "bgremove";
+  const effectiveCreditCost = toolId === "photo" && photoBgCleanupEnabled ? tool.credit + 1 : tool.credit;
   const cropConfig = getCropModeConfig(cropMode, manualSize);
   const targetKB = useMemo(() => {
     const numericValue = parseFloat(targetValue);
@@ -700,6 +740,7 @@ export default function ToolPage() {
     setBgOutputMode("transparent");
     setBgColor("#ffffff");
     setBgRemoveStrength("balanced");
+    setPhotoBgCleanupEnabled(false);
     resetWorkflow();
   };
 
@@ -716,6 +757,7 @@ export default function ToolPage() {
     setBgOutputMode("transparent");
     setBgColor("#ffffff");
     setBgRemoveStrength("balanced");
+    setPhotoBgCleanupEnabled(false);
     resetWorkflow();
   };
 
@@ -805,11 +847,14 @@ export default function ToolPage() {
           const preparedPhoto = await renderExamPhotoInput({
             src: preview,
             spec: liveSpec,
+            applyBgCleanup: photoBgCleanupEnabled,
           });
           uploadFile = await dataUrlToFile(preparedPhoto.url, "formfixer_exam_photo.jpg");
           photoMeta = {
             faceDetected: preparedPhoto.faceDetected,
             whiteBackgroundApplied: true,
+            bgCleanupApplied: photoBgCleanupEnabled,
+            creditCost: tool.credit + (photoBgCleanupEnabled ? 1 : 0),
           };
         }
 
@@ -864,6 +909,7 @@ export default function ToolPage() {
           toolType: toolId,
           examName: selectedExam || (isCropTool ? `${cropMode} crop` : isBackgroundRemoveTool ? `background remove ${bgOutputMode}` : tool.label),
           processedUrl: isCropTool || isBackgroundRemoveTool ? "" : result.url,
+          addon: toolId === "photo" && result.bgCleanupApplied ? "photoBgCleanup" : undefined,
         });
         if (data.creditsLeft !== undefined) updateCredits(data.creditsLeft);
         setDownloadUnlocked(true);
@@ -928,6 +974,7 @@ export default function ToolPage() {
     setBgOutputMode("transparent");
     setBgColor("#ffffff");
     setBgRemoveStrength("balanced");
+    setPhotoBgCleanupEnabled(false);
     resetWorkflow();
   };
 
@@ -970,12 +1017,12 @@ export default function ToolPage() {
           <button style={s.backBtn} onClick={() => navigate(user ? "/dashboard" : "/")}>← Back</button>
           <div style={{ ...s.toolIcon, background: `${tool.color}20`, color: tool.color }}>{tool.icon}</div>
           <div>
-            <h2 style={s.title}>{tool.label}</h2>
-            <p style={s.desc}>
-              {tool.desc} · <b style={{ color: tool.color }}>⚡ {tool.credit} credits</b>
-            </p>
+              <h2 style={s.title}>{tool.label}</h2>
+              <p style={s.desc}>
+                {tool.desc} · <b style={{ color: tool.color }}>⚡ {effectiveCreditCost} credits</b>
+              </p>
+            </div>
           </div>
-        </div>
 
         {tool.soon && (
           <div style={s.warnBox}>
@@ -983,9 +1030,9 @@ export default function ToolPage() {
           </div>
         )}
 
-        {!tool.soon && user && currentCredits < tool.credit && (
+        {!tool.soon && user && currentCredits < effectiveCreditCost && (
           <div style={s.warnBox}>
-            Need <b>{tool.credit} credits</b>, have <b>{currentCredits}</b>.{" "}
+            Need <b>{effectiveCreditCost} credits</b>, have <b>{currentCredits}</b>.{" "}
             <span style={s.link} onClick={() => navigate("/pricing")}>Buy credits →</span>
           </div>
         )}
@@ -1071,19 +1118,25 @@ export default function ToolPage() {
               <div style={s.cropPanel}>
                 <div style={s.cropHeaderRow}>
                   <div>
-                    <p style={s.cropTitle}>Face Detection + White Background</p>
-                    <p style={s.cropSub}>We auto-detect the face, improve portrait framing, and place the result on a clean white background for exam portals.</p>
+                    <p style={s.cropTitle}>White Background Add-on</p>
+                    <p style={s.cropSub}>Keep default exam photo processing, or turn on face-aware white background cleanup for photos with messy backgrounds.</p>
                   </div>
-                  <div style={s.cropBadge}>Auto enabled</div>
+                  <div style={s.cropBadge}>{photoBgCleanupEnabled ? "+1 credit" : "Optional"}</div>
                 </div>
 
                 <div style={s.bgOptionLock}>
-                  <button style={{ ...s.bgModeBtn, ...s.bgModeBtnActive, cursor: "default" }} disabled>
-                    Face Detection
+                  <button
+                    style={{
+                      ...s.bgModeBtn,
+                      ...(photoBgCleanupEnabled ? s.bgModeBtnActive : null),
+                    }}
+                    onClick={() => setPhotoBgCleanupEnabled((prev) => !prev)}
+                  >
+                    {photoBgCleanupEnabled ? "AI White Background ON (+1)" : "Use AI White Background (+1)"}
                   </button>
-                  <button style={{ ...s.bgModeBtn, ...s.bgModeBtnActive, cursor: "default" }} disabled>
-                    Add White Background
-                  </button>
+                  <span style={s.inlineHint}>
+                    Face detection helps keep the person safe while cleaning border background.
+                  </span>
                 </div>
               </div>
             )}
@@ -1283,6 +1336,7 @@ export default function ToolPage() {
               <div style={s.cropInfoRow}>
                 <span style={s.cropInfoPill}>{result.faceDetected ? "Face detected" : "Center framing used"}</span>
                 <span style={s.cropInfoPill}>White background applied</span>
+                <span style={s.cropInfoPill}>{result.bgCleanupApplied ? "AI cleanup applied" : "Standard processing"}</span>
               </div>
             )}
             <div style={s.resultBtns}>
@@ -1291,11 +1345,11 @@ export default function ToolPage() {
                   ? "Unlocking Download..."
                   : downloadUnlocked
                     ? "Download Again"
-                    : `Download Final File (${tool.credit} credits)`}
+                    : `Download Final File (${result.creditCost || effectiveCreditCost} credits)`}
               </button>
               <button onClick={handleReset} style={{ ...s.btnSecondary, justifyContent: "center" }}>Process Another</button>
             </div>
-            {!downloadUnlocked && user && currentCredits < tool.credit && (
+            {!downloadUnlocked && user && currentCredits < (result.creditCost || effectiveCreditCost) && (
               <p style={{ color: "#fca57a", fontSize: 12, marginTop: 12 }}>
                 Need more credits for download? <span style={s.link} onClick={() => navigate("/pricing")}>Buy a plan →</span>
               </p>
@@ -1374,6 +1428,7 @@ const s = {
   qualityChipRow: { display: "flex", gap: 8, flexWrap: "wrap" },
   qualityChip: { border: "1px solid", borderRadius: 999, padding: "9px 12px", fontSize: 12, fontWeight: 700, cursor: "pointer" },
   bgOptionLock: { display: "flex", flexWrap: "wrap", gap: 10 },
+  inlineHint: { color: "#94a3b8", fontSize: 12, lineHeight: 1.5, alignSelf: "center" },
   bgToolGrid: { display: "grid", gap: 14 },
   bgModeRow: { display: "flex", gap: 10, flexWrap: "wrap" },
   bgModeBtn: { border: "1px solid #374151", background: "#111827", color: "#cbd5e1", borderRadius: 999, padding: "10px 14px", fontSize: 13, fontWeight: 700, cursor: "pointer" },
