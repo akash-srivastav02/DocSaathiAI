@@ -229,6 +229,7 @@ async function renderExamPhotoInput({ src, spec, applyBgCleanup }) {
         outputMode: "transparent",
         bgColor: "#ffffff",
         edgeStrength: "balanced",
+        protectBox: faceBox,
       })
     : { url: src };
   const isolated = await loadImage(preparedSource.url);
@@ -383,7 +384,7 @@ function rgbDistance(r1, g1, b1, r2, g2, b2) {
   return Math.sqrt(((r1 - r2) ** 2) + ((g1 - g2) ** 2) + ((b1 - b2) ** 2));
 }
 
-async function renderBackgroundRemovedImage({ src, outputMode, bgColor, edgeStrength }) {
+async function renderBackgroundRemovedImage({ src, outputMode, bgColor, edgeStrength, protectBox = null }) {
   const img = await loadImage(src);
   const maxDimension = 1600;
   const ratio = Math.min(1, maxDimension / Math.max(img.width, img.height));
@@ -403,9 +404,27 @@ async function renderBackgroundRemovedImage({ src, outputMode, bgColor, edgeStre
   const fadeRange = 22;
   const visited = new Uint8Array(width * height);
   const queue = [];
+  const protectScale = width / img.width;
+  const protectedZone = protectBox
+    ? {
+        left: clamp((protectBox.x - protectBox.width * 0.95) * protectScale, 0, width),
+        right: clamp((protectBox.x + protectBox.width * 1.95) * protectScale, 0, width),
+        top: clamp((protectBox.y - protectBox.height * 0.55) * protectScale, 0, height),
+        bottom: clamp((protectBox.y + protectBox.height * 3.3) * protectScale, 0, height),
+      }
+    : null;
+
+  const isProtectedPixel = (x, y) =>
+    protectedZone
+      ? x >= protectedZone.left &&
+        x <= protectedZone.right &&
+        y >= protectedZone.top &&
+        y <= protectedZone.bottom
+      : false;
 
   const pushIfMatch = (x, y) => {
     if (x < 0 || y < 0 || x >= width || y >= height) return;
+    if (isProtectedPixel(x, y)) return;
     const pixelIndex = y * width + x;
     if (visited[pixelIndex]) return;
     const dataIndex = pixelIndex * 4;
