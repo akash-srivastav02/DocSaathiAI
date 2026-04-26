@@ -10,7 +10,6 @@ import TopBar from "../components/TopBar";
 const FEATURES = {
   photo: { icon: "📸", label: "Exam Photo", credit: 2, color: "#3b82f6", desc: "Resize, compress, and add white background per exam spec", needsExam: true },
   signature: { icon: "✍️", label: "Exam Signature", credit: 2, color: "#8b5cf6", desc: "Format signature for any exam", needsExam: true },
-  bgremove: { icon: "🪄", label: "AI Background Remover", credit: 2, color: "#14b8a6", desc: "Remove background and export transparent or solid color image", needsExam: false },
   imgcompress: { icon: "🖼️", label: "Image Compressor", credit: 2, color: "#a78bfa", desc: "Compress image to target KB", needsExam: false },
   crop: { icon: "✂️", label: "Crop & Resize", credit: 2, color: "#ec4899", desc: "Circle, square, and manual crop with zoom controls", needsExam: false },
   pdfeditor: { icon: "📝", label: "PDF Editor", credit: 2, color: "#ef4444", desc: "Edit admit cards and form PDFs", needsExam: false, soon: true },
@@ -197,96 +196,6 @@ async function loadImage(src) {
   });
 }
 
-async function detectPrimaryFace(src) {
-  if (typeof window === "undefined" || typeof window.FaceDetector === "undefined") {
-    return null;
-  }
-
-  try {
-    const img = await loadImage(src);
-    const bitmap = await createImageBitmap(img);
-    const detector = new window.FaceDetector({ fastMode: true, maxDetectedFaces: 1 });
-    const detections = await detector.detect(bitmap);
-    bitmap.close();
-    return detections?.[0]?.boundingBox || null;
-  } catch {
-    return null;
-  }
-}
-
-async function dataUrlToFile(dataUrl, filename, mimeType = "image/jpeg") {
-  const response = await fetch(dataUrl);
-  const blob = await response.blob();
-  return new File([blob], filename, { type: mimeType });
-}
-
-async function renderExamPhotoInput({ src, spec, applyBgCleanup }) {
-  const original = await loadImage(src);
-  const faceBox = await detectPrimaryFace(src);
-  const preparedSource = applyBgCleanup
-    ? await renderBackgroundRemovedImage({
-        src,
-        outputMode: "transparent",
-        bgColor: "#ffffff",
-        edgeStrength: "balanced",
-        protectBox: faceBox,
-      })
-    : { url: src };
-  const isolated = await loadImage(preparedSource.url);
-
-  const aspect = spec.w / spec.h;
-  const sourceW = original.width;
-  const sourceH = original.height;
-
-  let cropW = sourceW;
-  let cropH = cropW / aspect;
-
-  if (cropH > sourceH) {
-    cropH = sourceH;
-    cropW = cropH * aspect;
-  }
-
-  let cropX = (sourceW - cropW) / 2;
-  let cropY = (sourceH - cropH) / 2;
-  let faceDetected = false;
-
-  if (faceBox) {
-    faceDetected = true;
-    const faceCenterX = faceBox.x + faceBox.width / 2;
-    const faceCenterY = faceBox.y + faceBox.height / 2;
-    const desiredCropH = Math.min(sourceH, Math.max(faceBox.height * 3.5, faceBox.width * 3.8));
-    const desiredCropW = Math.min(sourceW, desiredCropH * aspect);
-    const resolvedCropH = Math.min(sourceH, desiredCropW / aspect);
-    const resolvedCropW = resolvedCropH * aspect;
-
-    cropW = resolvedCropW;
-    cropH = resolvedCropH;
-    cropX = clamp(faceCenterX - cropW / 2, 0, sourceW - cropW);
-    cropY = clamp(faceCenterY - cropH * 0.38, 0, sourceH - cropH);
-  }
-
-  const canvas = document.createElement("canvas");
-  canvas.width = spec.w * 3;
-  canvas.height = spec.h * 3;
-  const ctx = canvas.getContext("2d");
-  ctx.fillStyle = "#ffffff";
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-  ctx.drawImage(
-    isolated,
-    cropX,
-    cropY,
-    cropW,
-    cropH,
-    0,
-    0,
-    canvas.width,
-    canvas.height,
-  );
-
-  const url = canvas.toDataURL("image/jpeg", 0.96);
-  return { url, faceDetected };
-}
-
 async function renderCropImage({ src, cropMode, zoom, offsetX, offsetY, manualSize }) {
   const config = getCropModeConfig(cropMode, manualSize);
   const img = await loadImage(src);
@@ -347,154 +256,6 @@ async function renderCropImage({ src, cropMode, zoom, offsetX, offsetY, manualSi
     format,
     extension: config.extension,
     sizeKB: Math.round((url.length * 0.75) / 1024),
-  };
-}
-
-function sampleBackgroundColor(imageData, width, height) {
-  const points = [
-    [4, 4],
-    [width - 5, 4],
-    [4, height - 5],
-    [width - 5, height - 5],
-    [Math.floor(width / 2), 4],
-    [Math.floor(width / 2), height - 5],
-    [4, Math.floor(height / 2)],
-    [width - 5, Math.floor(height / 2)],
-  ];
-
-  const totals = points.reduce(
-    (acc, [x, y]) => {
-      const index = (y * width + x) * 4;
-      acc.r += imageData[index];
-      acc.g += imageData[index + 1];
-      acc.b += imageData[index + 2];
-      return acc;
-    },
-    { r: 0, g: 0, b: 0 },
-  );
-
-  return {
-    r: Math.round(totals.r / points.length),
-    g: Math.round(totals.g / points.length),
-    b: Math.round(totals.b / points.length),
-  };
-}
-
-function rgbDistance(r1, g1, b1, r2, g2, b2) {
-  return Math.sqrt(((r1 - r2) ** 2) + ((g1 - g2) ** 2) + ((b1 - b2) ** 2));
-}
-
-async function renderBackgroundRemovedImage({ src, outputMode, bgColor, edgeStrength, protectBox = null }) {
-  const img = await loadImage(src);
-  const maxDimension = 1600;
-  const ratio = Math.min(1, maxDimension / Math.max(img.width, img.height));
-  const width = Math.max(120, Math.round(img.width * ratio));
-  const height = Math.max(120, Math.round(img.height * ratio));
-
-  const sourceCanvas = document.createElement("canvas");
-  sourceCanvas.width = width;
-  sourceCanvas.height = height;
-  const sourceCtx = sourceCanvas.getContext("2d", { willReadFrequently: true });
-  sourceCtx.drawImage(img, 0, 0, width, height);
-
-  const imageData = sourceCtx.getImageData(0, 0, width, height);
-  const data = imageData.data;
-  const sampledBg = sampleBackgroundColor(data, width, height);
-  const threshold = edgeStrength === "strong" ? 70 : edgeStrength === "soft" ? 42 : 56;
-  const fadeRange = 22;
-  const visited = new Uint8Array(width * height);
-  const queue = [];
-  const protectScale = width / img.width;
-  const protectedZone = protectBox
-    ? {
-        left: clamp((protectBox.x - protectBox.width * 0.95) * protectScale, 0, width),
-        right: clamp((protectBox.x + protectBox.width * 1.95) * protectScale, 0, width),
-        top: clamp((protectBox.y - protectBox.height * 0.55) * protectScale, 0, height),
-        bottom: clamp((protectBox.y + protectBox.height * 3.3) * protectScale, 0, height),
-      }
-    : null;
-
-  const isProtectedPixel = (x, y) =>
-    protectedZone
-      ? x >= protectedZone.left &&
-        x <= protectedZone.right &&
-        y >= protectedZone.top &&
-        y <= protectedZone.bottom
-      : false;
-
-  const pushIfMatch = (x, y) => {
-    if (x < 0 || y < 0 || x >= width || y >= height) return;
-    if (isProtectedPixel(x, y)) return;
-    const pixelIndex = y * width + x;
-    if (visited[pixelIndex]) return;
-    const dataIndex = pixelIndex * 4;
-    const distance = rgbDistance(
-      data[dataIndex],
-      data[dataIndex + 1],
-      data[dataIndex + 2],
-      sampledBg.r,
-      sampledBg.g,
-      sampledBg.b,
-    );
-
-    if (distance <= threshold + fadeRange) {
-      visited[pixelIndex] = 1;
-      queue.push([x, y, distance]);
-    }
-  };
-
-  for (let x = 0; x < width; x += 1) {
-    pushIfMatch(x, 0);
-    pushIfMatch(x, height - 1);
-  }
-
-  for (let y = 0; y < height; y += 1) {
-    pushIfMatch(0, y);
-    pushIfMatch(width - 1, y);
-  }
-
-  while (queue.length) {
-    const [x, y, distance] = queue.shift();
-    const pixelIndex = y * width + x;
-    const dataIndex = pixelIndex * 4;
-
-    if (distance <= threshold) {
-      data[dataIndex + 3] = 0;
-    } else {
-      const alphaRatio = (distance - threshold) / fadeRange;
-      data[dataIndex + 3] = Math.round(data[dataIndex + 3] * alphaRatio);
-    }
-
-    pushIfMatch(x + 1, y);
-    pushIfMatch(x - 1, y);
-    pushIfMatch(x, y + 1);
-    pushIfMatch(x, y - 1);
-  }
-
-  sourceCtx.putImageData(imageData, 0, 0);
-
-  const outputCanvas = document.createElement("canvas");
-  outputCanvas.width = width;
-  outputCanvas.height = height;
-  const outputCtx = outputCanvas.getContext("2d");
-
-  if (outputMode === "color") {
-    outputCtx.fillStyle = bgColor;
-    outputCtx.fillRect(0, 0, width, height);
-  } else {
-    outputCtx.clearRect(0, 0, width, height);
-  }
-
-  outputCtx.drawImage(sourceCanvas, 0, 0);
-
-  const url = outputCanvas.toDataURL("image/png");
-  return {
-    url,
-    sizeKB: Math.round((url.length * 0.75) / 1024),
-    width,
-    height,
-    extension: "png",
-    backgroundMode: outputMode,
   };
 }
 
@@ -678,10 +439,6 @@ export default function ToolPage() {
   const [targetValue, setTargetValue] = useState("");
   const [targetUnit, setTargetUnit] = useState("KB");
   const [compressQuality, setCompressQuality] = useState("medium");
-  const [bgOutputMode, setBgOutputMode] = useState("transparent");
-  const [bgColor, setBgColor] = useState("#ffffff");
-  const [bgRemoveStrength, setBgRemoveStrength] = useState("balanced");
-  const [photoBgCleanupEnabled, setPhotoBgCleanupEnabled] = useState(false);
 
   useEffect(() => {
     API.get("/process/exams")
@@ -719,8 +476,7 @@ export default function ToolPage() {
   const needsExam = tool?.needsExam ?? false;
   const isCropTool = toolId === "crop";
   const isImageCompressTool = toolId === "imgcompress";
-  const isBackgroundRemoveTool = toolId === "bgremove";
-  const effectiveCreditCost = toolId === "photo" && photoBgCleanupEnabled ? tool.credit + 1 : tool.credit;
+  const effectiveCreditCost = tool.credit;
   const cropConfig = getCropModeConfig(cropMode, manualSize);
   const targetKB = useMemo(() => {
     const numericValue = parseFloat(targetValue);
@@ -756,10 +512,6 @@ export default function ToolPage() {
     setTargetValue("");
     setTargetUnit("KB");
     setCompressQuality("medium");
-    setBgOutputMode("transparent");
-    setBgColor("#ffffff");
-    setBgRemoveStrength("balanced");
-    setPhotoBgCleanupEnabled(false);
     resetWorkflow();
   };
 
@@ -773,10 +525,6 @@ export default function ToolPage() {
     setTargetValue("");
     setTargetUnit("KB");
     setCompressQuality("medium");
-    setBgOutputMode("transparent");
-    setBgColor("#ffffff");
-    setBgRemoveStrength("balanced");
-    setPhotoBgCleanupEnabled(false);
     resetWorkflow();
   };
 
@@ -822,24 +570,6 @@ export default function ToolPage() {
           creditCost: tool.credit,
           extension: localCrop.extension,
         };
-      } else if (isBackgroundRemoveTool) {
-        const bgRemoved = await renderBackgroundRemovedImage({
-          src: preview,
-          outputMode: bgOutputMode,
-          bgColor,
-          edgeStrength: bgRemoveStrength,
-        });
-
-        data = {
-          url: bgRemoved.url,
-          sizeKB: bgRemoved.sizeKB,
-          dimensions: `${bgRemoved.width}x${bgRemoved.height}`,
-          withinRange: true,
-          hasWatermark: true,
-          creditCost: tool.credit,
-          extension: bgRemoved.extension,
-          backgroundMode: bgRemoved.backgroundMode,
-        };
       } else if (isImageCompressTool) {
         const compressed = await renderCompressedImage({
           src: preview,
@@ -859,25 +589,7 @@ export default function ToolPage() {
         };
       } else {
         const formData = new FormData();
-        let uploadFile = file;
-        let photoMeta = {};
-
-        if (toolId === "photo" && preview && liveSpec) {
-          const preparedPhoto = await renderExamPhotoInput({
-            src: preview,
-            spec: liveSpec,
-            applyBgCleanup: photoBgCleanupEnabled,
-          });
-          uploadFile = await dataUrlToFile(preparedPhoto.url, "formfixer_exam_photo.jpg");
-          photoMeta = {
-            faceDetected: preparedPhoto.faceDetected,
-            whiteBackgroundApplied: true,
-            bgCleanupApplied: photoBgCleanupEnabled,
-            creditCost: tool.credit + (photoBgCleanupEnabled ? 1 : 0),
-          };
-        }
-
-        formData.append("image", uploadFile);
+        formData.append("image", file);
         if (needsExam) formData.append("examName", selectedExam);
 
         const endpoint =
@@ -889,7 +601,7 @@ export default function ToolPage() {
           headers: { "Content-Type": "multipart/form-data" },
         });
 
-        data = { ...response.data, ...photoMeta };
+        data = response.data;
       }
 
       setResult(data);
@@ -926,9 +638,8 @@ export default function ToolPage() {
         setDownloading(true);
         const { data } = await API.post("/process/confirm-download", {
           toolType: toolId,
-          examName: selectedExam || (isCropTool ? `${cropMode} crop` : isBackgroundRemoveTool ? `background remove ${bgOutputMode}` : tool.label),
-          processedUrl: isCropTool || isBackgroundRemoveTool ? "" : result.url,
-          addon: toolId === "photo" && result.bgCleanupApplied ? "photoBgCleanup" : undefined,
+          examName: selectedExam || (isCropTool ? `${cropMode} crop` : tool.label),
+          processedUrl: isCropTool ? "" : result.url,
         });
         if (data.creditsLeft !== undefined) updateCredits(data.creditsLeft);
         setDownloadUnlocked(true);
@@ -990,10 +701,6 @@ export default function ToolPage() {
     setTargetValue("");
     setTargetUnit("KB");
     setCompressQuality("medium");
-    setBgOutputMode("transparent");
-    setBgColor("#ffffff");
-    setBgRemoveStrength("balanced");
-    setPhotoBgCleanupEnabled(false);
     resetWorkflow();
   };
 
@@ -1137,25 +844,15 @@ export default function ToolPage() {
               <div style={s.cropPanel}>
                 <div style={s.cropHeaderRow}>
                   <div>
-                    <p style={s.cropTitle}>White Background Add-on</p>
-                    <p style={s.cropSub}>Keep default exam photo processing, or turn on face-aware white background cleanup for photos with messy backgrounds.</p>
+                    <p style={s.cropTitle}>Exam Photo Processing</p>
+                    <p style={s.cropSub}>Photo will be resized to your selected exam specs and exported with a clean white background.</p>
                   </div>
-                  <div style={s.cropBadge}>{photoBgCleanupEnabled ? "+1 credit" : "Optional"}</div>
+                  <div style={s.cropBadge}>2 credits on download</div>
                 </div>
-
-                <div style={s.bgOptionLock}>
-                  <button
-                    style={{
-                      ...s.bgModeBtn,
-                      ...(photoBgCleanupEnabled ? s.bgModeBtnActive : null),
-                    }}
-                    onClick={() => setPhotoBgCleanupEnabled((prev) => !prev)}
-                  >
-                    {photoBgCleanupEnabled ? "AI White Background ON (+1)" : "Use AI White Background (+1)"}
-                  </button>
-                  <span style={s.inlineHint}>
-                    Face detection helps keep the person safe while cleaning border background.
-                  </span>
+                <div style={s.cropInfoRow}>
+                  <span style={s.cropInfoPill}>White background auto-applied</span>
+                  <span style={s.cropInfoPill}>Exact exam size output</span>
+                  <span style={s.cropInfoPill}>No extra add-on needed</span>
                 </div>
               </div>
             )}
@@ -1232,78 +929,6 @@ export default function ToolPage() {
               </div>
             )}
 
-            {isBackgroundRemoveTool && preview && !done && (
-              <div style={s.cropPanel}>
-                <div style={s.cropHeaderRow}>
-                  <div>
-                    <p style={s.cropTitle}>Output Background</p>
-                    <p style={s.cropSub}>Best for photos with plain backgrounds. Choose transparent PNG or place the subject on a solid color.</p>
-                  </div>
-                  <div style={s.cropBadge}>2 credits on download</div>
-                </div>
-
-                <div style={s.bgToolGrid}>
-                  <div style={s.bgModeRow}>
-                    {[
-                      { id: "transparent", label: "Transparent PNG" },
-                      { id: "color", label: "Solid Color" },
-                    ].map((option) => (
-                      <button
-                        key={option.id}
-                        style={{
-                          ...s.bgModeBtn,
-                          ...(bgOutputMode === option.id ? s.bgModeBtnActive : null),
-                        }}
-                        onClick={() => setBgOutputMode(option.id)}
-                      >
-                        {option.label}
-                      </button>
-                    ))}
-                  </div>
-
-                  <div style={s.bgSettingRow}>
-                    <label style={s.sliderBlock}>
-                      <span style={s.sliderLabel}>Removal Strength</span>
-                      <div style={s.qualityChipRow}>
-                        {[
-                          { id: "soft", label: "Soft" },
-                          { id: "balanced", label: "Balanced" },
-                          { id: "strong", label: "Strong" },
-                        ].map((option) => (
-                          <button
-                            key={option.id}
-                            style={{
-                              ...s.qualityChip,
-                              borderColor: bgRemoveStrength === option.id ? "#14b8a6" : "#374151",
-                              background: bgRemoveStrength === option.id ? "#14b8a620" : "#111827",
-                              color: bgRemoveStrength === option.id ? "#99f6e4" : "#cbd5e1",
-                            }}
-                            onClick={() => setBgRemoveStrength(option.id)}
-                          >
-                            {option.label}
-                          </button>
-                        ))}
-                      </div>
-                    </label>
-
-                    {bgOutputMode === "color" && (
-                      <label style={s.sliderBlock}>
-                        <span style={s.sliderLabel}>Pick Background Color</span>
-                        <div style={s.colorPickerRow}>
-                          <input
-                            type="color"
-                            value={bgColor}
-                            onChange={(e) => setBgColor(e.target.value)}
-                            style={s.colorPicker}
-                          />
-                          <span style={s.colorValue}>{bgColor.toUpperCase()}</span>
-                        </div>
-                      </label>
-                    )}
-                  </div>
-                </div>
-              </div>
-            )}
           </div>
         )}
 
@@ -1353,9 +978,9 @@ export default function ToolPage() {
             )}
             {toolId === "photo" && (
               <div style={s.cropInfoRow}>
-                <span style={s.cropInfoPill}>{result.faceDetected ? "Face detected" : "Center framing used"}</span>
                 <span style={s.cropInfoPill}>White background applied</span>
-                <span style={s.cropInfoPill}>{result.bgCleanupApplied ? "AI cleanup applied" : "Standard processing"}</span>
+                <span style={s.cropInfoPill}>Exam spec processing</span>
+                <span style={s.cropInfoPill}>Ready for portal upload</span>
               </div>
             )}
             <div style={s.resultBtns}>
@@ -1364,11 +989,11 @@ export default function ToolPage() {
                   ? "Unlocking Download..."
                   : downloadUnlocked
                     ? "Download Again"
-                    : `Download Final File (${result.creditCost || effectiveCreditCost} credits)`}
+                    : `Download Final File (${effectiveCreditCost} credits)`}
               </button>
               <button onClick={handleReset} style={{ ...s.btnSecondary, justifyContent: "center" }}>Process Another</button>
             </div>
-            {!downloadUnlocked && user && currentCredits < (result.creditCost || effectiveCreditCost) && (
+            {!downloadUnlocked && user && currentCredits < effectiveCreditCost && (
               <p style={{ color: "#fca57a", fontSize: 12, marginTop: 12 }}>
                 Need more credits for download? <span style={s.link} onClick={() => navigate("/pricing")}>Buy a plan →</span>
               </p>

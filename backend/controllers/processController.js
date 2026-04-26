@@ -7,15 +7,10 @@ const { cloudinary, uploadBuffer } = require('../utils/cloudinary');
 const TOOL_CREDIT_COST = {
   photo: 2,
   signature: 2,
-  bgremove: 2,
   crop: 2,
   imgcompress: 2,
   pdfcompress: 2,
   merger: 6,
-};
-
-const ADDON_CREDIT_COST = {
-  photoBgCleanup: 1,
 };
 
 /* ─────────────────────────────────────────────────────────────────────────────
@@ -208,16 +203,11 @@ const processImage = async (req, res) => {
 
 const confirmDownload = async (req, res) => {
   try {
-    const { toolType, examName, processedUrl, addon } = req.body;
-    const baseCost = TOOL_CREDIT_COST[toolType];
+    const { toolType, examName, processedUrl } = req.body;
+    const creditCost = TOOL_CREDIT_COST[toolType];
 
-    if (!baseCost) {
+    if (!creditCost) {
       return res.status(400).json({ message: 'Unsupported tool type for download confirmation.' });
-    }
-
-    let creditCost = baseCost;
-    if (toolType === 'photo' && addon === 'photoBgCleanup') {
-      creditCost += ADDON_CREDIT_COST.photoBgCleanup;
     }
 
     const user = await User.findById(req.user._id);
