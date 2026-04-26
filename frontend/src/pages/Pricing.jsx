@@ -16,7 +16,7 @@ const PLANS = [
     validity: "One-time",
     color: "#22c55e",
     badge: null,
-    tag: "Impulse buy, zero friction",
+    tag: "One clean file when you need it",
     icon: "SF",
     highlight: false,
     perks: ["1 Clean Download", "No watermark", "Perfect for urgent one-off use"],
@@ -31,7 +31,7 @@ const PLANS = [
     validity: "30 Days",
     color: "#f97316",
     badge: "Most Popular",
-    tag: "The real entry plan",
+    tag: "Best for regular use",
     icon: "ST",
     highlight: true,
     perks: ["40 Credits", "Valid 30 Days", "All core tools", "Best for regular aspirants"],
@@ -46,7 +46,7 @@ const PLANS = [
     validity: "30 Days",
     color: "#8b5cf6",
     badge: "Best Value",
-    tag: "Power users & coaching centres",
+    tag: "Best for heavy daily use",
     icon: "PR",
     highlight: true,
     perks: ["Unlimited operations*", "Valid 30 Days", "All features", "Best for heavy daily use"],
@@ -55,12 +55,12 @@ const PLANS = [
 ];
 
 const COMPARISON = [
-  { feature: "Photo + Sign Resize", cafe: "Rs.20 - Rs.50", us: "Rs.0 (Free Credits)" },
-  { feature: "Document Scanning", cafe: "Rs.10 per page", us: "FREE (Mobile cam)" },
-  { feature: "Urgent Form Fix", cafe: "Rs.50 - Rs.100", us: "Rs.9 (Single Fix)" },
-  { feature: "Waqt ki Barbadi", cafe: "1-2 Ghante (Line mein)", us: "Sirf 10 Second" },
-  { feature: "Travel Cost", cafe: "Rs.20 - Rs.40", us: "Rs.0 (Ghar baithe)" },
-  { feature: "Total Kharcha", cafe: "Rs.100 - Rs.200", us: "Rs.0 - Rs.79" },
+  { feature: "Photo + Signature", cafe: "Rs.20 - Rs.50", us: "Free with credits" },
+  { feature: "Document Scan", cafe: "Rs.10 per page", us: "Use your phone" },
+  { feature: "Urgent One-Time Fix", cafe: "Rs.50 - Rs.100", us: "Rs.9 one-time" },
+  { feature: "Time Needed", cafe: "1-2 hours", us: "Done in seconds" },
+  { feature: "Travel Cost", cafe: "Rs.20 - Rs.40", us: "No travel needed" },
+  { feature: "Total Spend", cafe: "Rs.100 - Rs.200", us: "Rs.0 - Rs.79" },
 ];
 
 const singleFixPlan = PLANS.find((plan) => plan.id === "single");
@@ -224,14 +224,14 @@ export default function Pricing() {
         <div style={{ ...s.content, ...(isMobile ? s.contentMobile : null) }}>
           <div style={s.pageHdr}>
             <h1 style={{ ...s.pageTitle, ...(isMobile ? s.pageTitleMobile : null) }}>Choose Your Plan</h1>
-            <p style={{ ...s.pageSub, ...(isMobile ? s.pageSubMobile : null) }}>Simple pricing for aspirants, repeat users, and power users.</p>
+            <p style={{ ...s.pageSub, ...(isMobile ? s.pageSubMobile : null) }}>Start free, pay only when you need more downloads.</p>
           </div>
 
           <div style={{ ...s.freeBanner, ...(isMobile ? s.bannerMobile : null) }}>
             <span style={s.bannerIcon}>FR</span>
             <div style={{ flex: 1 }}>
-              <p style={{ ...s.freeTitle, ...(isMobile ? s.bannerTitleMobile : null) }}>Free - 15 credits + 5 credits every 7 days</p>
-              <p style={{ ...s.freeSub, ...(isMobile ? s.bannerSubMobile : null) }}>Your forever acquisition hook. Users can try the product first without payment.</p>
+              <p style={{ ...s.freeTitle, ...(isMobile ? s.bannerTitleMobile : null) }}>Free - 15 credits + 5 every 7 days</p>
+              <p style={{ ...s.freeSub, ...(isMobile ? s.bannerSubMobile : null) }}>Try the tools first. No payment needed to get started.</p>
             </div>
             <span style={s.freeBadge}>FREE</span>
           </div>
@@ -240,11 +240,11 @@ export default function Pricing() {
             <span style={s.bannerIcon}>{singleFixPlan.icon}</span>
             <div style={{ flex: 1, minWidth: 220 }}>
               <p style={{ ...s.singleTitle, ...(isMobile ? s.bannerTitleMobile : null) }}>Single Fix - Rs.{singleFixPlan.price} for 1 clean download</p>
-              <p style={{ ...s.singleSub, ...(isMobile ? s.bannerSubMobile : null) }}>One-time impulse buy with zero friction. Ideal when someone just needs one final clean file.</p>
+              <p style={{ ...s.singleSub, ...(isMobile ? s.bannerSubMobile : null) }}>Best for one urgent file when you do not need a full plan.</p>
             </div>
             <div style={{ ...s.singleActionWrap, ...(isMobile ? s.singleActionWrapMobile : null) }}>
               <span style={s.singleBadge}>ONE-TIME</span>
-              <span style={s.singleInfo}>Shown only when a user needs a final clean download after preview.</span>
+              <span style={s.singleInfo}>Used for one final download after preview.</span>
             </div>
           </div>
 
@@ -272,12 +272,12 @@ export default function Pricing() {
           <p style={{ ...s.payNote, ...(isMobile ? s.payNoteMobile : null) }}>Razorpay · UPI · Cards · Net Banking · Paytm · PhonePe · GPay</p>
 
           <div>
-            <h2 style={{ ...s.tableTitle, ...(isMobile ? s.tableTitleMobile : null) }}>Hum Behtar Kyun Hain?</h2>
-            <p style={{ ...s.tableSub, ...(isMobile ? s.tableSubMobile : null) }}>FormFixer vs Cyber Cafe - Apna Faisla Khud Karo</p>
+            <h2 style={{ ...s.tableTitle, ...(isMobile ? s.tableTitleMobile : null) }}>Why Choose FormFixer?</h2>
+            <p style={{ ...s.tableSub, ...(isMobile ? s.tableSubMobile : null) }}>A quick comparison with typical offline costs.</p>
             <div style={{ ...s.table, ...(isMobile ? s.tableMobile : null) }}>
               <div style={s.tableHead}>
                 <div style={{ ...s.cell, flex: 2, color: "#64748b", fontWeight: 700, fontSize: 11, textTransform: "uppercase" }}>Feature</div>
-                <div style={{ ...s.cell, color: "#ef4444", fontWeight: 700, fontSize: 11 }}>Cyber Cafe</div>
+                <div style={{ ...s.cell, color: "#ef4444", fontWeight: 700, fontSize: 11 }}>Offline</div>
                 <div style={{ ...s.cell, color: "#22c55e", fontWeight: 700, fontSize: 11 }}>FormFixer</div>
               </div>
               {COMPARISON.map((row, index) => (
@@ -292,7 +292,7 @@ export default function Pricing() {
 
           <div style={{ ...s.cta, ...(isMobile ? s.ctaMobile : null) }}>
             <p style={{ color: "#94a3b8", fontSize: isMobile ? 15 : 14, lineHeight: 1.6, margin: 0 }}>
-              Paid plans are for repeat use. Single Fix appears only when someone needs one final download without watermark.
+              Free credits are enough for many first-time users. Choose a paid plan only if you need more downloads.
             </p>
           </div>
         </div>

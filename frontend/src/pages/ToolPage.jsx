@@ -840,23 +840,6 @@ export default function ToolPage() {
               </div>
             )}
 
-            {toolId === "photo" && preview && !done && (
-              <div style={s.cropPanel}>
-                <div style={s.cropHeaderRow}>
-                  <div>
-                    <p style={s.cropTitle}>Exam Photo Processing</p>
-                    <p style={s.cropSub}>Photo will be resized to your selected exam specs and exported with a clean white background.</p>
-                  </div>
-                  <div style={s.cropBadge}>2 credits on download</div>
-                </div>
-                <div style={s.cropInfoRow}>
-                  <span style={s.cropInfoPill}>White background auto-applied</span>
-                  <span style={s.cropInfoPill}>Exact exam size output</span>
-                  <span style={s.cropInfoPill}>No extra add-on needed</span>
-                </div>
-              </div>
-            )}
-
             {isImageCompressTool && preview && !done && (
               <div style={s.cropPanel}>
                 <div style={s.cropHeaderRow}>
