@@ -20,11 +20,9 @@ const getRazorpayClient = () => {
 // ─── Plan definitions — single source of truth ────────────────────────────────
 // amount is in PAISE (₹1 = 100 paise)
 const PLANS = {
-  single:    { amount: 900,   credits: 1,   label: 'Single Fix',       validDays: null  },
-  emergency: { amount: 1900,  credits: 15,  label: 'Emergency Pack',   validDays: 7     },
-  unlimited: { amount: 2900,  credits: -1,  label: 'Daily Unlimited',  validDays: 30    }, // -1 = unlimited, FUP 50/day
-  standard:  { amount: 5900,  credits: 60,  label: 'Standard',         validDays: 30    },
-  pro:       { amount: 13900, credits: 150, label: 'Pro',              validDays: 90    },
+  single:  { amount: 900,  credits: 1,  label: 'Single Fix',     validDays: null },
+  starter: { amount: 2900, credits: 40, label: 'Starter',        validDays: 30 },
+  pro:     { amount: 7900, credits: -1, label: 'Pro Unlimited',  validDays: 30 },
 };
 
 /* ─────────────────────────────────────────────────────────────────────────────
@@ -130,7 +128,7 @@ const verifyPayment = async (req, res) => {
             plan:           txn.plan,
             planLabel:      plan.label,
             isUnlimited:    true,
-            dailyOpsLimit:  50,
+            dailyOpsLimit:  80,
             planExpiry:     new Date(Date.now() + plan.validDays * 86400000),
           }
         },

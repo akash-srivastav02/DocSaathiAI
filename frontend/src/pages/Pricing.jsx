@@ -12,75 +12,45 @@ const PLANS = [
     price: 9,
     period: "one-time",
     credits: 1,
-    creditsLabel: "1 Download",
-    validity: "Without Watermark",
+    creditsLabel: "1 clean download",
+    validity: "One-time",
     color: "#22c55e",
     badge: null,
-    tag: "No account needed",
-    icon: "⚡",
+    tag: "Impulse buy, zero friction",
+    icon: "SF",
     highlight: false,
-    perks: ["1 Clean Download (No Watermark)", "Any Single Feature", "Instant Access"],
+    perks: ["1 Clean Download", "No watermark", "Perfect for urgent one-off use"],
     note: null,
   },
   {
-    id: "emergency",
-    name: "Emergency Pack",
-    price: 19,
-    period: "7 days",
-    credits: 15,
-    validity: "7 Days",
-    color: "#f97316",
-    badge: null,
-    tag: "Last-minute form bharne wale",
-    icon: "🚨",
-    highlight: false,
-    perks: ["15 Credits", "Valid 7 Days", "All Exam Formats", "Photo + Signature", "Document Size Changer"],
-    note: null,
-  },
-  {
-    id: "unlimited",
-    name: "Daily Unlimited",
+    id: "starter",
+    name: "Starter",
     price: 29,
-    period: "24 hours",
-    credits: "Unlimited*",
-    validity: "24 Hours",
-    color: "#a855f7",
-    badge: "New",
-    tag: "Heavy users & groups",
-    icon: "∞",
+    period: "30 days",
+    credits: 40,
+    validity: "30 Days",
+    color: "#f97316",
+    badge: "Most Popular",
+    tag: "The real entry plan",
+    icon: "ST",
     highlight: true,
-    perks: ["Unlimited Operations*", "Valid 24 Hours", "All Features", "PDF Editor", "Resume Builder", "Priority Processing"],
-    note: "* Fair Usage Policy: max 50 operations/day",
-  },
-  {
-    id: "standard",
-    name: "Standard",
-    price: 59,
-    period: "month",
-    credits: 60,
-    validity: "1 Month",
-    color: "#3b82f6",
-    badge: "Best Seller",
-    tag: "Serious aspirants",
-    icon: "🎯",
-    highlight: true,
-    perks: ["60 Credits", "Valid 1 Month", "All Exam Formats", "Photo + Signature + Merger", "Document Size Changer", "PDF Editor", "Resume Builder"],
+    perks: ["40 Credits", "Valid 30 Days", "All core tools", "Best for regular aspirants"],
     note: null,
   },
   {
     id: "pro",
-    name: "Pro",
-    price: 139,
-    period: "3 months",
-    credits: 150,
-    validity: "3 Months",
-    color: "#ec4899",
+    name: "Pro Unlimited",
+    price: 79,
+    period: "30 days",
+    credits: "Unlimited*",
+    validity: "30 Days",
+    color: "#8b5cf6",
     badge: "Best Value",
-    tag: "Power users & coaching centers",
-    icon: "👑",
-    highlight: false,
-    perks: ["150 Credits", "Valid 3 Months", "All Features Unlocked", "PDF Editor + Resume Builder", "Merger Feature", "Priority Support", "Early Access to New Tools"],
-    note: null,
+    tag: "Power users & coaching centres",
+    icon: "PR",
+    highlight: true,
+    perks: ["Unlimited operations*", "Valid 30 Days", "All features", "Best for heavy daily use"],
+    note: "* Fair usage policy: max 80 operations/day",
   },
 ];
 
@@ -89,8 +59,8 @@ const COMPARISON = [
   { feature: "Document Scanning", cafe: "Rs.10 per page", us: "FREE (Mobile cam)" },
   { feature: "Urgent Form Fix", cafe: "Rs.50 - Rs.100", us: "Rs.9 (Single Fix)" },
   { feature: "Waqt ki Barbadi", cafe: "1-2 Ghante (Line mein)", us: "Sirf 10 Second" },
-  { feature: "Travel Cost", cafe: "Rs.20-Rs.40 (Auto/Petrol)", us: "Rs.0 (Ghar baithe)" },
-  { feature: "Total Kharcha", cafe: "Rs.100 - Rs.200", us: "Rs.9 - Rs.59" },
+  { feature: "Travel Cost", cafe: "Rs.20 - Rs.40", us: "Rs.0 (Ghar baithe)" },
+  { feature: "Total Kharcha", cafe: "Rs.100 - Rs.200", us: "Rs.0 - Rs.79" },
 ];
 
 const singleFixPlan = PLANS.find((plan) => plan.id === "single");
@@ -174,7 +144,7 @@ function PlanCard({ plan, onBuy, loading, compact }) {
       <ul style={s.perks}>
         {plan.perks.map((perk) => (
           <li key={perk} style={{ ...s.perk, ...(compact ? s.perkMobile : null) }}>
-            <span style={{ color: plan.color, marginRight: 6, flexShrink: 0 }}>✓</span>
+            <span style={{ color: plan.color, marginRight: 6, flexShrink: 0 }}>+</span>
             {perk}
           </li>
         ))}
@@ -254,14 +224,14 @@ export default function Pricing() {
         <div style={{ ...s.content, ...(isMobile ? s.contentMobile : null) }}>
           <div style={s.pageHdr}>
             <h1 style={{ ...s.pageTitle, ...(isMobile ? s.pageTitleMobile : null) }}>Choose Your Plan</h1>
-            <p style={{ ...s.pageSub, ...(isMobile ? s.pageSubMobile : null) }}>Designed for Indian aspirants. Pay only for what you need.</p>
+            <p style={{ ...s.pageSub, ...(isMobile ? s.pageSubMobile : null) }}>Simple pricing for aspirants, repeat users, and power users.</p>
           </div>
 
           <div style={{ ...s.freeBanner, ...(isMobile ? s.bannerMobile : null) }}>
-            <span style={s.bannerIcon}>↻</span>
+            <span style={s.bannerIcon}>FR</span>
             <div style={{ flex: 1 }}>
-              <p style={{ ...s.freeTitle, ...(isMobile ? s.bannerTitleMobile : null) }}>Weekly Free Refill - 5 Credits Every 7 Days</p>
-              <p style={{ ...s.freeSub, ...(isMobile ? s.bannerSubMobile : null) }}>Auto-credited on every login after 7 days. No payment needed.</p>
+              <p style={{ ...s.freeTitle, ...(isMobile ? s.bannerTitleMobile : null) }}>Free - 15 credits + 5 credits every 7 days</p>
+              <p style={{ ...s.freeSub, ...(isMobile ? s.bannerSubMobile : null) }}>Your forever acquisition hook. Users can try the product first without payment.</p>
             </div>
             <span style={s.freeBadge}>FREE</span>
           </div>
@@ -269,12 +239,12 @@ export default function Pricing() {
           <div style={{ ...s.singleBanner, ...(isMobile ? s.bannerMobile : null) }}>
             <span style={s.bannerIcon}>{singleFixPlan.icon}</span>
             <div style={{ flex: 1, minWidth: 220 }}>
-              <p style={{ ...s.singleTitle, ...(isMobile ? s.bannerTitleMobile : null) }}>Single Fix - Rs.{singleFixPlan.price} for 1 Download Without Watermark</p>
-              <p style={{ ...s.singleSub, ...(isMobile ? s.bannerSubMobile : null) }}>Best for one urgent form fix. No credit pack needed, just one clean download when you need it.</p>
+              <p style={{ ...s.singleTitle, ...(isMobile ? s.bannerTitleMobile : null) }}>Single Fix - Rs.{singleFixPlan.price} for 1 clean download</p>
+              <p style={{ ...s.singleSub, ...(isMobile ? s.bannerSubMobile : null) }}>One-time impulse buy with zero friction. Ideal when someone just needs one final clean file.</p>
             </div>
             <div style={{ ...s.singleActionWrap, ...(isMobile ? s.singleActionWrapMobile : null) }}>
               <span style={s.singleBadge}>ONE-TIME</span>
-              <span style={s.singleInfo}>Shown only when a user needs one clean download after preview.</span>
+              <span style={s.singleInfo}>Shown only when a user needs a final clean download after preview.</span>
             </div>
           </div>
 
@@ -321,8 +291,8 @@ export default function Pricing() {
           </div>
 
           <div style={{ ...s.cta, ...(isMobile ? s.ctaMobile : null) }}>
-            <p style={{ color: "#94a3b8", fontSize: isMobile ? 15 : 14, lineHeight: 1.5, margin: 0 }}>
-              Paid plans are for repeat use. Single Fix is shown separately only when someone needs one final download without watermark.
+            <p style={{ color: "#94a3b8", fontSize: isMobile ? 15 : 14, lineHeight: 1.6, margin: 0 }}>
+              Paid plans are for repeat use. Single Fix appears only when someone needs one final download without watermark.
             </p>
           </div>
         </div>
@@ -334,7 +304,7 @@ export default function Pricing() {
 const s = {
   root: { display: "flex", minHeight: "100vh", background: "#070c18", fontFamily: "'Segoe UI', sans-serif" },
   main: { flex: 1, overflowY: "auto", paddingBottom: 60 },
-  content: { padding: "20px 24px", display: "flex", flexDirection: "column", gap: 22, maxWidth: 1100, width: "100%", boxSizing: "border-box" },
+  content: { padding: "20px 24px", display: "flex", flexDirection: "column", gap: 22, maxWidth: 960, width: "100%", boxSizing: "border-box" },
   contentMobile: { padding: "16px", gap: 18 },
 
   pageHdr: {},
@@ -343,63 +313,62 @@ const s = {
   pageTitleMobile: { fontSize: 24, lineHeight: 1.2 },
   pageSubMobile: { fontSize: 15, lineHeight: 1.5 },
 
-  bannerIcon: { fontSize: 20, flexShrink: 0 },
+  bannerIcon: { fontSize: 16, fontWeight: 800, flexShrink: 0 },
   freeBanner: { background: "#052e1620", border: "1px solid #14532d", borderRadius: 14, padding: "14px 18px", display: "flex", alignItems: "center", gap: 14, flexWrap: "wrap" },
-  bannerMobile: { alignItems: "flex-start", gap: 12, padding: "16px 16px" },
+  bannerMobile: { alignItems: "flex-start", gap: 12, padding: "16px" },
   freeTitle: { color: "#86efac", fontWeight: 700, fontSize: 14, margin: "0 0 2px" },
-  freeSub: { color: "#64748b", fontSize: 12, margin: 0 },
-  bannerTitleMobile: { fontSize: 15, lineHeight: 1.4 },
-  bannerSubMobile: { fontSize: 14, lineHeight: 1.55 },
+  freeSub: { color: "#64748b", fontSize: 12, margin: 0, lineHeight: 1.55 },
+  bannerTitleMobile: { fontSize: 15, lineHeight: 1.45 },
+  bannerSubMobile: { fontSize: 14, lineHeight: 1.6 },
   freeBadge: { background: "#052e16", color: "#86efac", border: "1px solid #14532d", borderRadius: 8, padding: "4px 14px", fontSize: 13, fontWeight: 800, flexShrink: 0 },
 
   singleBanner: { background: "#0f172a", border: "1px solid #22c55e55", borderRadius: 14, padding: "14px 18px", display: "flex", alignItems: "center", gap: 14, flexWrap: "wrap" },
   singleTitle: { color: "#22c55e", fontWeight: 800, fontSize: 14, margin: "0 0 2px" },
-  singleSub: { color: "#94a3b8", fontSize: 12, margin: 0, lineHeight: 1.5 },
+  singleSub: { color: "#94a3b8", fontSize: 12, margin: 0, lineHeight: 1.55 },
   singleActionWrap: { display: "flex", alignItems: "center", gap: 10, marginLeft: "auto", flexWrap: "wrap" },
   singleActionWrapMobile: { marginLeft: 0, width: "100%", justifyContent: "space-between" },
   singleBadge: { background: "#052e16", color: "#86efac", border: "1px solid #14532d", borderRadius: 8, padding: "4px 12px", fontSize: 12, fontWeight: 800 },
-  singleBtn: { background: "linear-gradient(135deg,#22c55e,#16a34a)", color: "#fff", border: "none", borderRadius: 9, padding: "10px 18px", fontWeight: 700, fontSize: 13, cursor: "pointer", whiteSpace: "nowrap" },
-  singleBtnMobile: { width: "100%", justifyContent: "center", textAlign: "center", padding: "12px 16px", fontSize: 14 },
+  singleInfo: { color: "#64748b", fontSize: 12, lineHeight: 1.5 },
 
   successAlert: { background: "#052e16", border: "1px solid #14532d", borderRadius: 12, padding: "14px 18px", color: "#86efac", fontSize: 14, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, flexWrap: "wrap" },
   alertBtn: { background: "#22c55e", color: "#fff", border: "none", borderRadius: 8, padding: "7px 14px", fontWeight: 700, fontSize: 13, cursor: "pointer" },
   errorAlert: { background: "#450a0a30", border: "1px solid #7f1d1d", borderRadius: 12, padding: "14px 18px", color: "#fca5a5", fontSize: 14 },
 
-  grid: { display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: 16, alignItems: "stretch", width: "100%" },
+  grid: { display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 16, alignItems: "stretch", width: "100%" },
   gridMobile: { gridTemplateColumns: "1fr", gap: 14 },
 
-  planCard: { background: "#0d1421", border: "1px solid", borderRadius: 16, padding: 16, display: "flex", flexDirection: "column", position: "relative", overflow: "hidden", height: "100%", minHeight: 315, width: "100%", boxSizing: "border-box", transition: "transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease" },
+  planCard: { background: "#0d1421", border: "1px solid", borderRadius: 16, padding: 18, display: "flex", flexDirection: "column", position: "relative", overflow: "hidden", height: "100%", minHeight: 318, width: "100%", boxSizing: "border-box", transition: "transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease" },
   planCardMobile: { minHeight: "auto", padding: 18 },
   badge: { position: "absolute", top: 0, right: 0, borderRadius: "0 14px 0 10px", padding: "3px 10px", fontSize: 10, fontWeight: 800, color: "#fff" },
   planTop: { display: "flex", alignItems: "flex-start", gap: 10, marginBottom: 12, marginTop: 4 },
-  planIcon: { width: 34, height: 34, borderRadius: 9, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 17, flexShrink: 0 },
-  planName: { fontSize: 14, fontWeight: 800, margin: "0 0 2px", lineHeight: 1.1 },
-  planTag: { color: "#475569", fontSize: 10, margin: 0, lineHeight: 1.3 },
+  planIcon: { width: 36, height: 36, borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, fontWeight: 800, flexShrink: 0 },
+  planName: { fontSize: 16, fontWeight: 800, margin: "0 0 2px", lineHeight: 1.15 },
+  planTag: { color: "#475569", fontSize: 11, margin: 0, lineHeight: 1.4 },
   planNameMobile: { fontSize: 18, lineHeight: 1.2 },
-  planTagMobile: { fontSize: 13, lineHeight: 1.45 },
+  planTagMobile: { fontSize: 13, lineHeight: 1.5 },
 
   priceRow: { display: "flex", alignItems: "baseline", gap: 2, marginBottom: 10 },
   rupee: { color: "#94a3b8", fontSize: 14, fontWeight: 700 },
-  priceNum: { color: "#f1f5f9", fontWeight: 900, fontSize: 28, lineHeight: 1 },
-  pricePd: { color: "#64748b", fontSize: 11, marginLeft: 3 },
+  priceNum: { color: "#f1f5f9", fontWeight: 900, fontSize: 30, lineHeight: 1 },
+  pricePd: { color: "#64748b", fontSize: 12, marginLeft: 3 },
   priceRowMobile: { gap: 4, marginBottom: 12, flexWrap: "wrap" },
   rupeeMobile: { fontSize: 18 },
   priceNumMobile: { fontSize: 36 },
   pricePdMobile: { fontSize: 15, marginLeft: 4 },
 
   metaRow: { display: "flex", alignItems: "center", gap: 8, marginBottom: 12, flexWrap: "wrap" },
-  metaPill: { border: "1px solid", borderRadius: 5, padding: "2px 7px", fontSize: 10, fontWeight: 700 },
-  validity: { color: "#64748b", fontSize: 10 },
+  metaPill: { border: "1px solid", borderRadius: 999, padding: "4px 9px", fontSize: 11, fontWeight: 700 },
+  validity: { color: "#64748b", fontSize: 11 },
   metaRowMobile: { gap: 10, marginBottom: 14 },
-  metaPillMobile: { padding: "4px 10px", fontSize: 12, borderRadius: 7 },
+  metaPillMobile: { padding: "5px 11px", fontSize: 12, borderRadius: 999 },
   validityMobile: { fontSize: 12 },
 
-  perks: { listStyle: "none", padding: 0, margin: "0 0 10px", display: "flex", flexDirection: "column", gap: 4, flex: 1 },
-  perk: { color: "#94a3b8", fontSize: 11, display: "flex", alignItems: "flex-start", lineHeight: 1.4 },
-  fupNote: { color: "#f59e0b", fontSize: 10, margin: "0 0 10px", fontStyle: "italic" },
-  buyBtn: { color: "#fff", border: "none", borderRadius: 9, padding: "10px 0", fontWeight: 700, fontSize: 13, cursor: "pointer", width: "100%", marginTop: "auto" },
-  perkMobile: { fontSize: 14, lineHeight: 1.55, gap: 2 },
-  fupNoteMobile: { fontSize: 12, lineHeight: 1.5 },
+  perks: { listStyle: "none", padding: 0, margin: "0 0 10px", display: "flex", flexDirection: "column", gap: 6, flex: 1 },
+  perk: { color: "#94a3b8", fontSize: 12, display: "flex", alignItems: "flex-start", lineHeight: 1.45 },
+  perkMobile: { fontSize: 14, lineHeight: 1.55 },
+  fupNote: { color: "#f59e0b", fontSize: 11, margin: "0 0 10px", fontStyle: "italic", lineHeight: 1.5 },
+  fupNoteMobile: { fontSize: 12, lineHeight: 1.55 },
+  buyBtn: { color: "#fff", border: "none", borderRadius: 10, padding: "11px 0", fontWeight: 700, fontSize: 14, cursor: "pointer", width: "100%", marginTop: "auto" },
   buyBtnMobile: { padding: "12px 0", fontSize: 15 },
 
   payNote: { textAlign: "center", color: "#334155", fontSize: 12 },
@@ -407,16 +376,14 @@ const s = {
 
   tableTitle: { color: "#f1f5f9", fontWeight: 800, fontSize: 18, margin: "0 0 4px" },
   tableSub: { color: "#64748b", fontSize: 13, margin: "0 0 12px" },
-  table: { border: "1px solid #1e293b", borderRadius: 14, overflow: "hidden" },
   tableTitleMobile: { fontSize: 20, lineHeight: 1.25 },
   tableSubMobile: { fontSize: 14, lineHeight: 1.55 },
+  table: { border: "1px solid #1e293b", borderRadius: 14, overflow: "hidden" },
   tableMobile: { overflowX: "auto" },
   tableHead: { display: "flex", background: "#111827", padding: "10px 16px", gap: 8 },
   tableRow: { display: "flex", padding: "10px 16px", gap: 8, borderTop: "1px solid #1e293b" },
   cell: { flex: 1, fontSize: 13 },
 
-  cta: { background: "#0d1421", border: "1px solid #1e293b", borderRadius: 14, padding: "18px 20px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, flexWrap: "wrap" },
-  ctaBtn: { background: "linear-gradient(135deg,#22c55e,#16a34a)", color: "#fff", border: "none", borderRadius: 9, padding: "10px 20px", fontWeight: 700, fontSize: 13, cursor: "pointer", whiteSpace: "nowrap", flexShrink: 0 },
+  cta: { background: "#0d1421", border: "1px solid #1e293b", borderRadius: 14, padding: "18px 20px", display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap" },
   ctaMobile: { padding: "16px", gap: 14 },
-  ctaBtnMobile: { width: "100%", textAlign: "center", padding: "12px 16px", fontSize: 14 },
 };
