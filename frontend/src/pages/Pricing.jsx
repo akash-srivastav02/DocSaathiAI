@@ -55,12 +55,54 @@ const PLANS = [
 ];
 
 const COMPARISON = [
-  { feature: "Photo + Signature", cafe: "Rs.20 - Rs.50", us: "Free with credits" },
-  { feature: "Document Scan", cafe: "Rs.10 per page", us: "Use your phone" },
-  { feature: "Urgent One-Time Fix", cafe: "Rs.50 - Rs.100", us: "Rs.9 one-time" },
-  { feature: "Time Needed", cafe: "1-2 hours", us: "Done in seconds" },
-  { feature: "Travel Cost", cafe: "Rs.20 - Rs.40", us: "No travel needed" },
-  { feature: "Total Spend", cafe: "Rs.100 - Rs.200", us: "Rs.0 - Rs.79" },
+  {
+    feature: "Exam-ready photo sizing",
+    cafe: "Depends on operator",
+    sites: "Usually generic resize only",
+    us: "Built for exam specs",
+  },
+  {
+    feature: "Photo + sign + date merge",
+    cafe: "Extra charge or manual work",
+    sites: "Often split across tools",
+    us: "One guided flow",
+  },
+  {
+    feature: "Start free",
+    cafe: "No",
+    sites: "Usually limited",
+    us: "15 credits + 5 every 7 days",
+  },
+  {
+    feature: "Urgent one-time fix",
+    cafe: "Rs.50 - Rs.100",
+    sites: "Plans or signup first",
+    us: "Rs.9 Single Fix",
+  },
+  {
+    feature: "Mobile-friendly use",
+    cafe: "Visit shop required",
+    sites: "Mixed experience",
+    us: "Built for phone and desktop",
+  },
+  {
+    feature: "Time needed",
+    cafe: "Travel + wait",
+    sites: "Tool hopping",
+    us: "Few minutes in one place",
+  },
+  {
+    feature: "Convenience",
+    cafe: "Go outside and pay per task",
+    sites: "Use multiple websites",
+    us: "One workspace for common tasks",
+  },
+  {
+    feature: "Total expected spend",
+    cafe: "Rs.100 - Rs.200",
+    sites: "Varies across tools",
+    us: "Rs.0 - Rs.79",
+  },
 ];
 
 const singleFixPlan = PLANS.find((plan) => plan.id === "single");
@@ -272,18 +314,20 @@ export default function Pricing() {
           <p style={{ ...s.payNote, ...(isMobile ? s.payNoteMobile : null) }}>Razorpay · UPI · Cards · Net Banking · Paytm · PhonePe · GPay</p>
 
           <div>
-            <h2 style={{ ...s.tableTitle, ...(isMobile ? s.tableTitleMobile : null) }}>Why Choose FormFixer?</h2>
-            <p style={{ ...s.tableSub, ...(isMobile ? s.tableSubMobile : null) }}>A quick comparison with typical offline costs.</p>
+            <h2 style={{ ...s.tableTitle, ...(isMobile ? s.tableTitleMobile : null) }}>Compare Your Options</h2>
+            <p style={{ ...s.tableSub, ...(isMobile ? s.tableSubMobile : null) }}>See how FormFixer compares with cyber cafes and typical online tools.</p>
             <div style={{ ...s.table, ...(isMobile ? s.tableMobile : null) }}>
               <div style={s.tableHead}>
-                <div style={{ ...s.cell, flex: 2, color: "#64748b", fontWeight: 700, fontSize: 11, textTransform: "uppercase" }}>Feature</div>
-                <div style={{ ...s.cell, color: "#ef4444", fontWeight: 700, fontSize: 11 }}>Offline</div>
+                <div style={{ ...s.cell, flex: 1.55, color: "#64748b", fontWeight: 700, fontSize: 11, textTransform: "uppercase" }}>Feature</div>
+                <div style={{ ...s.cell, color: "#ef4444", fontWeight: 700, fontSize: 11 }}>Cyber Cafe</div>
+                <div style={{ ...s.cell, color: "#f59e0b", fontWeight: 700, fontSize: 11 }}>Other Sites</div>
                 <div style={{ ...s.cell, color: "#22c55e", fontWeight: 700, fontSize: 11 }}>FormFixer</div>
               </div>
               {COMPARISON.map((row, index) => (
                 <div key={row.feature} style={{ ...s.tableRow, background: index % 2 === 0 ? "#0d1421" : "#070c18" }}>
-                  <div style={{ ...s.cell, flex: 2, color: "#94a3b8", fontWeight: 600 }}>{row.feature}</div>
+                  <div style={{ ...s.cell, flex: 1.55, color: "#94a3b8", fontWeight: 600 }}>{row.feature}</div>
                   <div style={{ ...s.cell, color: "#ef444499" }}>{row.cafe}</div>
+                  <div style={{ ...s.cell, color: "#fbbf24" }}>{row.sites}</div>
                   <div style={{ ...s.cell, color: "#22c55e", fontWeight: 700 }}>{row.us}</div>
                 </div>
               ))}
