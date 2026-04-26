@@ -52,6 +52,16 @@ const EXAM_TOOLS = [
 
 const OTHER_TOOLS = [
   {
+    id: "bgremove",
+    icon: "BG",
+    label: "AI Background Remover",
+    credit: 2,
+    color: "#14b8a6",
+    route: "/tool/bgremove",
+    desc: "Remove background and export transparent or color output.",
+    soon: false,
+  },
+  {
     id: "crop",
     icon: "✂️",
     label: "Crop & Resize",

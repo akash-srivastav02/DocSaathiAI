@@ -7,6 +7,7 @@ const { cloudinary, uploadBuffer } = require('../utils/cloudinary');
 const TOOL_CREDIT_COST = {
   photo: 2,
   signature: 2,
+  bgremove: 2,
   crop: 2,
   imgcompress: 2,
   pdfcompress: 2,

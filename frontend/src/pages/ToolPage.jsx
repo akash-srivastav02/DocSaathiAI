@@ -8,8 +8,9 @@ import Sidebar from "../components/Sidebar";
 import TopBar from "../components/TopBar";
 
 const FEATURES = {
-  photo: { icon: "📸", label: "Exam Photo", credit: 2, color: "#3b82f6", desc: "Resize and compress photo per exam spec", needsExam: true },
+  photo: { icon: "📸", label: "Exam Photo", credit: 2, color: "#3b82f6", desc: "Resize, compress, and add white background per exam spec", needsExam: true },
   signature: { icon: "✍️", label: "Exam Signature", credit: 2, color: "#8b5cf6", desc: "Format signature for any exam", needsExam: true },
+  bgremove: { icon: "🪄", label: "AI Background Remover", credit: 2, color: "#14b8a6", desc: "Remove background and export transparent or solid color image", needsExam: false },
   imgcompress: { icon: "🖼️", label: "Image Compressor", credit: 2, color: "#a78bfa", desc: "Compress image to target KB", needsExam: false },
   crop: { icon: "✂️", label: "Crop & Resize", credit: 2, color: "#ec4899", desc: "Circle, square, and manual crop with zoom controls", needsExam: false },
   pdfeditor: { icon: "📝", label: "PDF Editor", credit: 2, color: "#ef4444", desc: "Edit admit cards and form PDFs", needsExam: false, soon: true },
@@ -259,6 +260,100 @@ async function renderCropImage({ src, cropMode, zoom, offsetX, offsetY, manualSi
   };
 }
 
+function sampleBackgroundColor(imageData, width, height) {
+  const points = [
+    [4, 4],
+    [width - 5, 4],
+    [4, height - 5],
+    [width - 5, height - 5],
+    [Math.floor(width / 2), 4],
+    [Math.floor(width / 2), height - 5],
+    [4, Math.floor(height / 2)],
+    [width - 5, Math.floor(height / 2)],
+  ];
+
+  const totals = points.reduce(
+    (acc, [x, y]) => {
+      const index = (y * width + x) * 4;
+      acc.r += imageData[index];
+      acc.g += imageData[index + 1];
+      acc.b += imageData[index + 2];
+      return acc;
+    },
+    { r: 0, g: 0, b: 0 },
+  );
+
+  return {
+    r: Math.round(totals.r / points.length),
+    g: Math.round(totals.g / points.length),
+    b: Math.round(totals.b / points.length),
+  };
+}
+
+function rgbDistance(r1, g1, b1, r2, g2, b2) {
+  return Math.sqrt(((r1 - r2) ** 2) + ((g1 - g2) ** 2) + ((b1 - b2) ** 2));
+}
+
+async function renderBackgroundRemovedImage({ src, outputMode, bgColor, edgeStrength }) {
+  const img = await loadImage(src);
+  const maxDimension = 1600;
+  const ratio = Math.min(1, maxDimension / Math.max(img.width, img.height));
+  const width = Math.max(120, Math.round(img.width * ratio));
+  const height = Math.max(120, Math.round(img.height * ratio));
+
+  const sourceCanvas = document.createElement("canvas");
+  sourceCanvas.width = width;
+  sourceCanvas.height = height;
+  const sourceCtx = sourceCanvas.getContext("2d", { willReadFrequently: true });
+  sourceCtx.drawImage(img, 0, 0, width, height);
+
+  const imageData = sourceCtx.getImageData(0, 0, width, height);
+  const data = imageData.data;
+  const sampledBg = sampleBackgroundColor(data, width, height);
+  const threshold = edgeStrength === "strong" ? 78 : edgeStrength === "soft" ? 46 : 62;
+  const fadeRange = 26;
+
+  for (let i = 0; i < data.length; i += 4) {
+    const distance = rgbDistance(data[i], data[i + 1], data[i + 2], sampledBg.r, sampledBg.g, sampledBg.b);
+
+    if (distance <= threshold) {
+      data[i + 3] = 0;
+      continue;
+    }
+
+    if (distance < threshold + fadeRange) {
+      const alphaRatio = (distance - threshold) / fadeRange;
+      data[i + 3] = Math.round(data[i + 3] * alphaRatio);
+    }
+  }
+
+  sourceCtx.putImageData(imageData, 0, 0);
+
+  const outputCanvas = document.createElement("canvas");
+  outputCanvas.width = width;
+  outputCanvas.height = height;
+  const outputCtx = outputCanvas.getContext("2d");
+
+  if (outputMode === "color") {
+    outputCtx.fillStyle = bgColor;
+    outputCtx.fillRect(0, 0, width, height);
+  } else {
+    outputCtx.clearRect(0, 0, width, height);
+  }
+
+  outputCtx.drawImage(sourceCanvas, 0, 0);
+
+  const url = outputCanvas.toDataURL("image/png");
+  return {
+    url,
+    sizeKB: Math.round((url.length * 0.75) / 1024),
+    width,
+    height,
+    extension: "png",
+    backgroundMode: outputMode,
+  };
+}
+
 function CropEditor({
   preview,
   cropMode,
@@ -439,6 +534,9 @@ export default function ToolPage() {
   const [targetValue, setTargetValue] = useState("");
   const [targetUnit, setTargetUnit] = useState("KB");
   const [compressQuality, setCompressQuality] = useState("medium");
+  const [bgOutputMode, setBgOutputMode] = useState("transparent");
+  const [bgColor, setBgColor] = useState("#ffffff");
+  const [bgRemoveStrength, setBgRemoveStrength] = useState("balanced");
 
   useEffect(() => {
     API.get("/process/exams")
@@ -476,6 +574,7 @@ export default function ToolPage() {
   const needsExam = tool?.needsExam ?? false;
   const isCropTool = toolId === "crop";
   const isImageCompressTool = toolId === "imgcompress";
+  const isBackgroundRemoveTool = toolId === "bgremove";
   const cropConfig = getCropModeConfig(cropMode, manualSize);
   const targetKB = useMemo(() => {
     const numericValue = parseFloat(targetValue);
@@ -511,6 +610,9 @@ export default function ToolPage() {
     setTargetValue("");
     setTargetUnit("KB");
     setCompressQuality("medium");
+    setBgOutputMode("transparent");
+    setBgColor("#ffffff");
+    setBgRemoveStrength("balanced");
     resetWorkflow();
   };
 
@@ -524,6 +626,9 @@ export default function ToolPage() {
     setTargetValue("");
     setTargetUnit("KB");
     setCompressQuality("medium");
+    setBgOutputMode("transparent");
+    setBgColor("#ffffff");
+    setBgRemoveStrength("balanced");
     resetWorkflow();
   };
 
@@ -568,6 +673,24 @@ export default function ToolPage() {
           hasWatermark: true,
           creditCost: tool.credit,
           extension: localCrop.extension,
+        };
+      } else if (isBackgroundRemoveTool) {
+        const bgRemoved = await renderBackgroundRemovedImage({
+          src: preview,
+          outputMode: bgOutputMode,
+          bgColor,
+          edgeStrength: bgRemoveStrength,
+        });
+
+        data = {
+          url: bgRemoved.url,
+          sizeKB: bgRemoved.sizeKB,
+          dimensions: `${bgRemoved.width}x${bgRemoved.height}`,
+          withinRange: true,
+          hasWatermark: true,
+          creditCost: tool.credit,
+          extension: bgRemoved.extension,
+          backgroundMode: bgRemoved.backgroundMode,
         };
       } else if (isImageCompressTool) {
         const compressed = await renderCompressedImage({
@@ -637,8 +760,8 @@ export default function ToolPage() {
         setDownloading(true);
         const { data } = await API.post("/process/confirm-download", {
           toolType: toolId,
-          examName: selectedExam || (isCropTool ? `${cropMode} crop` : tool.label),
-          processedUrl: isCropTool ? "" : result.url,
+          examName: selectedExam || (isCropTool ? `${cropMode} crop` : isBackgroundRemoveTool ? `background remove ${bgOutputMode}` : tool.label),
+          processedUrl: isCropTool || isBackgroundRemoveTool ? "" : result.url,
         });
         if (data.creditsLeft !== undefined) updateCredits(data.creditsLeft);
         setDownloadUnlocked(true);
@@ -700,6 +823,9 @@ export default function ToolPage() {
     setTargetValue("");
     setTargetUnit("KB");
     setCompressQuality("medium");
+    setBgOutputMode("transparent");
+    setBgColor("#ffffff");
+    setBgRemoveStrength("balanced");
     resetWorkflow();
   };
 
@@ -739,7 +865,7 @@ export default function ToolPage() {
         )}
 
         <div style={s.header}>
-          <button style={s.backBtn} onClick={() => navigate("/dashboard")}>← Back</button>
+          <button style={s.backBtn} onClick={() => navigate(user ? "/dashboard" : "/")}>← Back</button>
           <div style={{ ...s.toolIcon, background: `${tool.color}20`, color: tool.color }}>{tool.icon}</div>
           <div>
             <h2 style={s.title}>{tool.label}</h2>
@@ -779,7 +905,7 @@ export default function ToolPage() {
             )}
             {selectedExam && liveSpec && (
               <p style={s.specNote}>
-                Will resize to <b>{liveSpec.w}x{liveSpec.h}px</b>, compress to <b>{liveSpec.minKB}-{liveSpec.maxKB} KB</b>, and apply white background.
+                Will resize to <b>{liveSpec.w}x{liveSpec.h}px</b>, compress to <b>{liveSpec.minKB}-{liveSpec.maxKB} KB</b>, and apply <b>white background only</b>.
               </p>
             )}
           </div>
@@ -836,6 +962,24 @@ export default function ToolPage() {
                   setOffsetY={setOffsetY}
                   imageNaturalSize={imageNaturalSize}
                 />
+              </div>
+            )}
+
+            {toolId === "photo" && preview && !done && (
+              <div style={s.cropPanel}>
+                <div style={s.cropHeaderRow}>
+                  <div>
+                    <p style={s.cropTitle}>Background Option</p>
+                    <p style={s.cropSub}>Exam Photo always exports with a clean white background for portal compatibility.</p>
+                  </div>
+                  <div style={s.cropBadge}>White only</div>
+                </div>
+
+                <div style={s.bgOptionLock}>
+                  <button style={{ ...s.bgModeBtn, ...s.bgModeBtnActive, cursor: "default" }} disabled>
+                    Add White Background
+                  </button>
+                </div>
               </div>
             )}
 
@@ -906,6 +1050,79 @@ export default function ToolPage() {
                       ))}
                     </div>
                     <span style={s.sliderValue}>Source image will export as JPG for best size reduction.</span>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {isBackgroundRemoveTool && preview && !done && (
+              <div style={s.cropPanel}>
+                <div style={s.cropHeaderRow}>
+                  <div>
+                    <p style={s.cropTitle}>Output Background</p>
+                    <p style={s.cropSub}>Best for photos with plain backgrounds. Choose transparent PNG or place the subject on a solid color.</p>
+                  </div>
+                  <div style={s.cropBadge}>2 credits on download</div>
+                </div>
+
+                <div style={s.bgToolGrid}>
+                  <div style={s.bgModeRow}>
+                    {[
+                      { id: "transparent", label: "Transparent PNG" },
+                      { id: "color", label: "Solid Color" },
+                    ].map((option) => (
+                      <button
+                        key={option.id}
+                        style={{
+                          ...s.bgModeBtn,
+                          ...(bgOutputMode === option.id ? s.bgModeBtnActive : null),
+                        }}
+                        onClick={() => setBgOutputMode(option.id)}
+                      >
+                        {option.label}
+                      </button>
+                    ))}
+                  </div>
+
+                  <div style={s.bgSettingRow}>
+                    <label style={s.sliderBlock}>
+                      <span style={s.sliderLabel}>Removal Strength</span>
+                      <div style={s.qualityChipRow}>
+                        {[
+                          { id: "soft", label: "Soft" },
+                          { id: "balanced", label: "Balanced" },
+                          { id: "strong", label: "Strong" },
+                        ].map((option) => (
+                          <button
+                            key={option.id}
+                            style={{
+                              ...s.qualityChip,
+                              borderColor: bgRemoveStrength === option.id ? "#14b8a6" : "#374151",
+                              background: bgRemoveStrength === option.id ? "#14b8a620" : "#111827",
+                              color: bgRemoveStrength === option.id ? "#99f6e4" : "#cbd5e1",
+                            }}
+                            onClick={() => setBgRemoveStrength(option.id)}
+                          >
+                            {option.label}
+                          </button>
+                        ))}
+                      </div>
+                    </label>
+
+                    {bgOutputMode === "color" && (
+                      <label style={s.sliderBlock}>
+                        <span style={s.sliderLabel}>Pick Background Color</span>
+                        <div style={s.colorPickerRow}>
+                          <input
+                            type="color"
+                            value={bgColor}
+                            onChange={(e) => setBgColor(e.target.value)}
+                            style={s.colorPicker}
+                          />
+                          <span style={s.colorValue}>{bgColor.toUpperCase()}</span>
+                        </div>
+                      </label>
+                    )}
                   </div>
                 </div>
               </div>
@@ -1045,6 +1262,15 @@ const s = {
   unitBtn: { border: "1px solid", padding: "10px 18px", fontSize: 14, fontWeight: 700, cursor: "pointer" },
   qualityChipRow: { display: "flex", gap: 8, flexWrap: "wrap" },
   qualityChip: { border: "1px solid", borderRadius: 999, padding: "9px 12px", fontSize: 12, fontWeight: 700, cursor: "pointer" },
+  bgOptionLock: { display: "flex", flexWrap: "wrap", gap: 10 },
+  bgToolGrid: { display: "grid", gap: 14 },
+  bgModeRow: { display: "flex", gap: 10, flexWrap: "wrap" },
+  bgModeBtn: { border: "1px solid #374151", background: "#111827", color: "#cbd5e1", borderRadius: 999, padding: "10px 14px", fontSize: 13, fontWeight: 700, cursor: "pointer" },
+  bgModeBtnActive: { borderColor: "#14b8a6", background: "#14b8a620", color: "#99f6e4" },
+  bgSettingRow: { display: "grid", gap: 12, gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))" },
+  colorPickerRow: { display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap" },
+  colorPicker: { width: 56, height: 42, border: "1px solid #374151", borderRadius: 10, background: "#020617", padding: 4, cursor: "pointer" },
+  colorValue: { color: "#cbd5e1", fontSize: 13, fontWeight: 700, letterSpacing: 0.4 },
   cropInfoRow: { display: "flex", justifyContent: "center", gap: 8, flexWrap: "wrap", marginTop: 14 },
   cropInfoPill: { background: "#111827", color: "#f9a8d4", border: "1px solid #374151", borderRadius: 999, padding: "6px 10px", fontSize: 12, fontWeight: 700 },
 };

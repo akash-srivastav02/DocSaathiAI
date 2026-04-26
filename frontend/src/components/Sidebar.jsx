@@ -22,6 +22,7 @@ const MOBILE_TOOL_SECTIONS = [
   {
     title: "Document & Utility",
     items: [
+      { label: "AI Background Remover", icon: "BG", path: "/tool/bgremove" },
       { label: "Crop & Resize", icon: "CR", path: "/tool/crop" },
       { label: "Image Compressor", icon: "IM", path: "/tool/imgcompress" },
       { label: "PDF Compressor", icon: "PC", path: "/pdf/compress" },
