@@ -21,17 +21,47 @@ async function compressPDFBufferWithPdfLib(buffer) {
 function resolveGhostscriptBinary() {
   return [
     process.env.GHOSTSCRIPT_PATH,
+    'gs',
     'gswin64c',
     'gswin32c',
   ].filter(Boolean);
 }
 
-function runGhostscript(binary, inputPath, outputPath, qualityPreset) {
-  const preset = qualityPreset === 'high'
-    ? '/printer'
-    : qualityPreset === 'low'
-      ? '/screen'
-      : '/ebook';
+function buildGhostscriptProfile(qualityPreset, targetRatio = null) {
+  const aggressiveTarget = targetRatio !== null && targetRatio <= 0.7;
+  const veryAggressiveTarget = targetRatio !== null && targetRatio <= 0.55;
+
+  if (qualityPreset === 'high') {
+    return {
+      preset: '/printer',
+      colorResolution: 150,
+      grayResolution: 150,
+      monoResolution: 300,
+      jpegQuality: 88,
+    };
+  }
+
+  if (qualityPreset === 'low') {
+    return {
+      preset: '/screen',
+      colorResolution: veryAggressiveTarget ? 84 : 96,
+      grayResolution: veryAggressiveTarget ? 84 : 96,
+      monoResolution: 200,
+      jpegQuality: veryAggressiveTarget ? 52 : 58,
+    };
+  }
+
+  return {
+    preset: aggressiveTarget ? '/screen' : '/ebook',
+    colorResolution: aggressiveTarget ? 108 : 132,
+    grayResolution: aggressiveTarget ? 108 : 132,
+    monoResolution: 240,
+    jpegQuality: aggressiveTarget ? 62 : 72,
+  };
+}
+
+function runGhostscript(binary, inputPath, outputPath, qualityPreset, targetRatio) {
+  const profile = buildGhostscriptProfile(qualityPreset, targetRatio);
 
   const args = [
     '-sDEVICE=pdfwrite',
@@ -39,16 +69,25 @@ function runGhostscript(binary, inputPath, outputPath, qualityPreset) {
     '-dNOPAUSE',
     '-dQUIET',
     '-dBATCH',
-    `-dPDFSETTINGS=${preset}`,
+    `-dPDFSETTINGS=${profile.preset}`,
     '-dDetectDuplicateImages=true',
     '-dCompressFonts=true',
     '-dSubsetFonts=true',
+    '-dAutoRotatePages=/None',
+    '-dAutoFilterColorImages=false',
+    '-dAutoFilterGrayImages=false',
+    '-dColorImageFilter=/DCTEncode',
+    '-dGrayImageFilter=/DCTEncode',
+    `-dJPEGQ=${profile.jpegQuality}`,
     '-dDownsampleColorImages=true',
     '-dDownsampleGrayImages=true',
     '-dDownsampleMonoImages=true',
-    '-dColorImageResolution=144',
-    '-dGrayImageResolution=144',
-    '-dMonoImageResolution=144',
+    '-dColorImageDownsampleType=/Bicubic',
+    '-dGrayImageDownsampleType=/Bicubic',
+    '-dMonoImageDownsampleType=/Subsample',
+    `-dColorImageResolution=${profile.colorResolution}`,
+    `-dGrayImageResolution=${profile.grayResolution}`,
+    `-dMonoImageResolution=${profile.monoResolution}`,
     `-sOutputFile=${outputPath}`,
     inputPath,
   ];
@@ -72,7 +111,7 @@ function runGhostscript(binary, inputPath, outputPath, qualityPreset) {
   });
 }
 
-async function compressWithGhostscript(buffer, qualityPreset) {
+async function compressWithGhostscript(buffer, qualityPreset, targetRatio) {
   const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'formfixer-pdf-'));
   const inputPath = path.join(tempDir, 'input.pdf');
   const outputPath = path.join(tempDir, 'output.pdf');
@@ -83,7 +122,7 @@ async function compressWithGhostscript(buffer, qualityPreset) {
     let lastError = null;
     for (const binary of resolveGhostscriptBinary()) {
       try {
-        await runGhostscript(binary, inputPath, outputPath, qualityPreset);
+        await runGhostscript(binary, inputPath, outputPath, qualityPreset, targetRatio);
         return await fs.readFile(outputPath);
       } catch (error) {
         lastError = error;
@@ -96,9 +135,14 @@ async function compressWithGhostscript(buffer, qualityPreset) {
   }
 }
 
-async function compressPDFBuffer(buffer, qualityPreset = 'medium') {
+async function compressPDFBuffer(buffer, options = {}) {
+  const qualityPreset = options.qualityPreset || 'medium';
+  const targetKB = Number.isFinite(options.targetKB) ? options.targetKB : null;
+  const originalKB = Math.max(1, Math.round(buffer.length / 1024));
+  const targetRatio = targetKB ? targetKB / originalKB : null;
+
   try {
-    const gsBuffer = await compressWithGhostscript(buffer, qualityPreset);
+    const gsBuffer = await compressWithGhostscript(buffer, qualityPreset, targetRatio);
     return { buffer: gsBuffer, engine: 'ghostscript' };
   } catch {
     const fallback = await compressPDFBufferWithPdfLib(buffer);

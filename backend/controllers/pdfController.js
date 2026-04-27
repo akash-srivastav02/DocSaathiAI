@@ -17,7 +17,10 @@ const compressPDF = async (req, res) => {
     const targetKB = req.body.targetKB ? parseInt(req.body.targetKB, 10) : null;
     const quality = req.body.quality || 'medium';
 
-    const compressed = await compressPDFBuffer(req.file.buffer, quality);
+    const compressed = await compressPDFBuffer(req.file.buffer, {
+      qualityPreset: quality,
+      targetKB,
+    });
     const compressedBuffer = compressed.buffer;
     const compressedKB = Math.round(compressedBuffer.length / 1024);
     const reduction = Math.max(0, Math.round(((originalKB - compressedKB) / originalKB) * 100));
@@ -32,6 +35,9 @@ const compressPDF = async (req, res) => {
     }
 
     const engineLabel = compressed.engine === 'ghostscript' ? 'FormFixer PDF Pro' : 'FormFixer PDF Basic';
+    const targetReduction = targetKB
+      ? Math.max(0, Math.round(((originalKB - targetKB) / originalKB) * 100))
+      : null;
 
     return res.json({
       url: uploadResult.secure_url,
@@ -46,6 +52,7 @@ const compressPDF = async (req, res) => {
       engine: compressed.engine,
       engineLabel,
       canImproveFurther: compressed.engine !== 'ghostscript',
+      targetReduction,
     });
   } catch (error) {
     console.error('[PDF] Compress Error:', error.message);

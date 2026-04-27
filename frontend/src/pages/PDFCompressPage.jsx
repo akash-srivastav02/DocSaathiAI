@@ -286,8 +286,8 @@ export default function PDFCompressPage() {
 
         <div style={s.card}>
           <div style={s.stepBadge}>Step 2 - Enter Target Size</div>
-          <p style={s.hint}>
-            What size do you need the PDF to be?
+            <p style={s.hint}>
+            Enter the final size you need.
             {fileSizeKB > 0 && (
               <span style={{ color: "#f97316" }}> Your file is currently <b>{fileSizeKB} KB</b>.</span>
             )}
@@ -426,8 +426,11 @@ export default function PDFCompressPage() {
             <div style={s.engineNote}>
               Compression engine: <b>{result.engineLabel || "Basic PDF engine"}</b>.
               {result.canImproveFurther
-                ? " Stronger 40-50% compression usually needs Ghostscript installed on the server."
+                ? " Stronger scanned-PDF compression needs the Pro engine enabled on the server."
                 : " Strong compression mode is active for this server."}
+              {result.targetReduction !== null && !result.hitTarget
+                ? ` You requested about ${result.targetReduction}% reduction, which is not achievable for this file with the current PDF content.`
+                : ""}
             </div>
 
             <div style={s.resultActions}>
