@@ -431,6 +431,9 @@ export default function ToolPage() {
   const { user, credits, updateCredits, logout } = useStore();
   const currentCredits = user ? (credits ?? user?.credits ?? 0) : 0;
   const tool = FEATURES[toolId];
+  const needsExam = tool?.needsExam ?? false;
+  const isCropTool = toolId === "crop";
+  const isImageCompressTool = toolId === "imgcompress";
 
   const [file, setFile] = useState(null);
   const [preview, setPreview] = useState(null);
@@ -511,9 +514,6 @@ export default function ToolPage() {
   }, [preview]);
 
   const liveSpec = liveSpecs[selectedExam]?.[toolId] ?? null;
-  const needsExam = tool?.needsExam ?? false;
-  const isCropTool = toolId === "crop";
-  const isImageCompressTool = toolId === "imgcompress";
   const effectiveCreditCost = tool.credit;
   const cropConfig = getCropModeConfig(cropMode, manualSize);
   const targetKB = useMemo(() => {
