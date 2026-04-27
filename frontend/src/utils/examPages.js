@@ -158,6 +158,35 @@ const COMMON_PHOTO_WARNINGS = [
   "Very small or far-away face reduces quality after resize and compression.",
 ];
 
+const COMMON_REJECTION_REASONS = [
+  "Face too dark, blurry, or too small inside the frame",
+  "Wrong photo size, wrong aspect ratio, or file size above portal limit",
+  "Signature not on white paper or not written in black ink",
+  "Background too messy, textured, or shadow-heavy",
+];
+
+const COMMON_FORM_STEPS = [
+  "Read the official notification first and note the photo, signature, and document rules.",
+  "Prepare photo and signature in the correct size before opening the application portal.",
+  "Keep ID proof, category certificates, and education details ready while filling the form.",
+  "Download and save the final processed files on your device after checking preview.",
+];
+
+const COMMON_FAQS = [
+  {
+    q: "Can I upload a selfie or casual photo?",
+    a: "Only if the face is front-facing, well lit, recent, and clearly visible. Casual, far-away, or cropped social-media photos often fail after resize.",
+  },
+  {
+    q: "Why does my final photo still look weak sometimes?",
+    a: "If the original photo is dark, low-resolution, noisy, or taken against a messy wall, the final result will also be limited. Better source photo gives better output.",
+  },
+  {
+    q: "Should I use mobile camera or studio photo?",
+    a: "A good mobile camera photo in bright front light and plain background usually works well. Studio photo is optional, not mandatory.",
+  },
+];
+
 export const EXAM_PAGE_DATA = [
   { name: "SSC CGL", slug: "ssc-cgl", family: "SSC", summary: "Resize SSC CGL photo and signature to the exact upload format." },
   { name: "SSC CHSL", slug: "ssc-chsl", family: "SSC", summary: "Prepare SSC CHSL photo and signature without guesswork." },
@@ -195,6 +224,9 @@ export const EXAM_PAGE_DATA = [
     syllabus: details.syllabus,
     uploadTips: COMMON_UPLOAD_TIPS,
     uploadWarnings: COMMON_PHOTO_WARNINGS,
+    rejectionReasons: COMMON_REJECTION_REASONS,
+    formSteps: COMMON_FORM_STEPS,
+    faqs: COMMON_FAQS,
   };
 });
 

@@ -6,6 +6,7 @@ import useStore from "../store/useStore";
 import AuthModal from "../components/AuthModal";
 import Sidebar from "../components/Sidebar";
 import TopBar from "../components/TopBar";
+import { getExamByName } from "../utils/examPages";
 
 const FEATURES = {
   photo: { icon: "📸", label: "Exam Photo", credit: 2, color: "#3b82f6", desc: "Resize, compress, and add white background per exam spec", needsExam: true },
@@ -514,6 +515,7 @@ export default function ToolPage() {
   }, [preview]);
 
   const liveSpec = liveSpecs[selectedExam]?.[toolId] ?? null;
+  const selectedExamGuide = selectedExam ? getExamByName(selectedExam) : null;
   const effectiveCreditCost = tool.credit;
   const cropConfig = getCropModeConfig(cropMode, manualSize);
   const targetKB = useMemo(() => {
@@ -832,6 +834,14 @@ export default function ToolPage() {
                 Final output will be <b>{liveSpec.w}x{liveSpec.h}px</b>, kept within <b>{liveSpec.minKB}-{liveSpec.maxKB} KB</b>, and exported on a <b>clean white background</b>.
               </p>
             )}
+            {selectedExamGuide && (
+              <p style={s.examGuideLinkWrap}>
+                Need full exam guidance?{" "}
+                <span style={s.inlineLink} onClick={() => navigate(`/exam/${selectedExamGuide.slug}`)}>
+                  Open {selectedExam} guide →
+                </span>
+              </p>
+            )}
             {toolId === "photo" && (
               <div style={s.guidanceBox}>
                 <p style={s.guidanceTitle}>Upload a good source photo first</p>
@@ -1068,6 +1078,8 @@ const s = {
   specLabel: { color: "#64748b", fontSize: 10, marginBottom: 1 },
   specValue: { color: "#f97316", fontWeight: 700, fontSize: 13 },
   specNote: { color: "#86efac", fontSize: 12, marginTop: 10, lineHeight: 1.5 },
+  examGuideLinkWrap: { margin: "10px 0 0", color: "#94a3b8", fontSize: 12, lineHeight: 1.5 },
+  inlineLink: { color: "#f97316", fontWeight: 700, cursor: "pointer" },
   guidanceBox: { marginTop: 14, background: "#111827", border: "1px solid #1f2937", borderRadius: 12, padding: 14 },
   guidanceTitle: { margin: "0 0 8px", color: "#f8fafc", fontSize: 14, fontWeight: 800 },
   guidanceList: { margin: 0, paddingLeft: 18, color: "#cbd5e1", fontSize: 12, lineHeight: 1.7, display: "grid", gap: 6 },

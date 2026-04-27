@@ -109,6 +109,24 @@ export default function ExamPage() {
         </SectionCard>
 
         <div style={s.infoGrid}>
+          <SectionCard title="Common Rejection Reasons">
+            <ul style={s.list}>
+              {exam.rejectionReasons.map((item) => (
+                <li key={item} style={s.listItem}>{item}</li>
+              ))}
+            </ul>
+          </SectionCard>
+
+          <SectionCard title="Form-Filling Checklist">
+            <ul style={s.list}>
+              {exam.formSteps.map((item) => (
+                <li key={item} style={s.listItem}>{item}</li>
+              ))}
+            </ul>
+          </SectionCard>
+        </div>
+
+        <div style={s.infoGrid}>
           <SectionCard title={`${exam.name} Overview`}>
             <p style={s.infoText}>{exam.overview}</p>
           </SectionCard>
@@ -141,6 +159,17 @@ export default function ExamPage() {
             Instead of guessing dimensions, background, and file size, you can start with the exact {exam.name} preset and generate a cleaner upload-ready file in one flow.
           </p>
         </SectionCard>
+
+        <SectionCard title={`${exam.name} FAQs`}>
+          <div style={s.faqGrid}>
+            {exam.faqs.map((item) => (
+              <div key={item.q} style={s.faqItem}>
+                <p style={s.faqQ}>{item.q}</p>
+                <p style={s.faqA}>{item.a}</p>
+              </div>
+            ))}
+          </div>
+        </SectionCard>
       </div>
     </div>
   );
@@ -170,4 +199,8 @@ const s = {
   listItem: { lineHeight: 1.7 },
   warnPanel: { marginTop: 16, background: "#451a0335", border: "1px solid #92400e", borderRadius: 14, padding: "14px 16px", display: "grid", gap: 8 },
   warnText: { margin: 0, color: "#fdba74", fontSize: 14, lineHeight: 1.65 },
+  faqGrid: { display: "grid", gap: 14 },
+  faqItem: { background: "#111827", border: "1px solid #1f2937", borderRadius: 14, padding: 14 },
+  faqQ: { margin: "0 0 6px", color: "#f8fafc", fontWeight: 800, fontSize: 15 },
+  faqA: { margin: 0, color: "#94a3b8", lineHeight: 1.7, fontSize: 14 },
 };
