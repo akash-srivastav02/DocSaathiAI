@@ -196,6 +196,23 @@ async function loadImage(src) {
   });
 }
 
+async function detectPrimaryFace(src) {
+  if (typeof window === "undefined" || typeof window.FaceDetector === "undefined") {
+    return null;
+  }
+
+  try {
+    const img = await loadImage(src);
+    const bitmap = await createImageBitmap(img);
+    const detector = new window.FaceDetector({ fastMode: true, maxDetectedFaces: 1 });
+    const detections = await detector.detect(bitmap);
+    bitmap.close();
+    return detections?.[0]?.boundingBox || null;
+  } catch {
+    return null;
+  }
+}
+
 async function renderCropImage({ src, cropMode, zoom, offsetX, offsetY, manualSize }) {
   const config = getCropModeConfig(cropMode, manualSize);
   const img = await loadImage(src);
@@ -587,13 +604,24 @@ export default function ToolPage() {
           extension: compressed.extension,
           targetKB,
         };
-      } else {
-        const formData = new FormData();
-        formData.append("image", file);
-        if (needsExam) formData.append("examName", selectedExam);
+        } else {
+          const formData = new FormData();
+          formData.append("image", file);
+          if (needsExam) formData.append("examName", selectedExam);
+          if (toolId === "photo" && preview) {
+            const faceBox = await detectPrimaryFace(preview);
+            if (faceBox) {
+              formData.append("focusBox", JSON.stringify({
+                x: faceBox.x,
+                y: faceBox.y,
+                width: faceBox.width,
+                height: faceBox.height,
+              }));
+            }
+          }
 
-        const endpoint =
-          toolId === "photo" || toolId === "signature"
+          const endpoint =
+            toolId === "photo" || toolId === "signature"
             ? `/process/${toolId}`
             : "/process/photo";
 
@@ -963,7 +991,7 @@ export default function ToolPage() {
               <div style={s.cropInfoRow}>
                 <span style={s.cropInfoPill}>White background applied</span>
                 <span style={s.cropInfoPill}>Exam spec processing</span>
-                <span style={s.cropInfoPill}>Ready for portal upload</span>
+                <span style={s.cropInfoPill}>{result.processing?.focusGuided ? "Face-guided framing" : "Standard framing"}</span>
               </div>
             )}
             <div style={s.resultBtns}>
