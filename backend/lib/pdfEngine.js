@@ -3,6 +3,9 @@ const os = require('os');
 const path = require('path');
 const { spawn } = require('child_process');
 const { PDFDocument } = require('pdf-lib');
+const sharp = require('sharp');
+
+const A4_PAGE = { width: 595, height: 842 };
 
 async function compressPDFBufferWithPdfLib(buffer) {
   const pdfDoc = await PDFDocument.load(buffer, { ignoreEncryption: true });
@@ -150,6 +153,54 @@ async function compressPDFBuffer(buffer, options = {}) {
   }
 }
 
+async function convertImagesToPdfBuffer(imageBuffers, options = {}) {
+  const pageMode = options.pageMode || 'a4';
+  const orientation = options.orientation || 'auto';
+  const pdfDoc = await PDFDocument.create();
+
+  for (const inputBuffer of imageBuffers) {
+    const prepared = await sharp(inputBuffer)
+      .rotate()
+      .flatten({ background: { r: 255, g: 255, b: 255 } })
+      .jpeg({ quality: 92, chromaSubsampling: '4:4:4' })
+      .toBuffer();
+
+    const metadata = await sharp(prepared).metadata();
+    const imgWidth = metadata.width || 1200;
+    const imgHeight = metadata.height || 1600;
+
+    const jpgImage = await pdfDoc.embedJpg(prepared);
+
+    let pageWidth;
+    let pageHeight;
+
+    if (pageMode === 'original') {
+      const baseScale = 0.5;
+      pageWidth = Math.max(300, Math.round(imgWidth * baseScale));
+      pageHeight = Math.max(300, Math.round(imgHeight * baseScale));
+    } else {
+      const isLandscape = orientation === 'landscape' || (orientation === 'auto' && imgWidth > imgHeight);
+      pageWidth = isLandscape ? A4_PAGE.height : A4_PAGE.width;
+      pageHeight = isLandscape ? A4_PAGE.width : A4_PAGE.height;
+    }
+
+    const page = pdfDoc.addPage([pageWidth, pageHeight]);
+    const margin = pageMode === 'original' ? 18 : 24;
+    const usableWidth = pageWidth - margin * 2;
+    const usableHeight = pageHeight - margin * 2;
+    const scale = Math.min(usableWidth / jpgImage.width, usableHeight / jpgImage.height);
+    const drawWidth = jpgImage.width * scale;
+    const drawHeight = jpgImage.height * scale;
+    const x = (pageWidth - drawWidth) / 2;
+    const y = (pageHeight - drawHeight) / 2;
+
+    page.drawImage(jpgImage, { x, y, width: drawWidth, height: drawHeight });
+  }
+
+  return Buffer.from(await pdfDoc.save({ useObjectStreams: true, addDefaultPage: false }));
+}
+
 module.exports = {
   compressPDFBuffer,
+  convertImagesToPdfBuffer,
 };

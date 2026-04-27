@@ -25,6 +25,7 @@ const MOBILE_TOOL_SECTIONS = [
       { label: "Crop & Resize", icon: "CR", path: "/tool/crop" },
       { label: "Image Compressor", icon: "IM", path: "/tool/imgcompress" },
       { label: "PDF Compressor", icon: "PC", path: "/pdf/compress" },
+      { label: "Image to PDF", icon: "IP", path: "/pdf/image-to-pdf" },
     ],
   },
 ];

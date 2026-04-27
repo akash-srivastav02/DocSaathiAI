@@ -34,19 +34,22 @@ const fileFilter = (req, file, cb) => {
     'image/jpeg',
     'image/png', 
     'image/jpg',
+    'image/webp',
+    'image/heic',
+    'image/heif',
     'application/pdf',   // ← PDF must be here
   ];
   if (allowed.includes(file.mimetype)) {
     cb(null, true);
   } else {
-    cb(new Error('Only JPG, PNG, PDF allowed'), false);
+    cb(new Error('Only JPG, PNG, WEBP, HEIC, HEIF, PDF allowed'), false);
   }
 };
 
 const upload = multer({
   storage,
   fileFilter,
-  limits: { fileSize: 10 * 1024 * 1024 }, // 10MB
+  limits: { fileSize: 20 * 1024 * 1024 }, // 20MB
 });
 
 module.exports = upload;

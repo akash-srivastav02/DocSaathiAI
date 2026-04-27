@@ -1,3 +1,4 @@
+import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useStore from "../store/useStore";
 import { EXAM_PAGE_DATA } from "../utils/examPages";
@@ -23,6 +24,12 @@ const FEATURES = [
     route: "/pdf/compress",
   },
   {
+    title: "Image to PDF",
+    desc: "Convert JPG, PNG, WEBP and HEIC images into one clean PDF.",
+    tag: "Convert",
+    route: "/pdf/image-to-pdf",
+  },
+  {
     title: "Photo + Sign Merger",
     desc: "Merge photo, signature and date into one clean upload-ready file.",
     tag: "Merge",
@@ -37,6 +44,44 @@ const EXAMS = EXAM_PAGE_DATA.filter((exam) =>
 export default function Landing() {
   const navigate = useNavigate();
   const { user } = useStore();
+  const [query, setQuery] = useState("");
+
+  const searchResults = useMemo(() => {
+    const normalized = query.trim().toLowerCase();
+    if (!normalized) return [];
+
+    const examMatches = EXAM_PAGE_DATA
+      .filter((exam) =>
+        exam.name.toLowerCase().includes(normalized) ||
+        exam.family.toLowerCase().includes(normalized) ||
+        exam.summary.toLowerCase().includes(normalized)
+      )
+      .slice(0, 6)
+      .map((exam) => ({
+        key: `exam-${exam.slug}`,
+        type: "Exam Guide",
+        title: exam.name,
+        summary: exam.summary,
+        route: `/exam/${exam.slug}`,
+      }));
+
+    const utilityMatches = UTILITY_PAGE_DATA
+      .filter((item) =>
+        item.title.toLowerCase().includes(normalized) ||
+        item.summary.toLowerCase().includes(normalized) ||
+        item.targetLabel.toLowerCase().includes(normalized)
+      )
+      .slice(0, 6)
+      .map((item) => ({
+        key: `utility-${item.slug}`,
+        type: `${item.category} Tool`,
+        title: item.title,
+        summary: item.summary,
+        route: `/utility/${item.slug}`,
+      }));
+
+    return [...examMatches, ...utilityMatches].slice(0, 8);
+  }, [query]);
 
   return (
     <div style={s.root}>
@@ -67,6 +112,26 @@ export default function Landing() {
             <button style={s.primaryBtnLarge} onClick={() => navigate(user ? "/dashboard" : "/auth")}>
               {user ? "Continue to Dashboard" : "Start Exploring"}
             </button>
+          </div>
+          <div style={s.searchShell}>
+            <input
+              type="text"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search exam pages, photo size help, or PDF size tools"
+              style={s.searchInput}
+            />
+            {searchResults.length > 0 && (
+              <div style={s.searchResults}>
+                {searchResults.map((item) => (
+                  <button key={item.key} type="button" style={s.searchResultBtn} onClick={() => navigate(item.route)}>
+                    <span style={s.searchResultType}>{item.type}</span>
+                    <span style={s.searchResultTitle}>{item.title}</span>
+                    <span style={s.searchResultSummary}>{item.summary}</span>
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
           <div style={s.examStrip}>
             {EXAMS.map((exam) => (
@@ -199,6 +264,42 @@ const s = {
   heroAccent: { color: "#f97316", display: "block" },
   heroSub: { color: "#94a3b8", fontSize: 18, lineHeight: 1.65, margin: 0, maxWidth: 760 },
   heroActions: { display: "flex", gap: 12, flexWrap: "wrap" },
+  searchShell: { position: "relative", width: "100%", maxWidth: 760 },
+  searchInput: {
+    width: "100%",
+    background: "#0d1421",
+    border: "1px solid #223047",
+    color: "#f8fafc",
+    borderRadius: 16,
+    padding: "16px 18px",
+    fontSize: 15,
+    outline: "none",
+    boxSizing: "border-box",
+  },
+  searchResults: {
+    marginTop: 10,
+    display: "grid",
+    gap: 10,
+    background: "#0b1220",
+    border: "1px solid #1e293b",
+    borderRadius: 16,
+    padding: 12,
+  },
+  searchResultBtn: {
+    background: "#111827",
+    border: "1px solid #223047",
+    borderRadius: 14,
+    padding: "12px 14px",
+    display: "grid",
+    gap: 4,
+    textAlign: "left",
+    cursor: "pointer",
+    color: "inherit",
+    fontFamily: "inherit",
+  },
+  searchResultType: { color: "#f97316", fontSize: 11, fontWeight: 800, textTransform: "uppercase", letterSpacing: 0.4 },
+  searchResultTitle: { color: "#f8fafc", fontSize: 15, fontWeight: 800 },
+  searchResultSummary: { color: "#94a3b8", fontSize: 13, lineHeight: 1.5 },
   primaryBtn: {
     background: "linear-gradient(135deg,#f97316,#ea580c)",
     border: "none",

@@ -28,13 +28,19 @@ export default function UtilityPage() {
 
         <div style={s.infoGrid}>
           <div style={s.infoCard}>
-            <p style={s.infoLabel}>Target Size</p>
-            <p style={s.infoValue}>{page.targetLabel}</p>
-            <p style={s.infoText}>The tool will open with this target already selected.</p>
+            <p style={s.infoLabel}>{page.kind === "converter" ? "Format" : "Target Size"}</p>
+            <p style={s.infoValue}>{page.kind === "converter" ? page.category : page.targetLabel}</p>
+            <p style={s.infoText}>
+              {page.kind === "converter"
+                ? "The converter will open ready for this file type workflow."
+                : "The tool will open with this target already selected."}
+            </p>
           </div>
           <div style={s.infoCard}>
             <p style={s.infoLabel}>Best For</p>
-            <p style={s.infoValue}>{page.category === "Image" ? "Photo uploads" : "Document uploads"}</p>
+            <p style={s.infoValue}>
+              {page.bestFor || (page.category === "Image" ? "Photo uploads" : page.category === "PDF" ? "Document uploads" : "File conversion")}
+            </p>
             <p style={s.infoText}>Useful for exam portals, college forms, and document verification uploads.</p>
           </div>
         </div>

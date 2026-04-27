@@ -1,37 +1,66 @@
-export const UTILITY_PAGE_DATA = [
+const IMAGE_TARGETS = [10, 20, 30, 50, 100, 200];
+const PDF_TARGETS = [100, 200, 300, 500];
+
+const imagePages = IMAGE_TARGETS.map((target) => ({
+  slug: `compress-image-to-${target}kb`,
+  title: `Compress Image to ${target}KB`,
+  summary: `Reduce image size close to ${target}KB for exam and form uploads without manual trial and error.`,
+  route: `/tool/imgcompress?target=${target}&unit=KB`,
+  targetLabel: `${target}KB`,
+  category: "Image",
+  kind: "target",
+}));
+
+const pdfPages = PDF_TARGETS.map((target) => ({
+  slug: `compress-pdf-to-${target}kb`,
+  title: `Compress PDF to ${target}KB`,
+  summary: `Shrink PDF files toward ${target}KB for upload forms, marksheets, and certificates.`,
+  route: `/pdf/compress?target=${target}&unit=KB`,
+  targetLabel: `${target}KB`,
+  category: "PDF",
+  kind: "target",
+}));
+
+const converterPages = [
   {
-    slug: "compress-image-to-20kb",
-    title: "Compress Image to 20KB",
-    summary: "Reduce image size to around 20KB for exam and form uploads.",
-    route: "/tool/imgcompress?target=20&unit=KB",
-    targetLabel: "20KB",
-    category: "Image",
+    slug: "image-to-pdf-online",
+    title: "Image to PDF",
+    summary: "Convert multiple images into one clean PDF without switching between different sites.",
+    route: "/pdf/image-to-pdf",
+    category: "Converter",
+    kind: "converter",
+    bestFor: "JPG, PNG, WEBP, and HEIC images",
   },
   {
-    slug: "compress-image-to-50kb",
-    title: "Compress Image to 50KB",
-    summary: "Resize and compress image files close to 50KB without manual trial and error.",
-    route: "/tool/imgcompress?target=50&unit=KB",
-    targetLabel: "50KB",
-    category: "Image",
+    slug: "jpg-to-pdf-online",
+    title: "JPG to PDF",
+    summary: "Turn JPG or JPEG images into one PDF for form uploads and document sharing.",
+    route: "/pdf/image-to-pdf?source=jpg",
+    category: "Converter",
+    kind: "converter",
+    bestFor: "JPG and JPEG images",
   },
   {
-    slug: "compress-pdf-to-100kb",
-    title: "Compress PDF to 100KB",
-    summary: "Shrink PDF files toward 100KB for portals with strict upload limits.",
-    route: "/pdf/compress?target=100&unit=KB",
-    targetLabel: "100KB",
-    category: "PDF",
+    slug: "png-to-pdf-online",
+    title: "PNG to PDF",
+    summary: "Convert PNG images to PDF while keeping them neatly arranged page by page.",
+    route: "/pdf/image-to-pdf?source=png",
+    category: "Converter",
+    kind: "converter",
+    bestFor: "PNG screenshots and form images",
   },
   {
-    slug: "compress-pdf-to-200kb",
-    title: "Compress PDF to 200KB",
-    summary: "Compress marksheets, certificates, and forms close to 200KB for upload.",
-    route: "/pdf/compress?target=200&unit=KB",
-    targetLabel: "200KB",
-    category: "PDF",
+    slug: "webp-to-pdf-online",
+    title: "WEBP to PDF",
+    summary: "Convert WEBP images into a shareable PDF for upload and print workflows.",
+    route: "/pdf/image-to-pdf?source=webp",
+    category: "Converter",
+    kind: "converter",
+    bestFor: "WEBP images downloaded from modern phones and browsers",
   },
 ];
+
+export const UTILITY_PAGE_DATA = [...imagePages, ...pdfPages, ...converterPages];
 
 export function getUtilityPageBySlug(slug) {
   return UTILITY_PAGE_DATA.find((item) => item.slug === slug) || null;

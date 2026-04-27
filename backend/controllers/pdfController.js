@@ -1,5 +1,5 @@
 const { uploadPDFBuffer } = require('../utils/cloudinary');
-const { compressPDFBuffer } = require('../lib/pdfEngine');
+const { compressPDFBuffer, convertImagesToPdfBuffer } = require('../lib/pdfEngine');
 
 const compressPDF = async (req, res) => {
   try {
@@ -63,4 +63,57 @@ const compressPDF = async (req, res) => {
   }
 };
 
-module.exports = { compressPDF };
+const imageToPdf = async (req, res) => {
+  try {
+    const user = req.user || null;
+
+    if (!req.files || req.files.length === 0) {
+      return res.status(400).json({ message: 'Upload at least one image.' });
+    }
+
+    const allowed = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/heic', 'image/heif'];
+    const invalid = req.files.find((file) => !allowed.includes(file.mimetype));
+    if (invalid) {
+      return res.status(400).json({ message: 'Only JPG, PNG, WEBP, HEIC, and HEIF images are supported.' });
+    }
+
+    const pageMode = req.body.pageMode === 'original' ? 'original' : 'a4';
+    const orientation = ['auto', 'portrait', 'landscape'].includes(req.body.orientation)
+      ? req.body.orientation
+      : 'auto';
+
+    const pdfBuffer = await convertImagesToPdfBuffer(
+      req.files.map((file) => file.buffer),
+      { pageMode, orientation }
+    );
+
+    let uploadResult;
+    try {
+      uploadResult = await uploadPDFBuffer(pdfBuffer, 'formfixer/pdfs');
+    } catch (error) {
+      console.error('[ImageToPDF] Cloudinary upload error:', error.message);
+      return res.status(500).json({ message: 'Upload failed. Check Cloudinary credentials.' });
+    }
+
+    return res.json({
+      url: uploadResult.secure_url,
+      originalCount: req.files.length,
+      pageCount: req.files.length,
+      pdfKB: Math.round(pdfBuffer.length / 1024),
+      hasWatermark: true,
+      creditsLeft: user ? user.credits : null,
+      creditCost: 2,
+      engine: 'formfixer-image-to-pdf',
+      pageMode,
+      orientation,
+    });
+  } catch (error) {
+    console.error('[ImageToPDF] Error:', error.message);
+    return res.status(500).json({
+      message: 'Image to PDF conversion failed.',
+      error: error.message,
+    });
+  }
+};
+
+module.exports = { compressPDF, imageToPdf };

@@ -9,6 +9,7 @@ const TOOL_CREDIT_COST = {
   signature: 2,
   crop: 2,
   imgcompress: 2,
+  imgtopdf: 2,
   pdfcompress: 2,
   merger: 6,
 };

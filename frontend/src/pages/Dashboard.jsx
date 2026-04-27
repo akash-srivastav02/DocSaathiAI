@@ -82,6 +82,16 @@ const OTHER_TOOLS = [
     soon: false,
   },
   {
+    id: "imgtopdf",
+    icon: "🧾",
+    label: "Image to PDF",
+    credit: 2,
+    color: "#14b8a6",
+    route: "/pdf/image-to-pdf",
+    desc: "Convert multiple images into one clean PDF.",
+    soon: false,
+  },
+  {
     id: "pdfeditor",
     icon: "📝",
     label: "PDF Editor",

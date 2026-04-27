@@ -56,12 +56,52 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://formfixer.in/exam/rrb-ntpc</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://formfixer.in/exam/jee-main</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://formfixer.in/exam/neet-ug</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://formfixer.in/exam/upsc-cds</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://formfixer.in/utility/compress-image-to-20kb</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://formfixer.in/utility/compress-image-to-10kb</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://formfixer.in/utility/compress-image-to-30kb</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://formfixer.in/utility/compress-image-to-50kb</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://formfixer.in/utility/compress-image-to-100kb</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://formfixer.in/utility/compress-image-to-200kb</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -72,6 +112,36 @@
   </url>
   <url>
     <loc>https://formfixer.in/utility/compress-pdf-to-200kb</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://formfixer.in/utility/compress-pdf-to-300kb</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://formfixer.in/utility/compress-pdf-to-500kb</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://formfixer.in/utility/image-to-pdf-online</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://formfixer.in/utility/jpg-to-pdf-online</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://formfixer.in/utility/png-to-pdf-online</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://formfixer.in/utility/webp-to-pdf-online</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
