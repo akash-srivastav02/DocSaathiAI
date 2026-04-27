@@ -832,6 +832,17 @@ export default function ToolPage() {
                 Final output will be <b>{liveSpec.w}x{liveSpec.h}px</b>, kept within <b>{liveSpec.minKB}-{liveSpec.maxKB} KB</b>, and exported on a <b>clean white background</b>.
               </p>
             )}
+            {toolId === "photo" && (
+              <div style={s.guidanceBox}>
+                <p style={s.guidanceTitle}>Upload a good source photo first</p>
+                <ul style={s.guidanceList}>
+                  <li>Use a front-facing passport-style photo where your face is clearly visible.</li>
+                  <li>Take the photo in bright light. Avoid dark rooms, shadows, and heavy backlight.</li>
+                  <li>Stand against a plain wall if possible. Damaged or messy backgrounds reduce output quality.</li>
+                  <li>Do not upload far-away, low-resolution, selfie-angle, or cropped social-media photos.</li>
+                </ul>
+              </div>
+            )}
           </div>
         )}
 
@@ -1057,6 +1068,9 @@ const s = {
   specLabel: { color: "#64748b", fontSize: 10, marginBottom: 1 },
   specValue: { color: "#f97316", fontWeight: 700, fontSize: 13 },
   specNote: { color: "#86efac", fontSize: 12, marginTop: 10, lineHeight: 1.5 },
+  guidanceBox: { marginTop: 14, background: "#111827", border: "1px solid #1f2937", borderRadius: 12, padding: 14 },
+  guidanceTitle: { margin: "0 0 8px", color: "#f8fafc", fontSize: 14, fontWeight: 800 },
+  guidanceList: { margin: 0, paddingLeft: 18, color: "#cbd5e1", fontSize: 12, lineHeight: 1.7, display: "grid", gap: 6 },
   uploadZone: { border: "2px dashed", borderRadius: 12, minHeight: 150, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", background: "#111827", marginBottom: 10, overflow: "hidden", transition: "all 0.2s", cursor: "pointer" },
   uploadText: { color: "#94a3b8", fontWeight: 600, fontSize: 14, margin: 0 },
   uploadSub: { color: "#475569", fontSize: 11, marginTop: 3 },
