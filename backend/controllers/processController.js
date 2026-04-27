@@ -53,6 +53,7 @@ const processImage = async (req, res) => {
       minKB: spec.minKB,
       maxKB: spec.maxKB,
       focusBox: toolType === 'photo' ? focusBox : null,
+      mode: toolType === 'signature' ? 'signature' : 'photo',
     });
   } catch (error) {
     console.error('[Process] image engine error:', error.message);

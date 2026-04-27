@@ -38,7 +38,7 @@ function buildFocusCrop({ focusBox, imageWidth, imageHeight, targetWidth, target
   const aspect = targetWidth / targetHeight;
   const faceCenterX = focusBox.x + focusBox.width / 2;
   const faceCenterY = focusBox.y + focusBox.height / 2;
-  let cropHeight = Math.max(focusBox.height * 3.4, focusBox.width * 3.8);
+  let cropHeight = Math.max(focusBox.height * 4.25, focusBox.width * 4.1);
   cropHeight = Math.min(cropHeight, imageHeight);
   let cropWidth = cropHeight * aspect;
 
@@ -48,7 +48,7 @@ function buildFocusCrop({ focusBox, imageWidth, imageHeight, targetWidth, target
   }
 
   let cropX = faceCenterX - cropWidth / 2;
-  let cropY = faceCenterY - cropHeight * 0.38;
+  let cropY = faceCenterY - cropHeight * 0.34;
   cropX = clamp(cropX, 0, imageWidth - cropWidth);
   cropY = clamp(cropY, 0, imageHeight - cropHeight);
 
@@ -65,6 +65,7 @@ async function createExamImagePipelineFactory(inputBuffer, {
   height,
   background = { r: 255, g: 255, b: 255 },
   focusBox = null,
+  mode = 'photo',
 }) {
   const rotated = sharp(inputBuffer).rotate();
   const metadata = await rotated.metadata();
@@ -87,26 +88,50 @@ async function createExamImagePipelineFactory(inputBuffer, {
         pipeline = pipeline.extract(focusCrop);
       }
 
+      if (mode === 'photo') {
+        return pipeline
+          .ensureAlpha()
+          .resize(width * 2, height * 2, {
+            fit: 'contain',
+            position: focusCrop ? 'centre' : sharp.strategy.attention,
+            background: { ...background, alpha: 1 },
+            kernel: sharp.kernel.lanczos3,
+          })
+          .flatten({ background })
+          .normalise()
+          .modulate({ brightness: 1.02, saturation: 1.04 })
+          .sharpen({ sigma: 0.55, m1: 0.7, m2: 0.4 })
+          .resize(width, height, {
+            fit: 'fill',
+            kernel: sharp.kernel.lanczos3,
+          });
+      }
+
       return pipeline
+        .ensureAlpha()
         .resize(width, height, {
-          fit: 'cover',
-          position: focusCrop ? 'centre' : 'top',
+          fit: 'contain',
+          position: 'centre',
+          background: { ...background, alpha: 1 },
           kernel: sharp.kernel.lanczos3,
         })
         .flatten({ background })
-        .sharpen({ sigma: 0.8, m1: 1.5, m2: 0.7 });
+        .sharpen({ sigma: 0.4, m1: 0.5, m2: 0.3 });
     },
     focusGuided: Boolean(focusCrop),
   };
 }
 
-async function processExamImageBuffer(inputBuffer, { width, height, minKB, maxKB, focusBox = null }) {
+async function processExamImageBuffer(inputBuffer, { width, height, minKB, maxKB, focusBox = null, mode = 'photo' }) {
   const { pipelineFactory, focusGuided } = await createExamImagePipelineFactory(inputBuffer, {
     width,
     height,
     focusBox,
+    mode,
   });
-  const attemptedQualities = [92, 90, 88, 86, 84, 82, 80, 78, 76, 74, 72];
+  const attemptedQualities = mode === 'photo'
+    ? [96, 94, 92, 90, 88, 86, 84, 82]
+    : [94, 92, 90, 88, 86, 84, 82, 80, 78];
   let bestBuffer = null;
   let bestMeta = null;
 

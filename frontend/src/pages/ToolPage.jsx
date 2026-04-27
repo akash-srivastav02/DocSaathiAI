@@ -829,7 +829,7 @@ export default function ToolPage() {
             )}
             {selectedExam && liveSpec && (
               <p style={s.specNote}>
-                Will resize to <b>{liveSpec.w}x{liveSpec.h}px</b>, compress to <b>{liveSpec.minKB}-{liveSpec.maxKB} KB</b>, and apply <b>white background only</b>.
+                Final output will be <b>{liveSpec.w}x{liveSpec.h}px</b>, kept within <b>{liveSpec.minKB}-{liveSpec.maxKB} KB</b>, and exported on a <b>clean white background</b>.
               </p>
             )}
           </div>
@@ -1010,9 +1010,9 @@ export default function ToolPage() {
             )}
             {toolId === "photo" && (
               <div style={s.cropInfoRow}>
-                <span style={s.cropInfoPill}>White background applied</span>
-                <span style={s.cropInfoPill}>Exam spec processing</span>
-                <span style={s.cropInfoPill}>{result.processing?.focusGuided ? "Face-guided framing" : "Standard framing"}</span>
+                <span style={s.cropInfoPill}>Clean white background</span>
+                <span style={s.cropInfoPill}>Exact exam-size export</span>
+                <span style={s.cropInfoPill}>{result.processing?.focusGuided ? "Face-guided framing" : "Centered portrait framing"}</span>
               </div>
             )}
             <div style={s.resultBtns}>
@@ -1075,7 +1075,7 @@ const s = {
   overlay: { position: "fixed", inset: 0, background: "#000000aa", zIndex: 1000, display: "flex", alignItems: "center", justifyContent: "center", padding: 16 },
   modal: { background: "#0d1421", border: "1px solid #374151", borderRadius: 18, padding: "26px 22px", maxWidth: 360, width: "100%", textAlign: "center" },
   previewShell: { position: "relative", maxWidth: 420, margin: "18px auto 0", borderRadius: 14, overflow: "hidden", border: "1px solid #14532d", background: "#03120b" },
-  resultImage: { display: "block", width: "100%", maxHeight: 420, objectFit: "contain", filter: "brightness(0.96)" },
+  resultImage: { display: "block", width: "100%", maxHeight: 420, objectFit: "contain" },
   previewWatermarkLayer: { position: "absolute", inset: 0, display: "grid", gridTemplateColumns: "1fr 1fr", alignContent: "space-evenly", justifyItems: "center", padding: 16, background: "linear-gradient(180deg, rgba(5,46,22,0.08), rgba(5,46,22,0.18))", pointerEvents: "none" },
   previewWatermarkText: { color: "rgba(255,255,255,0.2)", fontWeight: 800, fontSize: 15, letterSpacing: 2, transform: "rotate(-24deg)", textShadow: "0 0 10px rgba(0,0,0,0.35)" },
   cameraError: { background: "#1e293b", borderRadius: 10, padding: 20, color: "#94a3b8", fontSize: 13, textAlign: "center", marginBottom: 14 },
