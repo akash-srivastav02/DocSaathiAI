@@ -41,42 +41,45 @@ const EXAMS = EXAM_PAGE_DATA.filter((exam) =>
   ["SSC CGL", "SSC CHSL", "SBI PO", "IBPS Clerk", "RRB NTPC", "JEE Main", "NEET UG", "UP Police"].includes(exam.name)
 );
 
+const normalizeText = (value) => String(value || "").toLowerCase();
+
 export default function Landing() {
   const navigate = useNavigate();
   const { user } = useStore();
   const [query, setQuery] = useState("");
 
   const searchResults = useMemo(() => {
-    const normalized = query.trim().toLowerCase();
+    const normalized = normalizeText(query.trim());
     if (!normalized) return [];
 
     const examMatches = EXAM_PAGE_DATA
       .filter((exam) =>
-        exam.name.toLowerCase().includes(normalized) ||
-        exam.family.toLowerCase().includes(normalized) ||
-        exam.summary.toLowerCase().includes(normalized)
+        normalizeText(exam.name).includes(normalized) ||
+        normalizeText(exam.family).includes(normalized) ||
+        normalizeText(exam.summary).includes(normalized)
       )
       .slice(0, 6)
       .map((exam) => ({
         key: `exam-${exam.slug}`,
         type: "Exam Guide",
-        title: exam.name,
-        summary: exam.summary,
+        title: exam.name || "Exam Guide",
+        summary: exam.summary || "Open the exam page, document rules, and tool links.",
         route: `/exam/${exam.slug}`,
       }));
 
     const utilityMatches = UTILITY_PAGE_DATA
       .filter((item) =>
-        item.title.toLowerCase().includes(normalized) ||
-        item.summary.toLowerCase().includes(normalized) ||
-        item.targetLabel.toLowerCase().includes(normalized)
+        normalizeText(item.title).includes(normalized) ||
+        normalizeText(item.summary).includes(normalized) ||
+        normalizeText(item.targetLabel).includes(normalized) ||
+        normalizeText(item.bestFor).includes(normalized)
       )
       .slice(0, 6)
       .map((item) => ({
         key: `utility-${item.slug}`,
-        type: `${item.category} Tool`,
-        title: item.title,
-        summary: item.summary,
+        type: `${item.category || "Utility"} Tool`,
+        title: item.title || "Utility Tool",
+        summary: item.summary || "Open the matching tool page and continue from there.",
         route: `/utility/${item.slug}`,
       }));
 
