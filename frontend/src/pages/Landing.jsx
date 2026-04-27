@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import useStore from "../store/useStore";
 import { EXAM_PAGE_DATA } from "../utils/examPages";
+import { UTILITY_PAGE_DATA } from "../utils/utilityPages";
 
 const FEATURES = [
   {
@@ -114,6 +115,28 @@ export default function Landing() {
           <p style={s.exploreNote}>
             Users can explore these tools first. Login or signup can happen later when they want a clean download.
           </p>
+        </section>
+
+        <section style={s.featureSection}>
+          <div style={s.sectionHead}>
+            <h2 style={s.sectionTitle}>Popular size-based tools</h2>
+            <p style={s.sectionSub}>Direct pages for common upload limits like 20KB, 50KB, 100KB, and 200KB.</p>
+          </div>
+          <div style={s.featureGrid}>
+            {UTILITY_PAGE_DATA.map((item) => (
+              <button
+                key={item.slug}
+                type="button"
+                style={s.featureCard}
+                onClick={() => navigate(`/utility/${item.slug}`)}
+              >
+                <span style={s.featureTag}>{item.category}</span>
+                <h3 style={s.featureTitle}>{item.title}</h3>
+                <p style={s.featureDesc}>{item.summary}</p>
+                <span style={s.featureLink}>Open page →</span>
+              </button>
+            ))}
+          </div>
         </section>
 
         <section style={s.ctaSection}>

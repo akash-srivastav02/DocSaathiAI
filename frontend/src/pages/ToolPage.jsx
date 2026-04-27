@@ -480,6 +480,19 @@ export default function ToolPage() {
   }, [searchParams]);
 
   useEffect(() => {
+    if (!isImageCompressTool) return;
+    const targetFromQuery = searchParams.get("target");
+    const unitFromQuery = searchParams.get("unit");
+
+    if (targetFromQuery) {
+      setTargetValue(targetFromQuery);
+    }
+    if (unitFromQuery === "KB" || unitFromQuery === "MB") {
+      setTargetUnit(unitFromQuery);
+    }
+  }, [isImageCompressTool, searchParams]);
+
+  useEffect(() => {
     if (!preview) {
       setImageNaturalSize({ width: 0, height: 0 });
       return;

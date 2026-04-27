@@ -36,6 +36,46 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://formfixer.in/exam/ssc-cgl</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://formfixer.in/exam/ssc-chsl</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://formfixer.in/exam/sbi-po</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://formfixer.in/exam/ibps-clerk</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://formfixer.in/utility/compress-image-to-20kb</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://formfixer.in/utility/compress-image-to-50kb</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://formfixer.in/utility/compress-pdf-to-100kb</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://formfixer.in/utility/compress-pdf-to-200kb</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://formfixer.in/merger</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>

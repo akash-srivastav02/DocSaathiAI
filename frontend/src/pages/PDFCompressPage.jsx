@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import API from "../api/axios";
 import useStore from "../store/useStore";
 import AuthModal from "../components/AuthModal";
@@ -39,6 +39,7 @@ function WatermarkedPdfPreview({ fileName }) {
 
 export default function PDFCompressPage() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { user, credits, updateCredits, logout } = useStore();
   const currentCredits = user ? (credits ?? user?.credits ?? 0) : 0;
 
@@ -60,6 +61,18 @@ export default function PDFCompressPage() {
     if (!val || val <= 0) return null;
     return targetUnit === "MB" ? Math.round(val * 1024) : Math.round(val);
   };
+
+  useEffect(() => {
+    const targetFromQuery = searchParams.get("target");
+    const unitFromQuery = searchParams.get("unit");
+
+    if (targetFromQuery) {
+      setTargetValue(targetFromQuery);
+    }
+    if (unitFromQuery === "KB" || unitFromQuery === "MB") {
+      setTargetUnit(unitFromQuery);
+    }
+  }, [searchParams]);
 
   const handleFile = (selectedFile) => {
     setFileError("");

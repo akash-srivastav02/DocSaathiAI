@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Landing         from "./pages/Landing";
 import Auth            from "./pages/Auth";
 import ExamPage        from "./pages/ExamPage";
+import UtilityPage     from "./pages/UtilityPage";
 import Dashboard       from "./pages/Dashboard";
 import ToolPage        from "./pages/ToolPage";
 import PDFCompressPage from "./pages/PDFCompressPage";
@@ -25,6 +26,7 @@ function App() {
         <Route path="/" element={<Landing />} />
         <Route path="/auth" element={<Auth />} />
         <Route path="/exam/:examSlug" element={<ExamPage />} />
+        <Route path="/utility/:utilitySlug" element={<UtilityPage />} />
 
         <Route path="/tool/:toolId" element={<ToolPage />} />
         <Route path="/pdf/compress" element={<PDFCompressPage />} />
