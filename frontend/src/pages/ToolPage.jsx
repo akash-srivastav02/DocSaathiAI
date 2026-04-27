@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import Webcam from "react-webcam";
 import API from "../api/axios";
 import useStore from "../store/useStore";
@@ -427,6 +427,7 @@ function CropEditor({
 export default function ToolPage() {
   const { toolId } = useParams();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { user, credits, updateCredits, logout } = useStore();
   const currentCredits = user ? (credits ?? user?.credits ?? 0) : 0;
   const tool = FEATURES[toolId];
@@ -470,6 +471,13 @@ export default function ToolPage() {
       .catch(() => {})
       .finally(() => setSpecsLoading(false));
   }, []);
+
+  useEffect(() => {
+    const examFromQuery = searchParams.get("exam");
+    if (examFromQuery) {
+      setSelectedExam(examFromQuery);
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     if (!preview) {

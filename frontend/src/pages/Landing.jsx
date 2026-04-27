@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import useStore from "../store/useStore";
+import { EXAM_PAGE_DATA } from "../utils/examPages";
 
 const FEATURES = [
   {
@@ -28,7 +29,9 @@ const FEATURES = [
   },
 ];
 
-const EXAMS = ["SSC CGL", "SSC CHSL", "SBI PO", "IBPS Clerk", "RRB NTPC", "JEE Main", "NEET UG", "UP Police"];
+const EXAMS = EXAM_PAGE_DATA.filter((exam) =>
+  ["SSC CGL", "SSC CHSL", "SBI PO", "IBPS Clerk", "RRB NTPC", "JEE Main", "NEET UG", "UP Police"].includes(exam.name)
+);
 
 export default function Landing() {
   const navigate = useNavigate();
@@ -66,7 +69,9 @@ export default function Landing() {
           </div>
           <div style={s.examStrip}>
             {EXAMS.map((exam) => (
-              <span key={exam} style={s.examPill}>{exam}</span>
+              <button key={exam.slug} type="button" style={s.examPillBtn} onClick={() => navigate(`/exam/${exam.slug}`)}>
+                {exam.name}
+              </button>
             ))}
           </div>
         </section>
@@ -210,7 +215,7 @@ const s = {
     cursor: "pointer",
   },
   examStrip: { display: "flex", gap: 10, flexWrap: "wrap", marginTop: 4 },
-  examPill: {
+  examPillBtn: {
     background: "#0d1421",
     border: "1px solid #223047",
     color: "#cbd5e1",
@@ -218,6 +223,7 @@ const s = {
     padding: "7px 12px",
     fontSize: 13,
     fontWeight: 600,
+    cursor: "pointer",
   },
   metrics: {
     display: "grid",
