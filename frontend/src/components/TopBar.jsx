@@ -17,7 +17,7 @@ export default function TopBar({ user, credits, onLogout }) {
   const { theme, isDark, toggleTheme } = useTheme();
   const firstName = user?.name?.split(" ")[0] || "User";
   const [showMenu, setShowMenu] = useState(false);
-  const t = isDark ? darkTheme : lightTheme;
+  const t = darkTheme;
 
   useEffect(() => {
     setShowMenu(false);

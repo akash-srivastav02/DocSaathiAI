@@ -59,6 +59,22 @@ body {
   min-height: 100vh;
 }
 
+.ff-app-shell {
+  min-height: 100vh;
+}
+
+.ff-app-shell--light:not(.ff-app-shell--landing) {
+  background: #f4efe7;
+  filter: invert(1) hue-rotate(180deg);
+}
+
+.ff-app-shell--light:not(.ff-app-shell--landing) img,
+.ff-app-shell--light:not(.ff-app-shell--landing) video,
+.ff-app-shell--light:not(.ff-app-shell--landing) canvas,
+.ff-app-shell--light:not(.ff-app-shell--landing) svg {
+  filter: invert(1) hue-rotate(180deg);
+}
+
 button,
 input,
 textarea,

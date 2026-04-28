@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import Landing         from "./pages/Landing";
 import Auth            from "./pages/Auth";
 import ExamPage        from "./pages/ExamPage";
@@ -12,6 +12,7 @@ import MergerPage      from "./pages/MergerPage";
 import Pricing         from "./pages/Pricing";
 import Vault           from "./pages/Vault";
 import useStore        from "./store/useStore";
+import useTheme        from "./hooks/useTheme";
 
 // Protected route wrapper
 function Protected({ children }) {
@@ -22,6 +23,27 @@ function Protected({ children }) {
 function App() {
   return (
     <BrowserRouter>
+      <ThemedRoutes />
+    </BrowserRouter>
+  );
+}
+
+export default App;
+
+function ThemedRoutes() {
+  const { isDark } = useTheme();
+  const location = useLocation();
+  const isLanding = location.pathname === "/";
+  const shellClass = [
+    "ff-app-shell",
+    isDark ? "ff-app-shell--dark" : "ff-app-shell--light",
+    isLanding ? "ff-app-shell--landing" : "",
+  ]
+    .filter(Boolean)
+    .join(" ");
+
+  return (
+    <div className={shellClass}>
       <Routes>
         {/* Public */}
         <Route path="/" element={<Landing />} />
@@ -43,8 +65,6 @@ function App() {
         {/* Fallback */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
-    </BrowserRouter>
+    </div>
   );
 }
-
-export default App;
