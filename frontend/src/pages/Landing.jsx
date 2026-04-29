@@ -38,6 +38,30 @@ const FEATURES = [
   },
 ];
 
+const DIFFERENTIATORS = [
+  {
+    title: "Rejection-proof guidance",
+    desc: "Exam pages explain upload rules, common mistakes, and document requirements before users waste time.",
+  },
+  {
+    title: "One workspace, not tool-hopping",
+    desc: "Photo, signature, merge, PDF, and converter flows stay connected instead of pushing users across random sites.",
+  },
+  {
+    title: "Preview-first pricing",
+    desc: "Users can try, preview, and understand the result before paying for a clean final download.",
+  },
+];
+
+const SEARCH_LINKS = [
+  { label: "SSC CGL photo resize", route: "/exam/ssc-cgl" },
+  { label: "UPSC CDS photo resize", route: "/exam/upsc-cds" },
+  { label: "Compress image to 20KB", route: "/utility/compress-image-to-20kb" },
+  { label: "Compress PDF to 200KB", route: "/utility/compress-pdf-to-200kb" },
+  { label: "JPG to PDF online", route: "/utility/jpg-to-pdf-online" },
+  { label: "NEET UG photo resize", route: "/exam/neet-ug" },
+];
+
 const EXAMS = EXAM_PAGE_DATA.filter((exam) =>
   ["SSC CGL", "SSC CHSL", "SBI PO", "IBPS Clerk", "RRB NTPC", "JEE Main", "NEET UG", "UP Police"].includes(exam.name)
 );
@@ -256,6 +280,71 @@ export default function Landing() {
           </div>
         </section>
 
+        <section style={{ ...s.advantageSection, ...t.advantageSection }}>
+          <div style={s.advantageCopy}>
+            <div style={{ ...s.heroBadge, ...t.heroBadge }}>Why users stay</div>
+            <h2 style={{ ...s.sectionTitle, ...t.sectionTitle }}>Why FormFixer feels better than generic online tools</h2>
+            <p style={{ ...s.sectionSub, ...t.sectionSub }}>
+              The tools themselves are not enough. Aspirants need guidance, faster decisions, and fewer chances of rejection.
+            </p>
+            <div style={s.differentiatorList}>
+              {DIFFERENTIATORS.map((item) => (
+                <div key={item.title} style={{ ...s.differentiatorCard, ...t.differentiatorCard }} className="ff-glass ff-hover-lift">
+                  <h3 style={{ ...s.differentiatorTitle, ...t.differentiatorTitle }}>{item.title}</h3>
+                  <p style={{ ...s.differentiatorDesc, ...t.differentiatorDesc }}>{item.desc}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div style={s.stageWrap}>
+            <div className="ff-stage">
+              <div className="ff-stage__panel ff-stage__panel--main">
+                <span className="ff-stage__eyebrow">Aspirant Flow</span>
+                <strong className="ff-stage__title">Upload → Fix → Preview → Download</strong>
+                <p className="ff-stage__text">One smooth workflow instead of guessing file size, switching tabs, and retrying uploads.</p>
+              </div>
+              <div className="ff-stage__card ff-stage__card--one">
+                <span className="ff-stage__chip">Photo</span>
+                <strong>Exam preset</strong>
+                <small>Resize and KB fix</small>
+              </div>
+              <div className="ff-stage__card ff-stage__card--two">
+                <span className="ff-stage__chip">Merge</span>
+                <strong>Photo + Sign / Date</strong>
+                <small>One clean output</small>
+              </div>
+              <div className="ff-stage__card ff-stage__card--three">
+                <span className="ff-stage__chip">PDF</span>
+                <strong>Compress and convert</strong>
+                <small>Upload-ready docs</small>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section style={s.featureSection}>
+          <div style={s.sectionHead}>
+            <h2 style={{ ...s.sectionTitle, ...t.sectionTitle }}>Search by exact problem</h2>
+            <p style={{ ...s.sectionSub, ...t.sectionSub }}>
+              These are the kinds of queries we want to win on Google, and the pages users actually need.
+            </p>
+          </div>
+          <div style={s.searchIntentGrid}>
+            {SEARCH_LINKS.map((item) => (
+              <button
+                key={item.label}
+                type="button"
+                style={{ ...s.searchIntentBtn, ...t.searchIntentBtn }}
+                className="ff-glass ff-hover-lift"
+                onClick={() => navigate(item.route)}
+              >
+                {item.label}
+              </button>
+            ))}
+          </div>
+        </section>
+
         <section style={{ ...s.ctaSection, ...t.ctaSection }} className="ff-glass">
           <h2 style={{ ...s.sectionTitle, ...t.sectionTitle }}>Start free, upgrade only when needed</h2>
           <p style={{ ...s.sectionSub, ...t.sectionSub }}>
@@ -440,6 +529,32 @@ const s = {
     gap: 12,
     alignItems: "flex-start",
   },
+  advantageSection: {
+    display: "grid",
+    gridTemplateColumns: "minmax(0, 1.05fr) minmax(320px, 0.95fr)",
+    gap: 24,
+    alignItems: "center",
+    marginBottom: 40,
+  },
+  advantageCopy: { display: "flex", flexDirection: "column", gap: 14 },
+  differentiatorList: { display: "grid", gap: 12 },
+  differentiatorCard: { borderRadius: 16, padding: "16px 18px" },
+  differentiatorTitle: { margin: "0 0 6px", fontSize: 18, fontWeight: 800 },
+  differentiatorDesc: { margin: 0, fontSize: 14, lineHeight: 1.65 },
+  stageWrap: { minHeight: 360, display: "flex", alignItems: "center", justifyContent: "center" },
+  searchIntentGrid: {
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+    gap: 12,
+  },
+  searchIntentBtn: {
+    textAlign: "left",
+    borderRadius: 14,
+    padding: "16px 18px",
+    border: "1px solid transparent",
+    cursor: "pointer",
+    fontWeight: 700,
+  },
   themeBtn: {
     display: "flex",
     alignItems: "center",
@@ -506,6 +621,10 @@ function getThemeStyles(isDark) {
         featureDesc: { color: "#94a3b8" },
         featureLink: { color: "#fda75a" },
         exploreNote: { color: "#64748b" },
+        differentiatorCard: {},
+        differentiatorTitle: { color: "#f8fafc" },
+        differentiatorDesc: { color: "#94a3b8" },
+        searchIntentBtn: { color: "#e6edf8", borderColor: "rgba(79, 97, 130, 0.2)", background: "rgba(13, 20, 33, 0.72)" },
         themeBtn: {
           background: "rgba(15, 23, 42, 0.72)",
           borderColor: "rgba(96, 165, 250, 0.18)",
@@ -564,6 +683,10 @@ function getThemeStyles(isDark) {
         featureDesc: { color: "#5d6b7f" },
         featureLink: { color: "#c24c02" },
         exploreNote: { color: "#7a8799" },
+        differentiatorCard: {},
+        differentiatorTitle: { color: "#162033" },
+        differentiatorDesc: { color: "#5d6b7f" },
+        searchIntentBtn: { color: "#162033", borderColor: "rgba(133, 99, 66, 0.12)", background: "rgba(255, 251, 246, 0.86)" },
         themeBtn: {
           background: "rgba(255, 252, 247, 0.88)",
           borderColor: "rgba(133, 99, 66, 0.12)",
