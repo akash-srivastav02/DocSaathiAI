@@ -9,7 +9,7 @@ export default function UtilityPage() {
 
   useEffect(() => {
     if (!page) return;
-    document.title = `${page.title} | FormFixer`;
+    document.title = `${page.title} Online | FormFixer`;
   }, [page]);
 
   if (!page) {
@@ -23,7 +23,9 @@ export default function UtilityPage() {
         <div style={s.hero}>
           <span style={s.badge}>{page.category} Utility</span>
           <h1 style={s.title}>{page.title}</h1>
-          <p style={s.sub}>{page.summary}</p>
+          <p style={s.sub}>
+            {page.summary} Use this page when you need a direct online fix without searching across multiple tools.
+          </p>
         </div>
 
         <div style={s.infoGrid}>

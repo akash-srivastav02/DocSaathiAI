@@ -7,14 +7,6 @@ import Sidebar from "../components/Sidebar";
 import TopBar from "../components/TopBar";
 import useIsMobile from "../hooks/useIsMobile";
 
-const FALLBACK_EXAMS = [
-  "SSC CGL", "SSC CHSL", "SSC MTS", "SSC GD",
-  "SBI PO", "SBI Clerk", "IBPS PO", "IBPS Clerk", "IBPS RRB",
-  "RRB NTPC", "RRB Group D", "UPSC CSE", "Delhi Police Constable",
-  "JEE Main", "NEET UG", "NDA", "AFCAT", "GATE",
-  "UP Police", "Bihar Police", "Agniveer Army",
-];
-
 function UploadBox({ label, icon, preview, onFile, disabled }) {
   const id = `inp_${label.replace(/\s/g, "")}`;
 
@@ -97,7 +89,6 @@ export default function MergerPage() {
   const [photoPreview, setPhotoPreview] = useState(null);
   const [signFile, setSignFile] = useState(null);
   const [signPreview, setSignPreview] = useState(null);
-  const [exam, setExam] = useState("");
   const [dateType, setDateType] = useState("today");
   const [dobValue, setDobValue] = useState("");
   const [processing, setProcessing] = useState(false);
@@ -200,10 +191,6 @@ export default function MergerPage() {
       ctx.fillText(dateType === "today" ? "Date" : "Date of Birth", canvas.width / 2, footerArea.y + 220);
     }
 
-    ctx.fillStyle = "#94a3b8";
-    ctx.font = "600 22px Segoe UI, sans-serif";
-    ctx.fillText(exam, canvas.width / 2, canvas.height - 28);
-    ctx.textAlign = "left";
   };
 
   const handleMerge = async () => {
@@ -221,11 +208,6 @@ export default function MergerPage() {
       setError("Please select your date of birth.");
       return;
     }
-    if (!exam) {
-      setError("Please select your exam.");
-      return;
-    }
-
     setProcessing(true);
     try {
       const canvas = canvasRef.current;
@@ -244,7 +226,7 @@ export default function MergerPage() {
         existing.unshift({
           id: Date.now(),
           toolType: "merger",
-          examName: exam,
+          examName: mode === "sign" ? "Photo + Signature" : "Photo + Date",
           url: output,
           sizeKB: Math.round((output.length * 0.75) / 1024),
           date: new Date().toISOString(),
@@ -267,7 +249,7 @@ export default function MergerPage() {
         setDownloading(true);
         const { data } = await API.post("/process/confirm-download", {
           toolType: "merger",
-          examName: exam,
+          examName: mode === "sign" ? "photo-signature-merger" : "photo-date-merger",
         });
         if (data.creditsLeft !== undefined) updateCredits(data.creditsLeft);
         setDownloadUnlocked(true);
@@ -275,7 +257,7 @@ export default function MergerPage() {
 
       const a = document.createElement("a");
       a.href = outputUrl;
-      a.download = `formfixer_merged_${exam}.jpg`;
+      a.download = `formfixer_${mode === "sign" ? "photo-signature" : "photo-date"}_merged.jpg`;
       a.click();
     } catch (err) {
       setError(err.response?.data?.message || "Download failed. Please try again.");
@@ -299,7 +281,6 @@ export default function MergerPage() {
     setPhotoPreview(null);
     setSignFile(null);
     setSignPreview(null);
-    setExam("");
     setDobValue("");
     setDateType("today");
     setDone(false);
@@ -420,18 +401,6 @@ export default function MergerPage() {
                 <UploadBox label="Your Photo" icon="PH" preview={photoPreview} onFile={handlePhoto} disabled={done} />
                 <UploadBox label="Your Signature" icon="SG" preview={signPreview} onFile={handleSign} disabled={done} />
               </div>
-            </div>
-          )}
-
-          {mode && (
-            <div style={s.card}>
-              <div style={s.stepBadge}>Step 3 - Select Your Exam</div>
-              <select style={{ ...s.select, opacity: done ? 0.5 : 1 }} value={exam} onChange={(e) => setExam(e.target.value)} disabled={done}>
-                <option value="">-- Choose Exam --</option>
-                {FALLBACK_EXAMS.map((item) => (
-                  <option key={item} value={item}>{item}</option>
-                ))}
-              </select>
             </div>
           )}
 

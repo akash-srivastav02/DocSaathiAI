@@ -218,6 +218,9 @@ export const EXAM_PAGE_DATA = [
   const details = FAMILY_DETAILS[exam.family] || FAMILY_DETAILS.Entrance;
   return {
     ...exam,
+    seoTitle: `${exam.name} photo resize, signature resize, eligibility and syllabus`,
+    seoDescription: `Resize ${exam.name} photo and signature online, check eligibility, syllabus, document list, and common upload rules in one FormFixer guide.`,
+    searchIntent: `${exam.name} photo resize online`,
     overview: details.overview,
     eligibility: details.eligibility,
     documents: details.documents,

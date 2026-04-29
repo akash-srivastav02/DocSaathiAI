@@ -47,7 +47,7 @@ export default function ExamPage() {
 
   useEffect(() => {
     if (!exam) return;
-    document.title = `${exam.name} Photo, Signature, Eligibility & Syllabus | FormFixer`;
+    document.title = `${exam.name} Photo Resize & Signature Resize | FormFixer`;
   }, [exam]);
 
   if (!exam) {
@@ -63,8 +63,10 @@ export default function ExamPage() {
 
         <div style={s.hero}>
           <span style={s.family}>{exam.family}</span>
-          <h1 style={s.title}>{exam.name} Form Guide</h1>
-          <p style={s.sub}>{exam.summary}</p>
+          <h1 style={s.title}>{exam.name} Photo Resize, Signature Resize & Form Guide</h1>
+          <p style={s.sub}>
+            {exam.seoDescription || exam.summary}
+          </p>
         </div>
 
         <div style={s.specGrid}>
@@ -87,7 +89,7 @@ export default function ExamPage() {
           <button style={s.secondaryBtn} onClick={() => navigate(`/tool/signature?exam=${encodeURIComponent(exam.name)}`)}>
             Fix {exam.name} Signature
           </button>
-          <button style={s.secondaryBtn} onClick={() => navigate(`/merger?exam=${encodeURIComponent(exam.name)}`)}>
+          <button style={s.secondaryBtn} onClick={() => navigate("/merger")}>
             Merge Photo + Sign / Date
           </button>
           <button style={s.secondaryBtn} onClick={() => navigate("/pdf/compress")}>
@@ -154,9 +156,9 @@ export default function ExamPage() {
           </SectionCard>
         </div>
 
-        <SectionCard title="How FormFixer Helps">
+        <SectionCard title={`How FormFixer Helps With ${exam.name} Photo Resize`}>
           <p style={s.infoText}>
-            Instead of guessing dimensions, background, and file size, you can start with the exact {exam.name} preset and generate a cleaner upload-ready file in one flow.
+            Instead of guessing dimensions, background, and file size, you can use the exact {exam.name} photo resize and signature resize flow here, then move to merge or PDF tools without switching websites.
           </p>
         </SectionCard>
 

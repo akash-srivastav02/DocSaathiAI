@@ -56,52 +56,44 @@ const PLANS = [
 
 const COMPARISON = [
   {
-    feature: "Exam-ready photo sizing",
-    cafe: "Depends on operator",
+    feature: "Exam-ready presets",
     sites: "Usually generic resize only",
-    us: "Built for exam specs",
+    us: "Guided presets for exam uploads",
   },
   {
-    feature: "Photo + sign + date merge",
-    cafe: "Extra charge or manual work",
-    sites: "Often split across tools",
-    us: "One guided flow",
+    feature: "Multiple tasks in one place",
+    sites: "Jump between different tools",
+    us: "Photo, sign, merge, PDF, converter in one workspace",
   },
   {
-    feature: "Start free",
-    cafe: "No",
-    sites: "Usually limited",
-    us: "15 credits + 5 every 7 days",
+    feature: "Clean mobile experience",
+    sites: "Mixed layouts and extra clutter",
+    us: "Built for phone-first use",
   },
   {
-    feature: "Urgent one-time fix",
-    cafe: "Rs.50 - Rs.100",
-    sites: "Plans or signup first",
-    us: "Rs.9 Single Fix",
+    feature: "Preview before payment",
+    sites: "Often paywall or signup first",
+    us: "Preview first, pay only for final download",
   },
   {
-    feature: "Mobile-friendly use",
-    cafe: "Visit shop required",
-    sites: "Mixed experience",
-    us: "Built for phone and desktop",
+    feature: "Urgent one-time use",
+    sites: "Plans or heavy upsell",
+    us: "Rs.9 Single Fix option",
   },
   {
-    feature: "Time needed",
-    cafe: "Travel + wait",
-    sites: "Tool hopping",
-    us: "Few minutes in one place",
+    feature: "Output guidance",
+    sites: "Mostly tool-only pages",
+    us: "Exam guides, upload tips, rejection help",
   },
   {
-    feature: "Convenience",
-    cafe: "Go outside and pay per task",
-    sites: "Use multiple websites",
-    us: "One workspace for common tasks",
+    feature: "Search intent coverage",
+    sites: "Limited exam-specific help",
+    us: "Exam pages plus size-specific utility pages",
   },
   {
-    feature: "Total expected spend",
-    cafe: "Rs.100 - Rs.200",
-    sites: "Varies across tools",
-    us: "Rs.0 - Rs.79",
+    feature: "Value for repeat users",
+    sites: "Separate charges across pages",
+    us: "Free start, then clear plans for repeat use",
   },
 ];
 
@@ -314,19 +306,17 @@ export default function Pricing() {
           <p style={{ ...s.payNote, ...(isMobile ? s.payNoteMobile : null) }}>Razorpay · UPI · Cards · Net Banking · Paytm · PhonePe · GPay</p>
 
           <div>
-            <h2 style={{ ...s.tableTitle, ...(isMobile ? s.tableTitleMobile : null) }}>Compare Your Options</h2>
-            <p style={{ ...s.tableSub, ...(isMobile ? s.tableSubMobile : null) }}>See how FormFixer compares with cyber cafes and typical online tools.</p>
+            <h2 style={{ ...s.tableTitle, ...(isMobile ? s.tableTitleMobile : null) }}>Why FormFixer Feels Better</h2>
+            <p style={{ ...s.tableSub, ...(isMobile ? s.tableSubMobile : null) }}>Not because the tools are magical, but because the full experience is faster, clearer, and made for actual exam uploads.</p>
             <div style={{ ...s.table, ...(isMobile ? s.tableMobile : null) }}>
               <div style={s.tableHead}>
                 <div style={{ ...s.cell, flex: 1.55, color: "#64748b", fontWeight: 700, fontSize: 11, textTransform: "uppercase" }}>Feature</div>
-                <div style={{ ...s.cell, color: "#ef4444", fontWeight: 700, fontSize: 11 }}>Cyber Cafe</div>
                 <div style={{ ...s.cell, color: "#f59e0b", fontWeight: 700, fontSize: 11 }}>Other Sites</div>
                 <div style={{ ...s.cell, color: "#22c55e", fontWeight: 700, fontSize: 11 }}>FormFixer</div>
               </div>
               {COMPARISON.map((row, index) => (
                 <div key={row.feature} style={{ ...s.tableRow, background: index % 2 === 0 ? "#0d1421" : "#070c18" }}>
                   <div style={{ ...s.cell, flex: 1.55, color: "#94a3b8", fontWeight: 600 }}>{row.feature}</div>
-                  <div style={{ ...s.cell, color: "#ef444499" }}>{row.cafe}</div>
                   <div style={{ ...s.cell, color: "#fbbf24" }}>{row.sites}</div>
                   <div style={{ ...s.cell, color: "#22c55e", fontWeight: 700 }}>{row.us}</div>
                 </div>
