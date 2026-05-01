@@ -9,11 +9,11 @@ const NAV_ITEMS = [
   { label: "Contact", path: "/support", icon: "CT" },
 ];
 
-const EXAM_LINKS = [
-  { label: "SSC CGL", path: "/exam/ssc-cgl" },
-  { label: "UPSC CDS", path: "/exam/upsc-cds" },
-  { label: "JEE Main", path: "/exam/jee-main" },
-  { label: "NEET UG", path: "/exam/neet-ug" },
+const EXAM_TOOL_LINKS = [
+  { label: "Exam Photo", path: "/tool/photo", icon: "PH" },
+  { label: "Exam Signature", path: "/tool/signature", icon: "SG" },
+  { label: "Photo + Sign / Date", path: "/merger", icon: "MX" },
+  { label: "Custom Image Resizer", path: "/tool/crop", icon: "RS" },
 ];
 
 export default function Sidebar({ credits, onLogout, activeNav }) {
@@ -101,20 +101,20 @@ export default function Sidebar({ credits, onLogout, activeNav }) {
           ))}
         </div>
 
-        <div style={s.sectionLabel}>Exam Section</div>
+        <div style={s.sectionLabel}>Exam Tools</div>
         <div style={s.quickAccess}>
-          {EXAM_LINKS.map((exam) => (
+          {EXAM_TOOL_LINKS.map((tool) => (
             <button
-              key={exam.path}
+              key={tool.path}
               type="button"
               style={{
                 ...s.quickItem,
-                ...(location.pathname === exam.path ? s.quickItemActive : null),
+                ...(location.pathname.startsWith(tool.path) ? s.quickItemActive : null),
               }}
-              onClick={() => navigate(exam.path)}
+              onClick={() => navigate(tool.path)}
             >
-              <span style={{ ...s.quickIcon, color: "var(--ff-blue)" }}>EX</span>
-              <span style={s.quickText}>{exam.label}</span>
+              <span style={{ ...s.quickIcon, color: "var(--ff-blue)" }}>{tool.icon}</span>
+              <span style={s.quickText}>{tool.label}</span>
             </button>
           ))}
         </div>

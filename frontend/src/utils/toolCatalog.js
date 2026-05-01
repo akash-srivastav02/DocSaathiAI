@@ -29,7 +29,7 @@ export const TOOL_CATEGORIES = [
     items: [
       { id: "exam-photo", label: "Exam Photo Resizer", route: "/tool/photo", icon: "EX", desc: "Portal-ready dimensions", live: true, accent: "#3b82f6" },
       { id: "signature-live", label: "Signature Resizer", route: "/tool/signature", icon: "SG", desc: "Clean and resize", live: true, accent: "#8b5cf6" },
-      { id: "custom-resize", label: "Custom Image Resizer", route: "/tool/crop", icon: "RS", desc: "Width, height and crop", live: true, accent: "#06b6d4" },
+      { id: "custom-resize", label: "Custom Image Resizer", route: "/tool/crop", icon: "RS", desc: "Manual resize and crop controls", live: true, accent: "#06b6d4" },
       { id: "img-compress", label: "Image Compressor", route: "/tool/imgcompress", icon: "IC", desc: "Exact KB target", live: true, accent: "#f97316" },
       { id: "universal-image-converter", label: "Universal Image Converter", icon: "UC", desc: "PNG, WEBP, HEIC to JPG", live: false, accent: "#10b981" },
       { id: "passport-sheet", label: "Passport Photo Sheet Maker", icon: "PS", desc: "Multiple copies on one page", live: false, accent: "#a855f7" },

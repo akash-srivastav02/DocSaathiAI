@@ -37,10 +37,10 @@ const FEATURES = {
   },
   crop: {
     icon: "CR",
-    label: "Crop & Resize",
+    label: "Custom Image Resizer",
     credit: 2,
     color: "#ec4899",
-    desc: "Circle, square and manual crop with zoom and position controls.",
+    desc: "Manual crop and resize with zoom, positioning and custom output controls.",
     needsExam: false,
     uploadLabel: "Upload image to crop",
   },
