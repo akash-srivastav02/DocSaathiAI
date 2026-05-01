@@ -10,6 +10,8 @@ import ImageToPdfPage  from "./pages/ImageToPdfPage";
 import Support         from "./pages/Support";
 import MergerPage      from "./pages/MergerPage";
 import Pricing         from "./pages/Pricing";
+import PrivacyPage     from "./pages/PrivacyPage";
+import TermsPage       from "./pages/TermsPage";
 import Vault           from "./pages/Vault";
 import useStore        from "./store/useStore";
 import useTheme        from "./hooks/useTheme";
@@ -56,6 +58,8 @@ function ThemedRoutes() {
         <Route path="/pdf/compress" element={<PDFCompressPage />} />
         <Route path="/pdf/image-to-pdf" element={<ImageToPdfPage />} />
         <Route path="/merger"       element={<MergerPage />} />
+        <Route path="/privacy-policy" element={<PrivacyPage />} />
+        <Route path="/terms-and-conditions" element={<TermsPage />} />
 
         {/* Protected */}
         <Route path="/dashboard"    element={<Protected><Dashboard /></Protected>} />

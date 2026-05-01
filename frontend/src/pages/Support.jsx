@@ -114,6 +114,23 @@ const CONTACTS = [
   { label: "Tool Hours", value: "Available 24/7", icon: "ON", color: "#22c55e" },
 ];
 
+const LEGAL_LINKS = [
+  {
+    label: "Privacy Policy",
+    value: "How we process uploads, payments, and account data.",
+    path: "/privacy-policy",
+    icon: "PP",
+    color: "#8b5cf6",
+  },
+  {
+    label: "Terms & Conditions",
+    value: "Usage rules, credits, fair-use, and service limits.",
+    path: "/terms-and-conditions",
+    icon: "TC",
+    color: "#0ea5e9",
+  },
+];
+
 function FAQItem({ q, a, color, compact }) {
   const [open, setOpen] = useState(false);
 
@@ -170,6 +187,34 @@ export default function Support() {
               <p style={s.quickText}>Send your issue with the exam name, target size and a screenshot if the portal shows an error.</p>
             </div>
             <a href="mailto:supportformfixer@gmail.com" style={s.mailBtn}>Email Support</a>
+          </div>
+
+          <div>
+            <div style={s.secHead}>
+              <div style={s.secHeadLeft}>
+                <span style={{ ...s.secIcon, background: "rgba(139,92,246,0.12)", color: "#8b5cf6" }}>LG</span>
+                <div>
+                  <h2 style={s.secTitle}>Policies & Trust</h2>
+                  <p style={s.secSub}>Important legal pages for privacy, payments, and platform usage.</p>
+                </div>
+              </div>
+            </div>
+            <div style={{ ...s.contactGrid, ...(isMobile ? s.contactGridMobile : null) }}>
+              {LEGAL_LINKS.map((item) => (
+                <button
+                  key={item.label}
+                  type="button"
+                  style={{ ...s.contactItem, ...s.legalItem }}
+                  onClick={() => navigate(item.path)}
+                >
+                  <span style={{ ...s.contactIcon, background: `${item.color}18`, color: item.color }}>{item.icon}</span>
+                  <div style={s.contactBody}>
+                    <p style={s.contactLabel}>{item.label}</p>
+                    <p style={{ ...s.legalVal, ...(isMobile ? s.contactValMobile : null) }}>{item.value}</p>
+                  </div>
+                </button>
+              ))}
+            </div>
           </div>
 
           {FAQS.map((section) => (
@@ -266,6 +311,8 @@ const s = {
   contactLabel: { color: "var(--ff-text-faint)", fontSize: 11, margin: "0 0 3px", textTransform: "uppercase", fontWeight: 800, letterSpacing: 0.4 },
   contactVal: { color: "var(--ff-text)", fontWeight: 800, fontSize: 14, margin: 0, overflowWrap: "anywhere", lineHeight: 1.35 },
   contactValMobile: { fontSize: 15 },
+  legalItem: { textAlign: "left", cursor: "pointer", width: "100%" },
+  legalVal: { color: "var(--ff-text-soft)", fontWeight: 700, fontSize: 14, margin: 0, lineHeight: 1.45, textAlign: "left" },
 
   quickCard: {
     background: "color-mix(in srgb, var(--ff-orange) 9%, var(--ff-panel-solid))",
