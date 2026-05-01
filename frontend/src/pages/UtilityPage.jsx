@@ -1,11 +1,14 @@
 import { useEffect } from "react";
 import { Navigate, useNavigate, useParams } from "react-router-dom";
 import { getUtilityPageBySlug } from "../utils/utilityPages";
+import { EXAM_PAGE_DATA } from "../utils/examPages";
+import Seo from "../components/Seo";
 
 export default function UtilityPage() {
   const { utilitySlug } = useParams();
   const navigate = useNavigate();
   const page = getUtilityPageBySlug(utilitySlug);
+  const siteUrl = "https://formfixer.in";
 
   useEffect(() => {
     if (!page) return;
@@ -16,8 +19,52 @@ export default function UtilityPage() {
     return <Navigate to="/" replace />;
   }
 
+  const canonical = `${siteUrl}/utility/${page.slug}`;
+  const relatedExamGuides = EXAM_PAGE_DATA.slice(0, 4);
+  const utilitySchema = [
+    {
+      "@context": "https://schema.org",
+      "@type": "HowTo",
+      name: `${page.title} Online`,
+      description: `${page.summary} Open the tool, upload your file, preview the result, and download the final output.`,
+      step: [
+        { "@type": "HowToStep", name: "Open the tool", text: `Open ${page.title} on FormFixer.` },
+        { "@type": "HowToStep", name: "Upload your file", text: "Upload your image or document in the supported format." },
+        { "@type": "HowToStep", name: "Preview the result", text: "Check the preview and confirm the target size or conversion output." },
+        { "@type": "HowToStep", name: "Download final file", text: "Download the processed file when it is ready." },
+      ],
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      mainEntity: [
+        {
+          "@type": "Question",
+          name: `What is ${page.title}?`,
+          acceptedAnswer: { "@type": "Answer", text: page.summary },
+        },
+        {
+          "@type": "Question",
+          name: `Is ${page.title} useful for exam forms?`,
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: "Yes. This utility is designed for exam forms, student portals, college uploads, and document verification tasks.",
+          },
+        },
+      ],
+    },
+  ];
+
   return (
     <div style={s.root}>
+      <Seo
+        title={`${page.title} Online | FormFixer`}
+        description={`${page.summary} Use FormFixer to ${page.title.toLowerCase()} for exam forms, college uploads, and document verification.`}
+        canonical={canonical}
+        keywords={`${page.title.toLowerCase()}, ${page.category.toLowerCase()} tool, ${page.bestFor || "exam uploads"}, FormFixer`}
+        type="article"
+        ldJson={utilitySchema}
+      />
       <div style={s.wrap}>
         <button style={s.backBtn} onClick={() => navigate("/")}>← Back</button>
         <div style={s.hero}>
@@ -52,6 +99,27 @@ export default function UtilityPage() {
             Open {page.title}
           </button>
         </div>
+
+        <div style={s.howToCard}>
+          <h2 style={s.sectionTitle}>How to use {page.title}</h2>
+          <ol style={s.howToList}>
+            <li>Open the tool with the target already preselected.</li>
+            <li>Upload your file and preview the expected output.</li>
+            <li>Adjust if needed, then download the final file.</li>
+          </ol>
+        </div>
+
+        <div style={s.relatedWrap}>
+          <h2 style={s.sectionTitle}>Popular exam guides</h2>
+          <div style={s.relatedGrid}>
+            {relatedExamGuides.map((exam) => (
+              <button key={exam.slug} style={s.relatedCard} onClick={() => navigate(`/exam/${exam.slug}`)}>
+                <p style={s.relatedTitle}>{exam.name}</p>
+                <p style={s.relatedText}>{exam.summary}</p>
+              </button>
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -72,4 +140,12 @@ const s = {
   infoText: { margin: 0, color: "#94a3b8", fontSize: 14, lineHeight: 1.6 },
   ctaBox: { marginTop: 24 },
   primaryBtn: { background: "linear-gradient(135deg,#f97316,#ea580c)", border: "none", color: "#fff", padding: "14px 18px", borderRadius: 12, fontWeight: 800, fontSize: 15, cursor: "pointer" },
+  howToCard: { marginTop: 26, background: "#0d1421", border: "1px solid #1e293b", borderRadius: 16, padding: 18 },
+  sectionTitle: { margin: "0 0 12px", fontSize: 22, fontWeight: 800, color: "#f1f5f9" },
+  howToList: { margin: 0, paddingLeft: 18, color: "#cbd5e1", display: "grid", gap: 10, lineHeight: 1.7 },
+  relatedWrap: { marginTop: 26 },
+  relatedGrid: { display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 12 },
+  relatedCard: { background: "#111827", border: "1px solid #1f2937", borderRadius: 14, padding: 16, textAlign: "left", cursor: "pointer", color: "inherit" },
+  relatedTitle: { margin: "0 0 6px", color: "#f8fafc", fontSize: 15, fontWeight: 800 },
+  relatedText: { margin: 0, color: "#94a3b8", fontSize: 14, lineHeight: 1.6 },
 };

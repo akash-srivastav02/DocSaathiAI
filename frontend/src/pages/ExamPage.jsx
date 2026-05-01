@@ -1,7 +1,8 @@
 import { useEffect } from "react";
 import { Navigate, useNavigate, useParams } from "react-router-dom";
-import { getExamBySlug } from "../utils/examPages";
+import { EXAM_PAGE_DATA, getExamBySlug } from "../utils/examPages";
 import useStore from "../store/useStore";
+import Seo from "../components/Seo";
 
 const EXAM_SPECS = {
   "SSC CGL": { photo: "200 x 230 px · 20-50 KB", signature: "200 x 70 px · 10-20 KB" },
@@ -57,9 +58,54 @@ export default function ExamPage() {
   }
 
   const specs = EXAM_SPECS[exam.name];
+  const siteUrl = "https://formfixer.in";
+  const canonical = `${siteUrl}/exam/${exam.slug}`;
+  const relatedExams = EXAM_PAGE_DATA.filter((item) => item.family === exam.family && item.slug !== exam.slug).slice(0, 4);
+  const faqSchema = exam.faqs.map((item) => ({
+    "@type": "Question",
+    name: item.q,
+    acceptedAnswer: { "@type": "Answer", text: item.a },
+  }));
+  const examSchema = [
+    {
+      "@context": "https://schema.org",
+      "@type": "WebPage",
+      name: `${exam.name} Photo Resize, Signature Resize & Form Guide`,
+      url: canonical,
+      description: exam.seoDescription,
+      about: [
+        { "@type": "Thing", name: `${exam.name} photo resize` },
+        { "@type": "Thing", name: `${exam.name} signature resize` },
+        { "@type": "Thing", name: `${exam.name} eligibility` },
+        { "@type": "Thing", name: `${exam.name} syllabus` },
+      ],
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Home", item: siteUrl },
+        { "@type": "ListItem", position: 2, name: "Exam Guides", item: `${siteUrl}/#ff-tools-grid` },
+        { "@type": "ListItem", position: 3, name: exam.name, item: canonical },
+      ],
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      mainEntity: faqSchema,
+    },
+  ];
 
   return (
     <div style={s.root}>
+      <Seo
+        title={`${exam.name} Photo Resize, Signature Resize, Eligibility & Syllabus | FormFixer`}
+        description={exam.seoDescription}
+        canonical={canonical}
+        keywords={`${exam.name} photo resize, ${exam.name} signature resize, ${exam.name} eligibility, ${exam.name} syllabus, ${exam.name} photo size, ${exam.name} form guide, FormFixer`}
+        type="article"
+        ldJson={examSchema}
+      />
       <div style={s.wrap}>
         <button style={s.backBtn} onClick={() => navigate("/")}>← Back</button>
 
@@ -177,6 +223,19 @@ export default function ExamPage() {
             ))}
           </div>
         </SectionCard>
+
+        {relatedExams.length > 0 && (
+          <SectionCard title={`Related ${exam.family} Exam Guides`}>
+            <div style={s.linkGrid}>
+              {relatedExams.map((item) => (
+                <button key={item.slug} style={s.linkCard} onClick={() => navigate(`/exam/${item.slug}`)}>
+                  <p style={s.linkTitle}>{item.name}</p>
+                  <p style={s.linkText}>{item.summary}</p>
+                </button>
+              ))}
+            </div>
+          </SectionCard>
+        )}
       </div>
     </div>
   );
@@ -210,4 +269,16 @@ const s = {
   faqItem: { background: "#111827", border: "1px solid #1f2937", borderRadius: 14, padding: 14 },
   faqQ: { margin: "0 0 6px", color: "#f8fafc", fontWeight: 800, fontSize: 15 },
   faqA: { margin: 0, color: "#94a3b8", lineHeight: 1.7, fontSize: 14 },
+  linkGrid: { display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 12 },
+  linkCard: {
+    background: "#111827",
+    border: "1px solid #1f2937",
+    borderRadius: 14,
+    padding: 16,
+    textAlign: "left",
+    cursor: "pointer",
+    color: "inherit",
+  },
+  linkTitle: { margin: "0 0 6px", color: "#f8fafc", fontSize: 15, fontWeight: 800 },
+  linkText: { margin: 0, color: "#94a3b8", fontSize: 14, lineHeight: 1.6 },
 };

@@ -10,14 +10,14 @@
     <link rel="manifest" href="/manifest.json" />
     <meta
       name="description"
-      content="FormFixer instantly resizes exam photos and signatures for SSC, SBI, IBPS, Railway, JEE and NEET forms. Compress PDFs, merge photo and sign, and fix upload-ready documents in seconds."
+      content="FormFixer, also searched as Form Fixer, helps aspirants resize exam photos and signatures for SSC, SBI, IBPS, Railway, JEE, NEET and UPSC forms. Compress PDFs, merge photo and sign, and track applications in one workspace."
     />
     <meta
       name="keywords"
-      content="FormFixer, exam photo resize, signature resize, PDF compress, form photo size, SSC photo, SBI photo, IBPS signature, railway form photo, JEE photo resize, NEET signature size, document size changer"
+      content="FormFixer, Form Fixer, exam photo resize, signature resize, PDF compress, form photo size, SSC photo, SBI photo, IBPS signature, railway form photo, JEE photo resize, NEET signature size, document size changer, application tracker"
     />
     <meta name="author" content="FormFixer" />
-    <meta property="og:title" content="FormFixer | Exam Photo, Signature & PDF Tools" />
+    <meta property="og:title" content="FormFixer (Form Fixer) | Exam Photo, Signature & PDF Tools" />
     <meta
       property="og:description"
       content="Resize exam photos, compress PDFs, merge photo and signature, and prepare form documents instantly with FormFixer."
@@ -28,7 +28,7 @@
     <meta property="og:site_name" content="FormFixer" />
     <meta property="og:locale" content="en_IN" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="FormFixer | Exam Photo, Signature & PDF Tools" />
+    <meta name="twitter:title" content="FormFixer (Form Fixer) | Exam Photo, Signature & PDF Tools" />
     <meta
       name="twitter:description"
       content="Online exam document tools for photo resize, signature formatting, PDF compression, crop, and merger."
@@ -37,21 +37,44 @@
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
-        "@type": "WebApplication",
-        "name": "FormFixer",
-        "url": "https://formfixer.in",
-        "applicationCategory": "UtilityApplication",
-        "operatingSystem": "Web",
-        "description": "FormFixer helps Indian aspirants resize exam photos and signatures, compress PDFs, and prepare form documents in seconds.",
-        "offers": {
-          "@type": "Offer",
-          "price": "0",
-          "priceCurrency": "INR"
-        }
+        "@graph": [
+          {
+            "@type": "Organization",
+            "name": "FormFixer",
+            "alternateName": ["Form Fixer", "formfixer.in"],
+            "url": "https://formfixer.in",
+            "logo": "https://formfixer.in/favicon.png"
+          },
+          {
+            "@type": "WebSite",
+            "name": "FormFixer",
+            "alternateName": "Form Fixer",
+            "url": "https://formfixer.in",
+            "potentialAction": {
+              "@type": "SearchAction",
+              "target": "https://formfixer.in/?q={search_term_string}",
+              "query-input": "required name=search_term_string"
+            }
+          },
+          {
+            "@type": "WebApplication",
+            "name": "FormFixer",
+            "alternateName": "Form Fixer",
+            "url": "https://formfixer.in",
+            "applicationCategory": "UtilityApplication",
+            "operatingSystem": "Web",
+            "description": "FormFixer helps Indian aspirants resize exam photos and signatures, compress PDFs, and prepare form documents in seconds.",
+            "offers": {
+              "@type": "Offer",
+              "price": "0",
+              "priceCurrency": "INR"
+            }
+          }
+        ]
       }
     </script>
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-    <title>FormFixer | Exam Photo, Signature & PDF Tools</title>
+    <title>FormFixer (Form Fixer) | Exam Photo, Signature & PDF Tools</title>
   </head>
   <body>
     <div id="root"></div>

@@ -5,6 +5,7 @@ import useIsMobile from "../hooks/useIsMobile";
 import useTheme from "../hooks/useTheme";
 import { EXAM_PAGE_DATA } from "../utils/examPages";
 import { UTILITY_PAGE_DATA } from "../utils/utilityPages";
+import Seo from "../components/Seo";
 
 const FEATURES = [
   {
@@ -74,6 +75,7 @@ const EXAMS = EXAM_PAGE_DATA.filter((exam) =>
 );
 
 const normalizeText = (value) => String(value || "").toLowerCase();
+const SITE_URL = "https://formfixer.in";
 
 export default function Landing() {
   const navigate = useNavigate();
@@ -164,6 +166,78 @@ export default function Landing() {
     return [...examMatches, ...utilityMatches].slice(0, 8);
   }, [query]);
 
+  const landingSchema = useMemo(
+    () => [
+      {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        name: "FormFixer",
+        alternateName: ["Form Fixer", "formfixer.in"],
+        url: SITE_URL,
+        logo: `${SITE_URL}/favicon.png`,
+      },
+      {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        name: "FormFixer",
+        alternateName: "Form Fixer",
+        url: SITE_URL,
+        potentialAction: {
+          "@type": "SearchAction",
+          target: `${SITE_URL}/?q={search_term_string}`,
+          "query-input": "required name=search_term_string",
+        },
+      },
+      {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        name: "FormFixer",
+        alternateName: "Form Fixer",
+        url: SITE_URL,
+        applicationCategory: "UtilityApplication",
+        operatingSystem: "Web",
+        description:
+          "FormFixer is an aspirant workspace for exam photo resize, signature resize, PDF compression, exam guides, and application tracking.",
+        offers: {
+          "@type": "Offer",
+          price: "0",
+          priceCurrency: "INR",
+        },
+      },
+      {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        mainEntity: [
+          {
+            "@type": "Question",
+            name: "What is FormFixer?",
+            acceptedAnswer: {
+              "@type": "Answer",
+              text: "FormFixer is an online aspirant workspace to resize exam photos, fix signatures, compress PDFs, read exam upload rules, and track application deadlines.",
+            },
+          },
+          {
+            "@type": "Question",
+            name: "Can FormFixer help with SSC CGL photo resize and signature resize?",
+            acceptedAnswer: {
+              "@type": "Answer",
+              text: "Yes. FormFixer has exam-specific pages and tools for SSC CGL, SSC CHSL, banking exams, railway exams, JEE, NEET, UPSC, and more.",
+            },
+          },
+          {
+            "@type": "Question",
+            name: "Why search Form Fixer or FormFixer for exam uploads?",
+            acceptedAnswer: {
+              "@type": "Answer",
+              text: "FormFixer combines exact photo and signature tools, PDF utilities, exam guides, and an application tracker in one place, so aspirants do not need to switch between multiple websites.",
+            },
+          },
+        ],
+      },
+    ],
+    []
+  );
+
   return (
     <div
       style={{
@@ -173,6 +247,13 @@ export default function Landing() {
         "--ff-stage-rotate": `${Math.min(scrollY * 0.01, 4)}deg`,
       }}
     >
+      <Seo
+        title="FormFixer (Form Fixer) | Exam Photo Resize, Signature Resize & PDF Tools"
+        description="FormFixer, also searched as Form Fixer, helps aspirants resize exam photos and signatures, compress PDFs, check exam upload rules, and track applications in one workspace."
+        canonical={SITE_URL}
+        keywords="FormFixer, Form Fixer, exam photo resize, signature resize, compress image to 20kb, compress pdf to 200kb, SSC CGL photo resize, JEE Main photo resize, NEET photo resize"
+        ldJson={landingSchema}
+      />
       <div className="ff-scene" aria-hidden="true" style={sceneStyle}>
         <div className="ff-scene__grid" />
         <div className="ff-scene__ring ff-scene__ring--one" />
@@ -212,6 +293,10 @@ export default function Landing() {
             <p style={{ ...s.heroSub, ...t.heroSub, ...(isMobile ? s.heroSubMobile : null) }}>
               FormFixer helps aspirants fix exam photos, signatures, PDFs, and now track
               applications, deadlines, and form requirements in one connected workspace.
+            </p>
+            <p style={{ ...s.heroTrust, ...t.heroSub, ...(isMobile ? s.heroTrustMobile : null) }}>
+              Searching for <strong>Form Fixer</strong>, exam photo resize, signature resize, or
+              upload-ready PDF tools? You are in the right place.
             </p>
             <div style={{ ...s.heroActions, ...(isMobile ? s.heroActionsMobile : null) }}>
               <button
@@ -540,6 +625,8 @@ const s = {
   heroAccentMobile: { gap: 10 },
   heroSub: { fontSize: 18, lineHeight: 1.72, margin: 0, maxWidth: 760 },
   heroSubMobile: { fontSize: 15, lineHeight: 1.62 },
+  heroTrust: { fontSize: 14, lineHeight: 1.75, margin: 0, maxWidth: 760, opacity: 0.96 },
+  heroTrustMobile: { fontSize: 13, lineHeight: 1.7 },
   heroActions: { display: "flex", gap: 12, flexWrap: "wrap" },
   heroActionsMobile: { width: "100%" },
   heroButtonMobile: { width: "100%" },
