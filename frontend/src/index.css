@@ -198,6 +198,13 @@ a {
   perspective: 1400px;
 }
 
+.ff-stage--compact {
+  width: min(320px, 100%);
+  height: 230px;
+  transform: scale(0.82);
+  transform-origin: top center;
+}
+
 .ff-stage__panel,
 .ff-stage__card {
   position: absolute;
@@ -292,6 +299,63 @@ a {
   animation: ffCardThree 7.6s ease-in-out infinite;
 }
 
+.ff-rush-accent {
+  position: relative;
+  display: inline-flex;
+  width: 86px;
+  height: 44px;
+  margin-left: 6px;
+  flex-shrink: 0;
+}
+
+.ff-rush-accent__ring,
+.ff-rush-accent__cube,
+.ff-rush-accent__spark {
+  position: absolute;
+}
+
+.ff-rush-accent__ring {
+  inset: 4px 10px 4px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  transform: perspective(240px) rotateX(68deg) rotateY(14deg);
+  animation: ffOrbitSpin 6.6s linear infinite;
+}
+
+.ff-rush-accent__cube {
+  width: 28px;
+  height: 28px;
+  right: 12px;
+  top: 8px;
+  border-radius: 8px;
+  background: linear-gradient(145deg, rgba(255, 213, 170, 0.95), rgba(249, 115, 22, 0.95));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 12px 24px rgba(249, 115, 22, 0.3);
+  transform: rotate(18deg);
+  animation: ffCubePulse 4.4s ease-in-out infinite;
+}
+
+.ff-rush-accent__spark {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(147, 197, 253, 0.95);
+  box-shadow: 0 0 18px rgba(96, 165, 250, 0.6);
+}
+
+.ff-rush-accent__spark--one {
+  left: 6px;
+  top: 8px;
+  animation: ffSparkDrift 5.4s ease-in-out infinite;
+}
+
+.ff-rush-accent__spark--two {
+  left: 24px;
+  bottom: 2px;
+  width: 6px;
+  height: 6px;
+  animation: ffSparkDrift 4.6s ease-in-out infinite reverse;
+}
+
 @keyframes ffDrift {
   0%,
   100% {
@@ -352,9 +416,40 @@ a {
   }
 }
 
+@keyframes ffOrbitSpin {
+  from {
+    transform: perspective(240px) rotateX(68deg) rotateY(14deg) rotateZ(0deg);
+  }
+  to {
+    transform: perspective(240px) rotateX(68deg) rotateY(14deg) rotateZ(360deg);
+  }
+}
+
+@keyframes ffCubePulse {
+  0%,
+  100% {
+    transform: rotate(18deg) translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: rotate(6deg) translate3d(-4px, -3px, 0) scale(1.06);
+  }
+}
+
+@keyframes ffSparkDrift {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+    opacity: 0.9;
+  }
+  50% {
+    transform: translate3d(8px, -6px, 0);
+    opacity: 0.45;
+  }
+}
+
 @media (max-width: 900px) {
   .ff-scene {
-    height: 400px;
+    height: 520px;
   }
 
   .ff-scene__grid {
@@ -393,37 +488,117 @@ a {
   }
 
   .ff-stage {
-    width: 100%;
-    height: 300px;
+    width: min(360px, 100%);
+    height: 252px;
+    margin: 0 auto;
+  }
+
+  .ff-stage--compact {
+    width: min(292px, 100%);
+    height: 210px;
+    transform: none;
   }
 
   .ff-stage__panel {
-    inset: 52px 20px 24px;
-    padding: 22px 18px;
+    inset: 34px 14px 20px;
+    padding: 16px 14px;
+    border-radius: 18px;
   }
 
   .ff-stage__title {
-    font-size: 22px;
+    font-size: 20px;
+    letter-spacing: -0.7px;
   }
 
   .ff-stage__text {
-    max-width: 210px;
+    max-width: 150px;
+    font-size: 12px;
+    line-height: 1.45;
   }
 
   .ff-stage__card {
-    width: 152px;
-    padding: 12px;
+    width: 108px;
+    padding: 8px;
+    border-radius: 16px;
+    font-size: 11px;
+    gap: 4px;
+  }
+
+  .ff-stage__chip {
+    font-size: 9px;
   }
 
   .ff-stage__card--one {
-    top: 18px;
+    top: 4px;
+    left: 2px;
   }
 
   .ff-stage__card--two {
-    top: 112px;
+    top: 82px;
+    right: 0;
   }
 
   .ff-stage__card--three {
-    left: 36px;
+    left: 18px;
+    bottom: 0;
+  }
+
+  .ff-rush-accent {
+    width: 60px;
+    height: 32px;
+    margin-left: 2px;
+  }
+
+  .ff-rush-accent__cube {
+    width: 18px;
+    height: 18px;
+    top: 7px;
+    right: 10px;
+    border-radius: 6px;
+  }
+
+  .ff-rush-accent__ring {
+    inset: 4px 8px 4px 8px;
+  }
+
+  .ff-rush-accent__spark--one {
+    left: 4px;
+  }
+
+  .ff-rush-accent__spark--two {
+    left: 16px;
+  }
+}
+
+@media (max-width: 420px) {
+  .ff-stage {
+    width: min(280px, 100%);
+    height: 224px;
+  }
+
+  .ff-stage__panel {
+    inset: 34px 14px 18px;
+    transform: rotateX(14deg) rotateY(-13deg) rotateZ(4deg);
+  }
+
+  .ff-stage__title {
+    font-size: 18px;
+  }
+
+  .ff-stage__text {
+    max-width: 138px;
+  }
+
+  .ff-stage__card {
+    width: 100px;
+    gap: 4px;
+  }
+
+  .ff-stage__card--two {
+    top: 78px;
+  }
+
+  .ff-stage__card--three {
+    left: 26px;
   }
 }

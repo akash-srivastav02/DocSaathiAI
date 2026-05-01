@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useStore from "../store/useStore";
+import useIsMobile from "../hooks/useIsMobile";
 import useTheme from "../hooks/useTheme";
 import { EXAM_PAGE_DATA } from "../utils/examPages";
 import { UTILITY_PAGE_DATA } from "../utils/utilityPages";
@@ -72,6 +73,7 @@ export default function Landing() {
   const navigate = useNavigate();
   const { user } = useStore();
   const { theme, isDark, toggleTheme } = useTheme();
+  const isMobile = useIsMobile(820);
   const [query, setQuery] = useState("");
   const t = useMemo(() => getThemeStyles(isDark), [isDark]);
 
@@ -126,89 +128,101 @@ export default function Landing() {
         <div className="ff-scene__orb ff-scene__orb--green" />
       </div>
 
-      <header style={{ ...s.nav, ...t.nav }} className="ff-glass">
+      <header style={{ ...s.nav, ...t.nav, ...(isMobile ? s.navMobile : null) }} className="ff-glass">
         <div style={s.brand}>
           <img src="/favicon.png" alt="FormFixer logo" style={s.brandIcon} />
           <span style={{ ...s.brandText, ...t.brandText }}>FormFixer</span>
         </div>
-        <div style={s.navActions}>
-          <button type="button" style={{ ...s.themeBtn, ...t.themeBtn }} onClick={toggleTheme}>
+        <div style={{ ...s.navActions, ...(isMobile ? s.navActionsMobile : null) }}>
+          <button type="button" style={{ ...s.themeBtn, ...t.themeBtn, ...(isMobile ? s.navButtonMobile : null) }} onClick={toggleTheme}>
             <span>{theme === "dark" ? "Light Mode" : "Dark Mode"}</span>
             <strong>{theme === "dark" ? "☼" : "☾"}</strong>
           </button>
-          <button style={s.primaryBtn} onClick={() => navigate(user ? "/dashboard" : "/auth")}>
+          <button style={{ ...s.primaryBtn, ...(isMobile ? s.navButtonMobile : null) }} onClick={() => navigate(user ? "/dashboard" : "/auth")}>
             {user ? "Open Dashboard" : "Login / Sign Up"}
           </button>
         </div>
       </header>
 
-      <main style={s.main}>
-        <section style={s.hero}>
-          <div style={{ ...s.heroBadge, ...t.heroBadge }}>Built for Indian exam forms</div>
-          <h1 style={{ ...s.heroTitle, ...t.heroTitle }}>
-            Fix exam photos, signatures and PDFs
-            <span style={{ ...s.heroAccent, ...t.heroAccent }}> without the cyber cafe rush</span>
-          </h1>
-          <p style={{ ...s.heroSub, ...t.heroSub }}>
-            FormFixer helps aspirants resize photos, compress PDFs, crop images and prepare
-            upload-ready documents in seconds.
-          </p>
-          <div style={s.heroActions}>
-            <button style={s.primaryBtnLarge} onClick={() => navigate(user ? "/dashboard" : "/auth")}>
-              {user ? "Continue to Dashboard" : "Start Exploring"}
-            </button>
-            <button
-              type="button"
-              style={{ ...s.secondaryBtnLarge, ...t.secondaryBtnLarge }}
-              onClick={() =>
-                document.getElementById("ff-tools-grid")?.scrollIntoView({
-                  behavior: "smooth",
-                  block: "start",
-                })
-              }
-            >
-              Explore Live Tools
-            </button>
-          </div>
-
-          <div style={{ ...s.searchShell, ...t.searchShell }} className="ff-glass">
-            <input
-              type="text"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search exam pages, photo size help, or PDF size tools"
-              style={{ ...s.searchInput, ...t.searchInput }}
-            />
-            {searchResults.length > 0 && (
-              <div style={{ ...s.searchResults, ...t.searchResults }}>
-                {searchResults.map((item) => (
-                  <button
-                    key={item.key}
-                    type="button"
-                    style={{ ...s.searchResultBtn, ...t.searchResultBtn }}
-                    className="ff-hover-lift"
-                    onClick={() => navigate(item.route)}
-                  >
-                    <span style={{ ...s.searchResultType, ...t.searchResultType }}>{item.type}</span>
-                    <span style={{ ...s.searchResultTitle, ...t.searchResultTitle }}>{item.title}</span>
-                    <span style={{ ...s.searchResultSummary, ...t.searchResultSummary }}>{item.summary}</span>
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-
-          <div style={s.examStrip}>
-            {EXAMS.map((exam) => (
+      <main style={{ ...s.main, ...(isMobile ? s.mainMobile : null) }}>
+        <section style={{ ...s.hero, ...(isMobile ? s.heroMobile : null) }}>
+          <div style={{ ...s.heroCopy, ...(isMobile ? s.heroCopyMobile : null) }}>
+            <div style={{ ...s.heroBadge, ...t.heroBadge }}>Built for Indian exam forms</div>
+            <h1 style={{ ...s.heroTitle, ...t.heroTitle, ...(isMobile ? s.heroTitleMobile : null) }}>
+              Fix exam photos, signatures and PDFs
+              <span style={{ ...s.heroAccent, ...t.heroAccent, ...(isMobile ? s.heroAccentMobile : null) }}>
+                without the cyber cafe rush
+                <HeroRushAccent />
+              </span>
+            </h1>
+            <p style={{ ...s.heroSub, ...t.heroSub, ...(isMobile ? s.heroSubMobile : null) }}>
+              FormFixer helps aspirants resize photos, compress PDFs, crop images and prepare
+              upload-ready documents in seconds.
+            </p>
+            <div style={{ ...s.heroActions, ...(isMobile ? s.heroActionsMobile : null) }}>
               <button
-                key={exam.slug}
-                type="button"
-                style={{ ...s.examPillBtn, ...t.examPillBtn }}
-                onClick={() => navigate(`/exam/${exam.slug}`)}
+                style={{ ...s.primaryBtnLarge, ...(isMobile ? s.heroButtonMobile : null) }}
+                onClick={() => navigate(user ? "/dashboard" : "/auth")}
               >
-                {exam.name}
+                {user ? "Continue to Dashboard" : "Start Exploring"}
               </button>
-            ))}
+              <button
+                type="button"
+                style={{ ...s.secondaryBtnLarge, ...t.secondaryBtnLarge, ...(isMobile ? s.heroButtonMobile : null) }}
+                onClick={() =>
+                  document.getElementById("ff-tools-grid")?.scrollIntoView({
+                    behavior: "smooth",
+                    block: "start",
+                  })
+                }
+              >
+                Explore Live Tools
+              </button>
+            </div>
+
+            <div style={{ ...s.searchShell, ...t.searchShell, ...(isMobile ? s.searchShellMobile : null) }} className="ff-glass">
+              <input
+                type="text"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="Search exam pages, photo size help, or PDF size tools"
+                style={{ ...s.searchInput, ...t.searchInput, ...(isMobile ? s.searchInputMobile : null) }}
+              />
+              {searchResults.length > 0 && (
+                <div style={{ ...s.searchResults, ...t.searchResults }}>
+                  {searchResults.map((item) => (
+                    <button
+                      key={item.key}
+                      type="button"
+                      style={{ ...s.searchResultBtn, ...t.searchResultBtn }}
+                      className="ff-hover-lift"
+                      onClick={() => navigate(item.route)}
+                    >
+                      <span style={{ ...s.searchResultType, ...t.searchResultType }}>{item.type}</span>
+                      <span style={{ ...s.searchResultTitle, ...t.searchResultTitle }}>{item.title}</span>
+                      <span style={{ ...s.searchResultSummary, ...t.searchResultSummary }}>{item.summary}</span>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div style={{ ...s.examStrip, ...(isMobile ? s.examStripMobile : null) }}>
+              {EXAMS.map((exam) => (
+                <button
+                  key={exam.slug}
+                  type="button"
+                  style={{ ...s.examPillBtn, ...t.examPillBtn, ...(isMobile ? s.examPillBtnMobile : null) }}
+                  onClick={() => navigate(`/exam/${exam.slug}`)}
+                >
+                  {exam.name}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div style={{ ...s.heroStage, ...(isMobile ? s.heroStageMobile : null) }}>
+            <WorkflowStage compact={isMobile} />
           </div>
         </section>
 
@@ -360,6 +374,44 @@ export default function Landing() {
   );
 }
 
+function WorkflowStage({ compact = false }) {
+  return (
+    <div className={`ff-stage${compact ? " ff-stage--compact" : ""}`}>
+      <div className="ff-stage__panel ff-stage__panel--main">
+        <span className="ff-stage__eyebrow">Aspirant Flow</span>
+        <strong className="ff-stage__title">Upload - Fix - Preview - Download</strong>
+        <p className="ff-stage__text">One smooth workflow instead of guessing file size, switching tabs, and retrying uploads.</p>
+      </div>
+      <div className="ff-stage__card ff-stage__card--one">
+        <span className="ff-stage__chip">Photo</span>
+        <strong>Exam preset</strong>
+        <small>Resize and KB fix</small>
+      </div>
+      <div className="ff-stage__card ff-stage__card--two">
+        <span className="ff-stage__chip">Merge</span>
+        <strong>Photo + Sign / Date</strong>
+        <small>One clean output</small>
+      </div>
+      <div className="ff-stage__card ff-stage__card--three">
+        <span className="ff-stage__chip">PDF</span>
+        <strong>Compress and convert</strong>
+        <small>Upload-ready docs</small>
+      </div>
+    </div>
+  );
+}
+
+function HeroRushAccent() {
+  return (
+    <span className="ff-rush-accent" aria-hidden="true">
+      <span className="ff-rush-accent__ring" />
+      <span className="ff-rush-accent__cube" />
+      <span className="ff-rush-accent__spark ff-rush-accent__spark--one" />
+      <span className="ff-rush-accent__spark ff-rush-accent__spark--two" />
+    </span>
+  );
+}
+
 const s = {
   root: {
     minHeight: "100vh",
@@ -378,17 +430,39 @@ const s = {
     zIndex: 8,
     flexWrap: "wrap",
   },
+  navMobile: {
+    padding: "14px 12px",
+    alignItems: "stretch",
+  },
   brand: { display: "flex", alignItems: "center", gap: 10 },
   brandIcon: { width: 34, height: 34, borderRadius: 10, objectFit: "contain" },
   brandText: { fontSize: 21, fontWeight: 900, letterSpacing: -0.5 },
   navActions: { display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" },
+  navActionsMobile: { width: "100%", alignItems: "stretch" },
+  navButtonMobile: { flex: "1 1 150px", justifyContent: "center" },
   main: { maxWidth: 1180, margin: "0 auto", padding: "28px 20px 56px", position: "relative", zIndex: 1 },
+  mainMobile: { padding: "18px 12px 44px" },
   hero: {
-    padding: "56px 0 34px",
+    padding: "42px 0 34px",
+    display: "grid",
+    gridTemplateColumns: "minmax(0, 1.05fr) minmax(320px, 0.95fr)",
+    gap: 26,
+    alignItems: "center",
+  },
+  heroMobile: {
+    padding: "24px 0 28px",
+    gridTemplateColumns: "1fr",
+    gap: 18,
+  },
+  heroCopy: {
     display: "flex",
     flexDirection: "column",
     gap: 20,
     alignItems: "flex-start",
+    minWidth: 0,
+  },
+  heroCopyMobile: {
+    gap: 16,
   },
   heroBadge: {
     padding: "7px 12px",
@@ -404,10 +478,32 @@ const s = {
     maxWidth: 920,
     letterSpacing: -2.4,
   },
-  heroAccent: { display: "block" },
+  heroTitleMobile: {
+    fontSize: "clamp(34px, 11vw, 46px)",
+    lineHeight: 1.04,
+    letterSpacing: -1.2,
+  },
+  heroAccent: { display: "inline-flex", alignItems: "center", gap: 16, flexWrap: "wrap" },
+  heroAccentMobile: { gap: 10 },
   heroSub: { fontSize: 18, lineHeight: 1.72, margin: 0, maxWidth: 760 },
+  heroSubMobile: { fontSize: 15, lineHeight: 1.62 },
   heroActions: { display: "flex", gap: 12, flexWrap: "wrap" },
+  heroActionsMobile: { width: "100%" },
+  heroButtonMobile: { width: "100%" },
+  heroStage: {
+    minWidth: 0,
+    minHeight: 390,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  heroStageMobile: {
+    minHeight: 250,
+    width: "100%",
+    overflow: "hidden",
+  },
   searchShell: { position: "relative", width: "100%", maxWidth: 860, borderRadius: 22, padding: 14 },
+  searchShellMobile: { padding: 10, borderRadius: 18 },
   searchInput: {
     width: "100%",
     borderRadius: 16,
@@ -416,6 +512,7 @@ const s = {
     outline: "none",
     boxSizing: "border-box",
   },
+  searchInputMobile: { padding: "14px 14px", fontSize: 14, borderRadius: 14 },
   searchResults: {
     marginTop: 10,
     display: "grid",
@@ -465,6 +562,7 @@ const s = {
     cursor: "pointer",
   },
   examStrip: { display: "flex", gap: 10, flexWrap: "wrap", marginTop: 6 },
+  examStripMobile: { gap: 8, width: "100%" },
   examPillBtn: {
     borderRadius: 999,
     padding: "9px 13px",
@@ -472,6 +570,7 @@ const s = {
     fontWeight: 700,
     cursor: "pointer",
   },
+  examPillBtnMobile: { flex: "1 1 calc(50% - 8px)", minWidth: 132, textAlign: "center" },
   metrics: {
     display: "grid",
     gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
@@ -531,7 +630,7 @@ const s = {
   },
   advantageSection: {
     display: "grid",
-    gridTemplateColumns: "minmax(0, 1.05fr) minmax(320px, 0.95fr)",
+    gridTemplateColumns: "1fr",
     gap: 24,
     alignItems: "center",
     marginBottom: 40,
@@ -541,7 +640,7 @@ const s = {
   differentiatorCard: { borderRadius: 16, padding: "16px 18px" },
   differentiatorTitle: { margin: "0 0 6px", fontSize: 18, fontWeight: 800 },
   differentiatorDesc: { margin: 0, fontSize: 14, lineHeight: 1.65 },
-  stageWrap: { minHeight: 360, display: "flex", alignItems: "center", justifyContent: "center" },
+  stageWrap: { display: "none" },
   searchIntentGrid: {
     display: "grid",
     gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
