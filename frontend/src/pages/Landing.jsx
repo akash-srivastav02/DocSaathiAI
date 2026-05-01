@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useStore from "../store/useStore";
 import useIsMobile from "../hooks/useIsMobile";
@@ -75,7 +75,48 @@ export default function Landing() {
   const { theme, isDark, toggleTheme } = useTheme();
   const isMobile = useIsMobile(820);
   const [query, setQuery] = useState("");
+  const [scrollY, setScrollY] = useState(0);
   const t = useMemo(() => getThemeStyles(isDark), [isDark]);
+
+  useEffect(() => {
+    let frame = null;
+
+    const updateScroll = () => {
+      frame = null;
+      setScrollY(window.scrollY || 0);
+    };
+
+    const onScroll = () => {
+      if (frame !== null) return;
+      frame = window.requestAnimationFrame(updateScroll);
+    };
+
+    updateScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      if (frame !== null) window.cancelAnimationFrame(frame);
+    };
+  }, []);
+
+  const sceneStyle = {
+    transform: `translate3d(0, ${Math.min(scrollY * 0.08, 68)}px, 0) scale(${1 + Math.min(scrollY / 5000, 0.03)})`,
+  };
+
+  const heroStageStyle = {
+    transform: `translate3d(0, ${Math.min(scrollY * 0.12, 84)}px, 0)`,
+  };
+
+  const stageParallaxVars = {
+    "--ff-stage-scroll": `${Math.min(scrollY * 0.1, 54)}px`,
+    "--ff-stage-rotate": `${Math.min(scrollY * 0.01, 4)}deg`,
+  };
+
+  const rushAccentStyle = {
+    "--ff-rush-scroll": `${Math.min(scrollY * 0.14, 30)}px`,
+    "--ff-rush-spin": `${Math.min(scrollY * 0.08, 28)}deg`,
+  };
 
   const searchResults = useMemo(() => {
     const normalized = normalizeText(query.trim());
@@ -118,8 +159,15 @@ export default function Landing() {
   }, [query]);
 
   return (
-    <div style={{ ...s.root, ...t.root }}>
-      <div className="ff-scene" aria-hidden="true">
+    <div
+      style={{
+        ...s.root,
+        ...t.root,
+        "--ff-stage-scroll": `${Math.min(scrollY * 0.1, 54)}px`,
+        "--ff-stage-rotate": `${Math.min(scrollY * 0.01, 4)}deg`,
+      }}
+    >
+      <div className="ff-scene" aria-hidden="true" style={sceneStyle}>
         <div className="ff-scene__grid" />
         <div className="ff-scene__ring ff-scene__ring--one" />
         <div className="ff-scene__ring ff-scene__ring--two" />
@@ -152,7 +200,7 @@ export default function Landing() {
               Fix exam photos, signatures and PDFs
               <span style={{ ...s.heroAccent, ...t.heroAccent, ...(isMobile ? s.heroAccentMobile : null) }}>
                 without the cyber cafe rush
-                <HeroRushAccent />
+                <HeroRushAccent style={rushAccentStyle} />
               </span>
             </h1>
             <p style={{ ...s.heroSub, ...t.heroSub, ...(isMobile ? s.heroSubMobile : null) }}>
@@ -221,8 +269,8 @@ export default function Landing() {
             </div>
           </div>
 
-          <div style={{ ...s.heroStage, ...(isMobile ? s.heroStageMobile : null) }}>
-            <WorkflowStage compact={isMobile} />
+          <div style={{ ...s.heroStage, ...(isMobile ? s.heroStageMobile : null), ...heroStageStyle }}>
+            <WorkflowStage compact={isMobile} style={stageParallaxVars} />
           </div>
         </section>
 
@@ -374,9 +422,9 @@ export default function Landing() {
   );
 }
 
-function WorkflowStage({ compact = false }) {
+function WorkflowStage({ compact = false, style = {} }) {
   return (
-    <div className={`ff-stage${compact ? " ff-stage--compact" : ""}`}>
+    <div className={`ff-stage${compact ? " ff-stage--compact" : ""}`} style={style}>
       <div className="ff-stage__panel ff-stage__panel--main">
         <span className="ff-stage__eyebrow">Aspirant Flow</span>
         <strong className="ff-stage__title">Upload - Fix - Preview - Download</strong>
@@ -401,9 +449,9 @@ function WorkflowStage({ compact = false }) {
   );
 }
 
-function HeroRushAccent() {
+function HeroRushAccent({ style }) {
   return (
-    <span className="ff-rush-accent" aria-hidden="true">
+    <span className="ff-rush-accent" aria-hidden="true" style={style}>
       <span className="ff-rush-accent__ring" />
       <span className="ff-rush-accent__cube" />
       <span className="ff-rush-accent__spark ff-rush-accent__spark--one" />
