@@ -3,10 +3,9 @@ import { useLocation, useNavigate } from "react-router-dom";
 import useIsMobile from "../hooks/useIsMobile";
 
 const NAV_ITEMS = [
-  { label: "Dashboard", icon: "DB", path: "/dashboard" },
-  { label: "Tracker", icon: "TR", path: "/tracker" },
+  { label: "All Tools", icon: "TL", path: "/dashboard" },
   { label: "Pricing", icon: "INR", path: "/pricing" },
-  { label: "Support", icon: "SP", path: "/support" },
+  { label: "Contact", icon: "CT", path: "/support" },
 ];
 
 const MOBILE_TOOL_SECTIONS = [
@@ -37,7 +36,7 @@ export default function Sidebar({ credits, onLogout, activeNav }) {
   const [isOpen, setIsOpen] = useState(false);
 
   const activeLabel =
-    activeNav || NAV_ITEMS.find((item) => location.pathname.startsWith(item.path))?.label || "Dashboard";
+    activeNav || NAV_ITEMS.find((item) => location.pathname.startsWith(item.path))?.label || "All Tools";
 
   const ringPct = Math.min((credits || 0) / 100, 1);
   const circumference = 2 * Math.PI * 26;

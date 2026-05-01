@@ -238,10 +238,10 @@ export default function Dashboard() {
               </h2>
               <p style={{ ...s.welcomeSub, ...(isMobile ? s.welcomeSubMobile : null) }}>
                 {isMobile
-                    ? "Open a tool, guide, or tracker flow and continue in seconds."
+                    ? "Open a tool and continue in seconds."
                   : user
-                    ? "Use tools, exam guides, and tracker features from one connected workspace."
-                    : "Explore tools, exam guides, and login only when you need downloads or tracker access."}
+                    ? "Use photo, signature, PDF, and conversion tools from one connected hub."
+                    : "Explore tools first, then login only when you need clean final downloads."}
               </p>
             </div>
             <div
@@ -256,18 +256,18 @@ export default function Dashboard() {
 
           <div style={s.workspaceStrip}>
             <div>
-              <p style={s.workspaceEyebrow}>Aspirant workflow</p>
-              <h3 style={s.workspaceTitle}>Tools plus tracker, not just one-time file fixes</h3>
+              <p style={s.workspaceEyebrow}>Quick categories</p>
+              <h3 style={s.workspaceTitle}>Open the exact tool you need faster</h3>
               <p style={s.workspaceText}>
-                Save important forms in your tracker, then use the exact tools you need without losing context.
+                Jump into the most-used flows for image fixes, PDF uploads, and conversion tasks without guessing where to start.
               </p>
             </div>
             <div style={s.workspaceActions}>
-              <button type="button" style={s.workspaceBtnPrimary} onClick={() => navigate("/tracker")}>
-                Open Tracker
+              <button type="button" style={s.workspaceBtnPrimary} onClick={() => navigate("/pdf/compress")}>
+                Open PDF Tool
               </button>
               <button type="button" style={s.workspaceBtnSecondary} onClick={() => navigate("/support")}>
-                Open Help
+                Contact / Help
               </button>
             </div>
           </div>
@@ -284,8 +284,8 @@ export default function Dashboard() {
               <div style={s.secHeadLeft}>
                 <span style={{ fontSize: 18 }}>📋</span>
                 <div>
-                  <h2 style={s.secTitle}>Document Prep Tools</h2>
-                  <p style={s.secSub}>Photo, signature and form-ready outputs for exam portals and student workflows.</p>
+                  <h2 style={s.secTitle}>Core Upload Tools</h2>
+                  <p style={s.secSub}>Photo, signature and form-ready outputs for exam portals and daily uploads.</p>
                 </div>
               </div>
             </div>
@@ -314,7 +314,7 @@ export default function Dashboard() {
           </section>
 
           <div style={s.strip}>
-            <b>FormFixer as a workspace:</b> prepare files, track deadlines, and keep your submission journey in one place instead of juggling random tools and notes.
+            <b>FormFixer as a tool hub:</b> resize, compress, merge, and convert from one place instead of bouncing across random sites.
           </div>
         </div>
       </div>

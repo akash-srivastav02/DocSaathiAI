@@ -4,10 +4,9 @@ import useIsMobile from "../hooks/useIsMobile";
 import useTheme from "../hooks/useTheme";
 
 const ACCOUNT_LINKS = [
-  { label: "Dashboard", path: "/dashboard" },
-  { label: "Tracker", path: "/tracker" },
+  { label: "All Tools", path: "/dashboard" },
   { label: "Pricing", path: "/pricing" },
-  { label: "Support", path: "/support" },
+  { label: "Contact", path: "/support" },
 ];
 
 export default function TopBar({ user, credits, onLogout }) {
