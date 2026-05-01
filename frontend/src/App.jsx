@@ -66,6 +66,7 @@ function ThemedRoutes() {
         <Route path="/support"      element={<Protected><Support /></Protected>} />
         <Route path="/pricing"      element={<Protected><Pricing /></Protected>} />
         <Route path="/vault"        element={<Protected><Vault /></Protected>} />
+        <Route path="/tracker"      element={<Protected><Vault /></Protected>} />
 
         {/* Fallback */}
         <Route path="*" element={<Navigate to="/" replace />} />

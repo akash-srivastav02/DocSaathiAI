@@ -1,6 +1,18 @@
 const mongoose = require('mongoose');
 const bcrypt   = require('bcryptjs');
 
+const applicationSchema = new mongoose.Schema({
+  title:        { type: String, required: true, trim: true },
+  organization: { type: String, required: true, trim: true },
+  category:     { type: String, default: 'Government Exam', trim: true },
+  status:       { type: String, default: 'Interested' },
+  deadline:     { type: Date },
+  officialLink: { type: String, trim: true },
+  notes:        { type: String, trim: true, maxlength: 1200 },
+  createdAt:    { type: Date, default: Date.now },
+  updatedAt:    { type: Date, default: Date.now },
+});
+
 const userSchema = new mongoose.Schema({
   name:  { type: String, required: true, trim: true },
   email: { type: String, required: true, unique: true, lowercase: true, trim: true },
@@ -24,6 +36,9 @@ const userSchema = new mongoose.Schema({
 
   // Weekly free refill tracking
   lastWeeklyRefill: { type: Date },
+
+  // Aspirant workspace
+  applications: { type: [applicationSchema], default: [] },
 
   createdAt: { type: Date, default: Date.now },
 });

@@ -5,7 +5,7 @@ import useTheme from "../hooks/useTheme";
 
 const ACCOUNT_LINKS = [
   { label: "Dashboard", path: "/dashboard" },
-  { label: "Vault", path: "/vault" },
+  { label: "Tracker", path: "/tracker" },
   { label: "Pricing", path: "/pricing" },
   { label: "Support", path: "/support" },
 ];

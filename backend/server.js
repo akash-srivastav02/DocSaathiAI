@@ -37,6 +37,7 @@ app.use('/api/auth',    require('./routes/authRoutes'));
 app.use('/api/process', require('./routes/processRoutes'));
 app.use('/api/pdf',     require('./routes/pdfRoutes'));
 app.use('/api/payment', require('./routes/paymentRoutes'));
+app.use('/api/tracker', require('./routes/trackerRoutes'));
 
 // ── Health check ──────────────────────────────────────────────────────────────
 app.get('/', (req, res) =>

@@ -4,7 +4,7 @@ import useIsMobile from "../hooks/useIsMobile";
 
 const NAV_ITEMS = [
   { label: "Dashboard", icon: "DB", path: "/dashboard" },
-  { label: "Vault", icon: "VT", path: "/vault" },
+  { label: "Tracker", icon: "TR", path: "/tracker" },
   { label: "Pricing", icon: "INR", path: "/pricing" },
   { label: "Support", icon: "SP", path: "/support" },
 ];
