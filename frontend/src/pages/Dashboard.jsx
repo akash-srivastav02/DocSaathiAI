@@ -238,10 +238,10 @@ export default function Dashboard() {
               </h2>
               <p style={{ ...s.welcomeSub, ...(isMobile ? s.welcomeSubMobile : null) }}>
                 {isMobile
-                  ? "Open any tool below and continue in seconds."
+                    ? "Open a tool, guide, or tracker flow and continue in seconds."
                   : user
-                    ? "Pick the tool you need and prepare your documents quickly."
-                    : "Explore tools, generate previews, and login only when you download."}
+                    ? "Use tools, exam guides, and tracker features from one connected workspace."
+                    : "Explore tools, exam guides, and login only when you need downloads or tracker access."}
               </p>
             </div>
             <div
@@ -251,6 +251,24 @@ export default function Dashboard() {
               <span style={{ fontSize: 22 }}>⚡</span>
               <span style={s.creditNum}>{currentCredits}</span>
               <span style={s.creditLbl}>Credits</span>
+            </div>
+          </div>
+
+          <div style={s.workspaceStrip}>
+            <div>
+              <p style={s.workspaceEyebrow}>Aspirant workflow</p>
+              <h3 style={s.workspaceTitle}>Tools plus tracker, not just one-time file fixes</h3>
+              <p style={s.workspaceText}>
+                Save important forms in your tracker, then use the exact tools you need without losing context.
+              </p>
+            </div>
+            <div style={s.workspaceActions}>
+              <button type="button" style={s.workspaceBtnPrimary} onClick={() => navigate("/tracker")}>
+                Open Tracker
+              </button>
+              <button type="button" style={s.workspaceBtnSecondary} onClick={() => navigate("/support")}>
+                Open Help
+              </button>
             </div>
           </div>
 
@@ -266,8 +284,8 @@ export default function Dashboard() {
               <div style={s.secHeadLeft}>
                 <span style={{ fontSize: 18 }}>📋</span>
                 <div>
-                  <h2 style={s.secTitle}>Exam Tools</h2>
-                  <p style={s.secSub}>Photo, signature and form-ready outputs for exam portals.</p>
+                  <h2 style={s.secTitle}>Document Prep Tools</h2>
+                  <p style={s.secSub}>Photo, signature and form-ready outputs for exam portals and student workflows.</p>
                 </div>
               </div>
             </div>
@@ -283,8 +301,8 @@ export default function Dashboard() {
               <div style={s.secHeadLeft}>
                 <span style={{ fontSize: 18 }}>📦</span>
                 <div>
-                  <h2 style={s.secTitle}>Document & Utility Tools</h2>
-                  <p style={s.secSub}>Crop, compress and clean files for quick submissions.</p>
+                  <h2 style={s.secTitle}>Utility & Conversion Tools</h2>
+                  <p style={s.secSub}>Crop, compress, convert and clean files for quick submissions.</p>
                 </div>
               </div>
             </div>
@@ -296,8 +314,7 @@ export default function Dashboard() {
           </section>
 
           <div style={s.strip}>
-            <b>FormFixer vs Cyber Cafe:</b> They often charge Rs.20-Rs.50 for one small task. You can
-            do the same work here faster, from home, and even late at night.
+            <b>FormFixer as a workspace:</b> prepare files, track deadlines, and keep your submission journey in one place instead of juggling random tools and notes.
           </div>
         </div>
       </div>
@@ -352,6 +369,23 @@ const s = {
     color: "var(--ff-orange)",
     fontSize: 13,
   },
+  workspaceStrip: {
+    background: "color-mix(in srgb, var(--ff-blue) 8%, var(--ff-panel-solid))",
+    border: "1px solid color-mix(in srgb, var(--ff-blue) 20%, var(--ff-border))",
+    borderRadius: 16,
+    padding: "18px 20px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: 16,
+    flexWrap: "wrap",
+  },
+  workspaceEyebrow: { margin: "0 0 5px", color: "var(--ff-blue)", fontSize: 11, fontWeight: 800, textTransform: "uppercase", letterSpacing: 0.6 },
+  workspaceTitle: { margin: "0 0 6px", color: "var(--ff-text)", fontSize: 18, fontWeight: 800 },
+  workspaceText: { margin: 0, color: "var(--ff-text-soft)", fontSize: 14, lineHeight: 1.6, maxWidth: 680 },
+  workspaceActions: { display: "flex", gap: 10, flexWrap: "wrap" },
+  workspaceBtnPrimary: { background: "var(--ff-blue)", color: "#fff", border: "none", borderRadius: 10, padding: "10px 14px", fontSize: 13, fontWeight: 800, cursor: "pointer" },
+  workspaceBtnSecondary: { background: "var(--ff-panel-solid)", color: "var(--ff-text-soft)", border: "1px solid var(--ff-border)", borderRadius: 10, padding: "10px 14px", fontSize: 13, fontWeight: 800, cursor: "pointer" },
 
   secHead: { display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 14, gap: 10, flexWrap: "wrap" },
   secHeadLeft: { display: "flex", alignItems: "flex-start", gap: 10 },

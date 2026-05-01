@@ -63,7 +63,7 @@ const COMPARISON = [
   {
     feature: "Multiple tasks in one place",
     sites: "Jump between different tools",
-    us: "Photo, sign, merge, PDF, converter in one workspace",
+    us: "Photo, sign, merge, PDF, converter, and tracker in one workspace",
   },
   {
     feature: "Clean mobile experience",
@@ -84,6 +84,11 @@ const COMPARISON = [
     feature: "Output guidance",
     sites: "Mostly tool-only pages",
     us: "Exam guides, upload tips, rejection help",
+  },
+  {
+    feature: "Application tracking",
+    sites: "Users manage dates separately in notes or WhatsApp",
+    us: "Tracker keeps deadlines, links, and status in one place",
   },
   {
     feature: "Search intent coverage",
@@ -257,15 +262,15 @@ export default function Pricing() {
         <TopBar user={user} credits={currentCredits} onLogout={() => { logout(); navigate("/"); }} />
         <div style={{ ...s.content, ...(isMobile ? s.contentMobile : null) }}>
           <div style={s.pageHdr}>
-            <h1 style={{ ...s.pageTitle, ...(isMobile ? s.pageTitleMobile : null) }}>Choose Your Plan</h1>
-            <p style={{ ...s.pageSub, ...(isMobile ? s.pageSubMobile : null) }}>Start free, pay only when you need more downloads.</p>
+            <h1 style={{ ...s.pageTitle, ...(isMobile ? s.pageTitleMobile : null) }}>Choose Your Workspace Plan</h1>
+            <p style={{ ...s.pageSub, ...(isMobile ? s.pageSubMobile : null) }}>Start free, use the tools and tracker, then pay only when you need more clean downloads.</p>
           </div>
 
           <div style={{ ...s.freeBanner, ...(isMobile ? s.bannerMobile : null) }}>
             <span style={s.bannerIcon}>FR</span>
             <div style={{ flex: 1 }}>
               <p style={{ ...s.freeTitle, ...(isMobile ? s.bannerTitleMobile : null) }}>Free - 15 credits + 5 every 7 days</p>
-              <p style={{ ...s.freeSub, ...(isMobile ? s.bannerSubMobile : null) }}>Try the tools first. No payment needed to get started.</p>
+              <p style={{ ...s.freeSub, ...(isMobile ? s.bannerSubMobile : null) }}>Try the tools and tracker first. No payment needed to get started.</p>
             </div>
             <span style={s.freeBadge}>FREE</span>
           </div>
@@ -274,7 +279,7 @@ export default function Pricing() {
             <span style={s.bannerIcon}>{singleFixPlan.icon}</span>
             <div style={{ flex: 1, minWidth: 220 }}>
               <p style={{ ...s.singleTitle, ...(isMobile ? s.bannerTitleMobile : null) }}>Single Fix - Rs.{singleFixPlan.price} for 1 clean download</p>
-              <p style={{ ...s.singleSub, ...(isMobile ? s.bannerSubMobile : null) }}>Best for one urgent file when you do not need a full plan.</p>
+              <p style={{ ...s.singleSub, ...(isMobile ? s.bannerSubMobile : null) }}>Best for one urgent file when you do not need a full workspace plan.</p>
             </div>
             <div style={{ ...s.singleActionWrap, ...(isMobile ? s.singleActionWrapMobile : null) }}>
               <span style={s.singleBadge}>ONE-TIME</span>
@@ -307,7 +312,7 @@ export default function Pricing() {
 
           <div>
             <h2 style={{ ...s.tableTitle, ...(isMobile ? s.tableTitleMobile : null) }}>Why FormFixer Feels Better</h2>
-            <p style={{ ...s.tableSub, ...(isMobile ? s.tableSubMobile : null) }}>Not because the tools are magical, but because the full experience is faster, clearer, and made for actual exam uploads.</p>
+            <p style={{ ...s.tableSub, ...(isMobile ? s.tableSubMobile : null) }}>Not because the tools are magical, but because the full experience is faster, clearer, and built around actual exam workflows.</p>
             <div style={{ ...s.table, ...(isMobile ? s.tableMobile : null) }}>
               <div style={s.tableHead}>
                 <div style={{ ...s.cell, flex: 1.55, color: "#64748b", fontWeight: 700, fontSize: 11, textTransform: "uppercase" }}>Feature</div>
@@ -332,7 +337,7 @@ export default function Pricing() {
 
           <div style={{ ...s.cta, ...(isMobile ? s.ctaMobile : null) }}>
               <p style={{ color: "var(--ff-text-soft)", fontSize: isMobile ? 15 : 14, lineHeight: 1.6, margin: 0 }}>
-                Free credits are enough for many first-time users. Choose a paid plan only if you need more downloads.
+                Free credits are enough for many first-time users. Upgrade only when your exam workflow needs more clean outputs.
               </p>
           </div>
         </div>

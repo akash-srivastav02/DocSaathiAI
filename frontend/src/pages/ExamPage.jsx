@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { Navigate, useNavigate, useParams } from "react-router-dom";
 import { getExamBySlug } from "../utils/examPages";
+import useStore from "../store/useStore";
 
 const EXAM_SPECS = {
   "SSC CGL": { photo: "200 x 230 px · 20-50 KB", signature: "200 x 70 px · 10-20 KB" },
@@ -43,6 +44,7 @@ function SectionCard({ title, children }) {
 export default function ExamPage() {
   const { examSlug } = useParams();
   const navigate = useNavigate();
+  const { user } = useStore();
   const exam = getExamBySlug(examSlug);
 
   useEffect(() => {
@@ -88,6 +90,9 @@ export default function ExamPage() {
           </button>
           <button style={s.secondaryBtn} onClick={() => navigate(`/tool/signature?exam=${encodeURIComponent(exam.name)}`)}>
             Fix {exam.name} Signature
+          </button>
+          <button style={s.secondaryBtn} onClick={() => navigate(user ? "/tracker" : "/auth")}>
+            Track This Exam
           </button>
           <button style={s.secondaryBtn} onClick={() => navigate("/merger")}>
             Merge Photo + Sign / Date
@@ -158,7 +163,7 @@ export default function ExamPage() {
 
         <SectionCard title={`How FormFixer Helps With ${exam.name} Photo Resize`}>
           <p style={s.infoText}>
-            Instead of guessing dimensions, background, and file size, you can use the exact {exam.name} photo resize and signature resize flow here, then move to merge or PDF tools without switching websites.
+            Instead of guessing dimensions, background, and file size, you can use the exact {exam.name} photo resize and signature resize flow here, then move to merge, PDF, or tracker workflows without switching websites.
           </p>
         </SectionCard>
 

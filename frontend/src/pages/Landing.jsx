@@ -37,6 +37,12 @@ const FEATURES = [
     tag: "Merge",
     route: "/merger",
   },
+  {
+    title: "Application Tracker",
+    desc: "Track deadlines, save exam links, and manage your form-filling workflow in one place.",
+    tag: "Track",
+    route: "/tracker",
+  },
 ];
 
 const DIFFERENTIATORS = [
@@ -46,11 +52,11 @@ const DIFFERENTIATORS = [
   },
   {
     title: "One workspace, not tool-hopping",
-    desc: "Photo, signature, merge, PDF, and converter flows stay connected instead of pushing users across random sites.",
+    desc: "Tools, exam guides, and tracker stay connected instead of pushing users across random sites and tabs.",
   },
   {
-    title: "Preview-first pricing",
-    desc: "Users can try, preview, and understand the result before paying for a clean final download.",
+    title: "Track the whole application journey",
+    desc: "FormFixer is not just for one file. Save deadlines, keep notes, and prepare uploads before exam-day panic starts.",
   },
 ];
 
@@ -195,24 +201,24 @@ export default function Landing() {
       <main style={{ ...s.main, ...(isMobile ? s.mainMobile : null) }}>
         <section style={{ ...s.hero, ...(isMobile ? s.heroMobile : null) }}>
           <div style={{ ...s.heroCopy, ...(isMobile ? s.heroCopyMobile : null) }}>
-            <div style={{ ...s.heroBadge, ...t.heroBadge }}>Built for Indian exam forms</div>
+            <div style={{ ...s.heroBadge, ...t.heroBadge }}>Aspirant workspace for Indian exams</div>
             <h1 style={{ ...s.heroTitle, ...t.heroTitle, ...(isMobile ? s.heroTitleMobile : null) }}>
-              Fix exam photos, signatures and PDFs
+              Prepare exam uploads, guides and applications
               <span style={{ ...s.heroAccent, ...t.heroAccent, ...(isMobile ? s.heroAccentMobile : null) }}>
                 without the cyber cafe rush
                 <HeroRushAccent style={rushAccentStyle} />
               </span>
             </h1>
             <p style={{ ...s.heroSub, ...t.heroSub, ...(isMobile ? s.heroSubMobile : null) }}>
-              FormFixer helps aspirants resize photos, compress PDFs, crop images and prepare
-              upload-ready documents in seconds.
+              FormFixer helps aspirants fix exam photos, signatures, PDFs, and now track
+              applications, deadlines, and form requirements in one connected workspace.
             </p>
             <div style={{ ...s.heroActions, ...(isMobile ? s.heroActionsMobile : null) }}>
               <button
                 style={{ ...s.primaryBtnLarge, ...(isMobile ? s.heroButtonMobile : null) }}
                 onClick={() => navigate(user ? "/dashboard" : "/auth")}
               >
-                {user ? "Continue to Dashboard" : "Start Exploring"}
+                  {user ? "Open Your Workspace" : "Start Exploring"}
               </button>
               <button
                 type="button"
@@ -224,7 +230,7 @@ export default function Landing() {
                   })
                 }
               >
-                Explore Live Tools
+                  Explore Tools & Guides
               </button>
             </div>
 
@@ -233,7 +239,7 @@ export default function Landing() {
                 type="text"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search exam pages, photo size help, or PDF size tools"
+                placeholder="Search exam pages, upload rules, or size-based tools"
                 style={{ ...s.searchInput, ...t.searchInput, ...(isMobile ? s.searchInputMobile : null) }}
               />
               {searchResults.length > 0 && (
@@ -285,16 +291,16 @@ export default function Landing() {
           </div>
           <div style={{ ...s.metricCard, ...t.metricCard }} className="ff-glass ff-hover-lift">
             <strong style={{ ...s.metricNum, ...t.metricNum }}>10s</strong>
-            <span style={{ ...s.metricLabel, ...t.metricLabel }}>Average processing time</span>
+              <span style={{ ...s.metricLabel, ...t.metricLabel }}>Aspirant workflow in one place</span>
           </div>
         </section>
 
         <section style={s.featureSection} id="ff-tools-grid">
           <div style={s.sectionHead}>
-            <h2 style={{ ...s.sectionTitle, ...t.sectionTitle }}>Everything needed for form uploads</h2>
-            <p style={{ ...s.sectionSub, ...t.sectionSub }}>
-              Focused tools, faster flow, and a more premium mobile-first experience.
-            </p>
+              <h2 style={{ ...s.sectionTitle, ...t.sectionTitle }}>Everything needed for the application journey</h2>
+              <p style={{ ...s.sectionSub, ...t.sectionSub }}>
+                Core tools, exact exam guidance, and a growing workspace for aspirants and students.
+              </p>
           </div>
           <div style={s.featureGrid}>
             {FEATURES.map((feature) => (
@@ -303,7 +309,7 @@ export default function Landing() {
                 type="button"
                 style={{ ...s.featureCard, ...t.featureCard }}
                 className="ff-glass ff-hover-lift"
-                onClick={() => navigate(feature.route)}
+                  onClick={() => navigate(feature.route === "/tracker" ? (user ? "/tracker" : "/auth") : feature.route)}
               >
                 <span style={{ ...s.featureTag, ...t.featureTag }}>{feature.tag}</span>
                 <h3 style={{ ...s.featureTitle, ...t.featureTitle }}>{feature.title}</h3>
@@ -313,7 +319,7 @@ export default function Landing() {
             ))}
           </div>
           <p style={{ ...s.exploreNote, ...t.exploreNote }}>
-            Users can explore these tools first. Login or signup can happen later when they want a clean download.
+            Users can explore tools first. Login or signup can happen later when they want clean downloads or tracker access.
           </p>
         </section>
 
@@ -347,7 +353,7 @@ export default function Landing() {
             <div style={{ ...s.heroBadge, ...t.heroBadge }}>Why users stay</div>
             <h2 style={{ ...s.sectionTitle, ...t.sectionTitle }}>Why FormFixer feels better than generic online tools</h2>
             <p style={{ ...s.sectionSub, ...t.sectionSub }}>
-              The tools themselves are not enough. Aspirants need guidance, faster decisions, and fewer chances of rejection.
+              The tools alone are not enough. Aspirants need guidance, tracking, and fewer chances of rejection.
             </p>
             <div style={s.differentiatorList}>
               {DIFFERENTIATORS.map((item) => (
@@ -408,14 +414,13 @@ export default function Landing() {
         </section>
 
         <section style={{ ...s.ctaSection, ...t.ctaSection }} className="ff-glass">
-          <h2 style={{ ...s.sectionTitle, ...t.sectionTitle }}>Start free, upgrade only when needed</h2>
-          <p style={{ ...s.sectionSub, ...t.sectionSub }}>
-            Explore the tools first, see the output, and continue only when you actually need a
-            clean download.
-          </p>
-          <button style={s.primaryBtnLarge} onClick={() => navigate(user ? "/dashboard" : "/auth")}>
-            {user ? "Go to Dashboard" : "Try Tools Now"}
-          </button>
+              <h2 style={{ ...s.sectionTitle, ...t.sectionTitle }}>Start free, grow into a full aspirant workspace</h2>
+              <p style={{ ...s.sectionSub, ...t.sectionSub }}>
+              Explore tools first, use exam guides, then unlock cleaner downloads and deeper workflow features only when needed.
+              </p>
+              <button style={s.primaryBtnLarge} onClick={() => navigate(user ? "/dashboard" : "/auth")}>
+              {user ? "Open Workspace" : "Try FormFixer"}
+              </button>
         </section>
       </main>
     </div>
@@ -427,8 +432,8 @@ function WorkflowStage({ compact = false, style = {} }) {
     <div className={`ff-stage${compact ? " ff-stage--compact" : ""}`} style={style}>
       <div className="ff-stage__panel ff-stage__panel--main">
         <span className="ff-stage__eyebrow">Aspirant Flow</span>
-        <strong className="ff-stage__title">Upload - Fix - Preview - Download</strong>
-        <p className="ff-stage__text">One smooth workflow instead of guessing file size, switching tabs, and retrying uploads.</p>
+        <strong className="ff-stage__title">Search - Prepare - Track - Submit</strong>
+        <p className="ff-stage__text">One connected workflow for exam pages, file fixes, previews, and application tracking.</p>
       </div>
       <div className="ff-stage__card ff-stage__card--one">
         <span className="ff-stage__chip">Photo</span>
@@ -436,14 +441,14 @@ function WorkflowStage({ compact = false, style = {} }) {
         <small>Resize and KB fix</small>
       </div>
       <div className="ff-stage__card ff-stage__card--two">
-        <span className="ff-stage__chip">Merge</span>
-        <strong>Photo + Sign / Date</strong>
-        <small>One clean output</small>
+        <span className="ff-stage__chip">Track</span>
+        <strong>Deadlines and status</strong>
+        <small>Save what matters</small>
       </div>
       <div className="ff-stage__card ff-stage__card--three">
-        <span className="ff-stage__chip">PDF</span>
-        <strong>Compress and convert</strong>
-        <small>Upload-ready docs</small>
+        <span className="ff-stage__chip">Guide</span>
+        <strong>Exam info and upload help</strong>
+        <small>Fewer rejection mistakes</small>
       </div>
     </div>
   );
