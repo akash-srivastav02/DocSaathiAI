@@ -277,8 +277,8 @@ export default function Landing() {
             <span>{theme === "dark" ? "Light Mode" : "Dark Mode"}</span>
             <strong>{theme === "dark" ? "☼" : "☾"}</strong>
           </button>
-          <button style={{ ...s.primaryBtn, ...(isMobile ? s.navButtonMobile : null) }} onClick={() => navigate(user ? "/dashboard" : "/auth")}>
-            {user ? "Open Tool Hub" : "Login / Sign Up"}
+          <button style={{ ...s.primaryBtn, ...(isMobile ? s.navButtonMobile : null) }} onClick={() => navigate(user ? "/dashboard" : "/all-tools")}>
+            {user ? "Open Tool Hub" : "View All Tools"}
           </button>
         </div>
       </header>
@@ -305,7 +305,7 @@ export default function Landing() {
             <div style={{ ...s.heroActions, ...(isMobile ? s.heroActionsMobile : null) }}>
               <button
                 style={{ ...s.primaryBtnLarge, ...(isMobile ? s.heroButtonMobile : null) }}
-                onClick={() => navigate(user ? "/dashboard" : "/auth")}
+                onClick={() => navigate(user ? "/dashboard" : "/all-tools")}
               >
                   {user ? "Open Tool Hub" : "Start Exploring"}
               </button>
@@ -507,7 +507,7 @@ export default function Landing() {
               <p style={{ ...s.sectionSub, ...t.sectionSub }}>
               Explore tools first, use exact utility pages, then unlock clean final downloads only when needed.
               </p>
-              <button style={s.primaryBtnLarge} onClick={() => navigate(user ? "/dashboard" : "/auth")}>
+              <button style={s.primaryBtnLarge} onClick={() => navigate(user ? "/dashboard" : "/all-tools")}>
               {user ? "Open Tool Hub" : "Try FormFixer"}
               </button>
         </section>

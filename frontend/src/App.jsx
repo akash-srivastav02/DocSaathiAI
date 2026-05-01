@@ -54,6 +54,7 @@ function ThemedRoutes() {
         <Route path="/exam/:examSlug" element={<ExamPage />} />
         <Route path="/utility/:utilitySlug" element={<UtilityPage />} />
 
+        <Route path="/all-tools" element={<Dashboard />} />
         <Route path="/tool/:toolId" element={<ToolPage />} />
         <Route path="/pdf/compress" element={<PDFCompressPage />} />
         <Route path="/pdf/image-to-pdf" element={<ImageToPdfPage />} />

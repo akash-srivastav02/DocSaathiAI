@@ -1,4 +1,4 @@
-const IMAGE_TARGETS = [10, 20, 30, 50, 100, 200];
+const IMAGE_TARGETS = [10, 20, 30, 50, 100, 200, 300];
 const PDF_TARGETS = [100, 200, 300, 500];
 
 const imagePages = IMAGE_TARGETS.map((target) => ({

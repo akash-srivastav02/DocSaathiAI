@@ -1,64 +1,40 @@
-import { useEffect, useState } from "react";
+import { useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import useIsMobile from "../hooks/useIsMobile";
+import { TOOL_CATEGORIES } from "../utils/toolCatalog";
 
 const NAV_ITEMS = [
-  { label: "All Tools", icon: "TL", path: "/dashboard" },
-  { label: "Pricing", icon: "INR", path: "/pricing" },
-  { label: "Contact", icon: "CT", path: "/support" },
-];
-
-const MOBILE_TOOL_SECTIONS = [
-  {
-    title: "Exam",
-    items: [
-      { label: "Exam Photo", icon: "PH", path: "/tool/photo" },
-      { label: "Exam Signature", icon: "SG", path: "/tool/signature" },
-      { label: "Photo + Sign / Date", icon: "MX", path: "/merger" },
-      { label: "Document Size Changer", icon: "PDF", path: "/pdf/compress" },
-    ],
-  },
-  {
-    title: "Document & Utility",
-    items: [
-      { label: "Crop & Resize", icon: "CR", path: "/tool/crop" },
-      { label: "Image Compressor", icon: "IM", path: "/tool/imgcompress" },
-      { label: "PDF Compressor", icon: "PC", path: "/pdf/compress" },
-      { label: "Image to PDF", icon: "IP", path: "/pdf/image-to-pdf" },
-    ],
-  },
+  { label: "Dashboard", path: "/dashboard", icon: "DB" },
+  { label: "Pricing", path: "/pricing", icon: "INR" },
+  { label: "Contact", path: "/support", icon: "CT" },
 ];
 
 export default function Sidebar({ credits, onLogout, activeNav }) {
   const navigate = useNavigate();
   const location = useLocation();
-  const isMobile = useIsMobile(900);
+  const isMobile = useIsMobile(960);
   const [isOpen, setIsOpen] = useState(false);
+  const [openGroups, setOpenGroups] = useState(() =>
+    Object.fromEntries(TOOL_CATEGORIES.map((group, index) => [group.id, index < 3]))
+  );
 
   const activeLabel =
-    activeNav || NAV_ITEMS.find((item) => location.pathname.startsWith(item.path))?.label || "All Tools";
+    activeNav || NAV_ITEMS.find((item) => location.pathname.startsWith(item.path))?.label || "Dashboard";
 
-  const ringPct = Math.min((credits || 0) / 100, 1);
-  const circumference = 2 * Math.PI * 26;
-
-  useEffect(() => {
-    if (isMobile) {
-      setIsOpen(false);
-    }
-  }, [isMobile, location.pathname]);
+  const quickAccess = useMemo(() => TOOL_CATEGORIES[0]?.items || [], []);
 
   return (
     <>
       {isMobile && (
         <button
-          onClick={() => setIsOpen((prev) => !prev)}
+          type="button"
           style={s.mobileToggle}
           aria-label={isOpen ? "Close menu" : "Open menu"}
+          onClick={() => setIsOpen((prev) => !prev)}
         >
-          {isOpen ? "×" : "☰"}
+          {isOpen ? "X" : "|||"}
         </button>
       )}
-
       {isMobile && isOpen && <div style={s.backdrop} onClick={() => setIsOpen(false)} />}
 
       <aside
@@ -68,118 +44,95 @@ export default function Sidebar({ credits, onLogout, activeNav }) {
           transform: isMobile ? (isOpen ? "translateX(0)" : "translateX(-110%)") : "translateX(0)",
         }}
       >
-        {!isMobile ? (
-          <>
-            <button type="button" style={s.brand} onClick={() => navigate("/")}>
-              <div style={s.iconBox}>
-                <img src="/favicon.png" alt="FormFixer logo" style={s.iconImage} />
-              </div>
-              <div>
-                <span style={s.brandMain}>FormFixer</span>
-              </div>
-            </button>
-
-            <div style={s.creditBlock}>
-              <div style={s.ringWrap}>
-                <svg width="76" height="76" viewBox="0 0 60 60">
-                  <circle cx="30" cy="30" r="26" fill="none" stroke="var(--ff-border)" strokeWidth="5" />
-                  <circle
-                    cx="30"
-                    cy="30"
-                    r="26"
-                    fill="none"
-                    stroke={credits <= 5 ? "#ef4444" : "#f97316"}
-                    strokeWidth="5"
-                    strokeDasharray={`${ringPct * circumference} ${circumference}`}
-                    strokeLinecap="round"
-                    transform="rotate(-90 30 30)"
-                    style={{ transition: "all 0.4s" }}
-                  />
-                </svg>
-                <div style={s.ringNum}>{credits}</div>
-              </div>
-              <p style={s.ringLbl}>Credits Remaining</p>
-              <button style={s.buyBtn} onClick={() => navigate("/pricing")}>
-                + Buy Credits
-              </button>
-            </div>
-          </>
-        ) : null}
-
-        {isMobile ? (
-          <div style={s.mobileToolWrap}>
-            <button type="button" style={{ ...s.brand, ...s.mobileBrand }} onClick={() => navigate("/")}>
-              <div style={s.iconBox}>
-                <img src="/favicon.png" alt="FormFixer logo" style={s.iconImage} />
-              </div>
-              <div>
-                <span style={s.brandMain}>FormFixer</span>
-              </div>
-            </button>
-            <div style={s.mobileSection}>
-              <p style={s.mobileSectionLabel}>Tools</p>
-              <p style={s.mobileSectionSub}>Choose a tool category and continue.</p>
-            </div>
-
-            <div style={s.mobileToolSections}>
-              {MOBILE_TOOL_SECTIONS.map((section) => (
-                <div key={section.title} style={s.toolSection}>
-                  <p style={s.toolSectionTitle}>{section.title}</p>
-                  <div style={s.toolList}>
-                    {section.items.map(({ label, icon, path }) => (
-                      <button
-                        key={label}
-                        style={{
-                          ...s.toolBtn,
-                          ...(location.pathname.startsWith(path) ? s.toolBtnActive : null),
-                        }}
-                        onClick={() => navigate(path)}
-                      >
-                        <span style={s.toolBtnIcon}>{icon}</span>
-                        <span>{label}</span>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
+        <button type="button" style={s.brand} onClick={() => navigate("/")}>
+          <div style={s.brandIconBox}>
+            <img src="/favicon.png" alt="FormFixer logo" style={s.brandIcon} />
           </div>
-        ) : (
-          <nav style={s.nav}>
-            {NAV_ITEMS.map(({ label, icon, path }) => (
-              <button
-                key={label}
-                style={{ ...s.navBtn, ...(activeLabel === label ? s.navActive : null) }}
-                onClick={() => navigate(path)}
-              >
-                <span style={s.navBtnIcon}>{icon}</span>
-                {label}
-              </button>
-            ))}
-          </nav>
-        )}
+          <div>
+            <div style={s.brandTitle}>FormFixer</div>
+            <div style={s.brandSub}>Document toolkit</div>
+          </div>
+        </button>
 
-        <div style={s.footer}>
-          {isMobile ? (
-            <>
-              <p style={s.mobileSectionLabel}>Quick Action</p>
-              <div style={s.mobileActionStack}>
-                <button style={{ ...s.buyBtn, width: "100%" }} onClick={() => navigate("/pricing")}>
-                  + Buy Credits
-                </button>
-              </div>
-            </>
-          ) : (
-            <>
-              <p style={s.footerText}>Smarter than Cyber Cafe</p>
-              {onLogout && (
-                <button onClick={onLogout} style={s.logoutBtn}>
-                  Logout
-                </button>
-              )}
-            </>
-          )}
+        <nav style={s.nav}>
+          {NAV_ITEMS.map((item) => (
+            <button
+              key={item.path}
+              type="button"
+              style={{
+                ...s.navBtn,
+                ...(activeLabel === item.label ? s.navBtnActive : null),
+              }}
+              onClick={() => navigate(item.path)}
+            >
+              <span style={s.navIcon}>{item.icon}</span>
+              <span>{item.label}</span>
+            </button>
+          ))}
+        </nav>
+
+        <div style={s.creditCard}>
+          <div style={s.creditNum}>{credits ?? 0}</div>
+          <div style={s.creditLabel}>Credits remaining</div>
+          <button type="button" style={s.buyBtn} onClick={() => navigate("/pricing")}>
+            + Buy Credits
+          </button>
         </div>
+
+        <div style={s.sectionLabel}>Quick Access</div>
+        <div style={s.quickAccess}>
+          {quickAccess.map((item) => (
+            <button
+              key={item.id}
+              type="button"
+              style={s.quickItem}
+              onClick={() => item.route && navigate(item.route)}
+            >
+              <span style={{ ...s.quickIcon, color: item.accent }}>{item.icon}</span>
+              <span style={s.quickText}>{item.label}</span>
+            </button>
+          ))}
+        </div>
+
+        <div style={s.groupWrap}>
+          {TOOL_CATEGORIES.slice(1).map((group) => (
+            <div key={group.id} style={s.groupCard}>
+              <button
+                type="button"
+                style={s.groupHead}
+                onClick={() => setOpenGroups((prev) => ({ ...prev, [group.id]: !prev[group.id] }))}
+              >
+                <span>{group.title}</span>
+                <span style={s.groupArrow}>{openGroups[group.id] ? "-" : "+"}</span>
+              </button>
+              {openGroups[group.id] && (
+                <div style={s.groupItems}>
+                  {group.items.map((item) => (
+                    <button
+                      key={item.id}
+                      type="button"
+                      disabled={!item.route || item.live === false}
+                      style={{
+                        ...s.groupItem,
+                        ...((!item.route || item.live === false) ? s.groupItemDisabled : null),
+                      }}
+                      onClick={() => item.route && item.live !== false && navigate(item.route)}
+                    >
+                      <span style={{ ...s.groupItemIcon, color: item.accent }}>{item.icon}</span>
+                      <span style={s.groupItemText}>{item.label}</span>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+
+        {onLogout ? (
+          <button type="button" style={s.logoutBtn} onClick={onLogout}>
+            Logout
+          </button>
+        ) : null}
       </aside>
     </>
   );
@@ -187,31 +140,29 @@ export default function Sidebar({ credits, onLogout, activeNav }) {
 
 const s = {
   sidebar: {
-    width: 220,
-    background: "linear-gradient(180deg, color-mix(in srgb, var(--ff-panel-solid) 88%, transparent), color-mix(in srgb, var(--ff-panel-soft) 82%, transparent))",
-    borderRight: "1px solid var(--ff-border)",
-    backdropFilter: "blur(18px)",
+    width: 292,
+    flexShrink: 0,
     display: "flex",
     flexDirection: "column",
-    padding: "18px 14px",
-    flexShrink: 0,
+    gap: 16,
+    padding: "16px 14px 18px",
+    background: "linear-gradient(180deg, color-mix(in srgb, var(--ff-panel-solid) 98%, transparent), color-mix(in srgb, var(--ff-panel-soft) 98%, transparent))",
+    borderRight: "1px solid var(--ff-border)",
+    height: "100vh",
     position: "sticky",
     top: 0,
-    height: "100vh",
     overflowY: "auto",
     zIndex: 20,
-    boxSizing: "border-box",
   },
   sidebarMobile: {
     position: "fixed",
     left: 0,
     top: 0,
-    width: 268,
-    maxWidth: "84vw",
+    maxWidth: "88vw",
+    width: 292,
     height: "100dvh",
-    padding: "82px 14px 24px",
-    transition: "transform 0.24s ease",
-    boxShadow: "0 24px 60px rgba(0, 0, 0, 0.45)",
+    transition: "transform .22s ease",
+    boxShadow: "0 28px 70px rgba(2, 6, 23, 0.35)",
     zIndex: 42,
   },
   mobileToggle: {
@@ -219,165 +170,160 @@ const s = {
     top: 14,
     left: 12,
     zIndex: 44,
-    width: 40,
-    height: 40,
-    borderRadius: 10,
+    width: 42,
+    height: 42,
+    borderRadius: 12,
     border: "1px solid var(--ff-border)",
-    background: "linear-gradient(180deg, color-mix(in srgb, var(--ff-panel-solid) 96%, transparent), color-mix(in srgb, var(--ff-panel) 100%, transparent))",
+    background: "var(--ff-panel-solid)",
     color: "var(--ff-text)",
-    fontSize: 19,
-    fontWeight: 700,
     cursor: "pointer",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
+    fontWeight: 900,
   },
-  backdrop: {
-    position: "fixed",
-    inset: 0,
-    background: "rgba(2, 6, 23, 0.68)",
-    zIndex: 41,
-  },
+  backdrop: { position: "fixed", inset: 0, background: "rgba(2, 6, 23, 0.68)", zIndex: 41 },
   brand: {
+    border: "none",
+    background: "transparent",
     display: "flex",
     alignItems: "center",
     gap: 12,
-    paddingBottom: 18,
-    marginBottom: 18,
-    borderBottom: "1px solid var(--ff-border)",
-    background: "transparent",
-    borderTop: "none",
-    borderLeft: "none",
-    borderRight: "none",
-    width: "100%",
     cursor: "pointer",
     textAlign: "left",
+    padding: "6px 4px 12px",
+    borderBottom: "1px solid var(--ff-border)",
   },
-  iconBox: {
+  brandIconBox: {
     width: 42,
     height: 42,
-    borderRadius: 11,
-    background: "color-mix(in srgb, var(--ff-orange) 12%, transparent)",
-    border: "1px solid color-mix(in srgb, var(--ff-orange) 24%, transparent)",
+    borderRadius: 12,
+    background: "linear-gradient(135deg, rgba(37,99,235,0.14), rgba(124,58,237,0.16))",
+    border: "1px solid color-mix(in srgb, var(--ff-blue) 24%, transparent)",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    flexShrink: 0,
     overflow: "hidden",
   },
-  iconImage: { width: 28, height: 28, objectFit: "contain", display: "block" },
-  brandMain: { fontSize: 18, fontWeight: 900, color: "var(--ff-text)", letterSpacing: -0.4, lineHeight: 1.1 },
-  mobileBrand: { paddingBottom: 14, marginBottom: 14 },
-  mobileSection: { paddingBottom: 12, marginBottom: 10, borderBottom: "1px solid var(--ff-border)" },
-  mobileSectionLabel: {
-    color: "var(--ff-text-soft)",
-    fontSize: 11,
-    fontWeight: 800,
-    textTransform: "uppercase",
-    letterSpacing: 0.8,
-    margin: "0 0 5px",
-  },
-  mobileSectionSub: { color: "var(--ff-text-faint)", fontSize: 13, lineHeight: 1.5, margin: 0 },
-  mobileToolWrap: { display: "flex", flexDirection: "column", gap: 12, flex: 1 },
-  mobileToolSections: { display: "flex", flexDirection: "column", gap: 16 },
-  toolSection: { display: "flex", flexDirection: "column", gap: 9 },
-  toolSectionTitle: { color: "var(--ff-text)", fontSize: 13, fontWeight: 800, margin: 0 },
-  toolList: { display: "grid", gap: 8 },
-  toolBtn: {
-    display: "flex",
-    alignItems: "center",
-    gap: 10,
-    padding: "11px 12px",
-    border: "1px solid var(--ff-border)",
-    background: "linear-gradient(180deg, color-mix(in srgb, var(--ff-panel-solid) 94%, transparent), color-mix(in srgb, var(--ff-panel-soft) 94%, transparent))",
-    color: "var(--ff-text-soft)",
-    borderRadius: 10,
-    cursor: "pointer",
-    fontSize: 14,
-    fontWeight: 600,
-    textAlign: "left",
-    width: "100%",
-  },
-  toolBtnActive: { borderColor: "#f9731650", background: "#f9731618", color: "#f97316" },
-  toolBtnIcon: {
-    width: 28,
-    minWidth: 28,
-    textAlign: "center",
-    flexShrink: 0,
-    fontSize: 11,
-    fontWeight: 800,
-    color: "inherit",
-    letterSpacing: 0.2,
-  },
-  creditBlock: {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    paddingBottom: 18,
-    marginBottom: 14,
-    borderBottom: "1px solid var(--ff-border)",
-  },
-  ringWrap: { position: "relative", width: 76, height: 76, marginBottom: 8 },
-  ringNum: {
-    position: "absolute",
-    inset: 0,
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    color: "var(--ff-orange)",
-    fontWeight: 800,
-    fontSize: 20,
-  },
-  ringLbl: { color: "var(--ff-text-faint)", fontSize: 11, margin: "0 0 10px" },
-  buyBtn: {
-    background: "linear-gradient(135deg,#f97316,#ea580c)",
-    color: "#fff",
-    border: "none",
-    borderRadius: 8,
-    padding: "7px 18px",
-    fontSize: 12,
-    fontWeight: 700,
-    cursor: "pointer",
-  },
-  nav: { display: "flex", flexDirection: "column", gap: 6, flex: 1 },
+  brandIcon: { width: 28, height: 28, objectFit: "contain" },
+  brandTitle: { color: "var(--ff-text)", fontSize: 18, fontWeight: 900, letterSpacing: -0.4 },
+  brandSub: { color: "var(--ff-text-soft)", fontSize: 13, marginTop: 2 },
+  nav: { display: "grid", gap: 8 },
   navBtn: {
+    borderRadius: 14,
+    border: "1px solid transparent",
+    background: "transparent",
+    color: "var(--ff-text-soft)",
     display: "flex",
     alignItems: "center",
     gap: 10,
-    padding: "12px 13px",
-    border: "none",
-    background: "transparent",
-    color: "var(--ff-text-faint)",
-    borderRadius: 10,
+    padding: "12px 12px",
     cursor: "pointer",
     fontSize: 15,
-    fontWeight: 600,
-    width: "100%",
-    textAlign: "left",
-    transition: "all 0.15s",
-  },
-  navBtnIcon: {
-    width: 26,
-    minWidth: 26,
-    textAlign: "center",
-    fontSize: 11,
     fontWeight: 800,
-    color: "inherit",
+    textAlign: "left",
   },
-  navActive: { background: "color-mix(in srgb, var(--ff-orange) 10%, transparent)", color: "var(--ff-orange)", fontWeight: 700 },
-  footer: { borderTop: "1px solid var(--ff-border)", paddingTop: 14, marginTop: "auto", paddingBottom: 18, flexShrink: 0 },
-  footerText: { color: "var(--ff-text-faint)", fontSize: 11, margin: "0 0 10px" },
-  mobileActionStack: { display: "grid", gap: 10 },
-  logoutBtn: {
-    background: "var(--ff-panel-soft)",
+  navBtnActive: {
+    background: "color-mix(in srgb, var(--ff-panel-soft) 94%, transparent)",
+    color: "var(--ff-text)",
+    borderColor: "var(--ff-border)",
+  },
+  navIcon: { minWidth: 28, fontSize: 11, fontWeight: 900, color: "var(--ff-orange)" },
+  creditCard: {
+    borderRadius: 18,
     border: "1px solid var(--ff-border)",
+    background: "var(--ff-panel-solid)",
+    padding: "18px 16px",
+    display: "grid",
+    gap: 8,
+    justifyItems: "start",
+  },
+  creditNum: { color: "var(--ff-orange)", fontSize: 34, lineHeight: 1, fontWeight: 900 },
+  creditLabel: { color: "var(--ff-text-soft)", fontSize: 13 },
+  buyBtn: {
+    border: "none",
+    background: "linear-gradient(135deg,#f97316,#ea580c)",
+    color: "#fff",
+    borderRadius: 10,
+    padding: "10px 14px",
+    fontSize: 13,
+    fontWeight: 800,
+    cursor: "pointer",
+  },
+  sectionLabel: {
+    color: "var(--ff-text-faint)",
+    fontSize: 11,
+    fontWeight: 900,
+    textTransform: "uppercase",
+    letterSpacing: 0.8,
+    marginTop: 2,
+  },
+  quickAccess: {
+    borderRadius: 18,
+    border: "1px solid var(--ff-border)",
+    background: "var(--ff-panel-solid)",
+    padding: "12px",
+    display: "grid",
+    gap: 6,
+  },
+  quickItem: {
+    border: "none",
+    background: "transparent",
     color: "var(--ff-text-soft)",
-    borderRadius: 8,
-    padding: "10px 12px",
+    display: "flex",
+    alignItems: "center",
+    gap: 10,
+    padding: "10px 8px",
+    borderRadius: 10,
+    cursor: "pointer",
+    textAlign: "left",
+  },
+  quickIcon: { minWidth: 28, fontSize: 12, fontWeight: 900 },
+  quickText: { fontSize: 14, fontWeight: 700 },
+  groupWrap: { display: "grid", gap: 10, marginTop: 2 },
+  groupCard: {
+    borderRadius: 18,
+    border: "1px solid var(--ff-border)",
+    background: "var(--ff-panel-solid)",
+    overflow: "hidden",
+  },
+  groupHead: {
+    width: "100%",
+    border: "none",
+    background: "transparent",
+    color: "var(--ff-text)",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    padding: "13px 14px",
     cursor: "pointer",
     fontSize: 14,
-    fontWeight: 700,
-    width: "100%",
+    fontWeight: 900,
     textAlign: "left",
+  },
+  groupArrow: { color: "var(--ff-text-faint)", fontSize: 16, fontWeight: 700 },
+  groupItems: { display: "grid", gap: 2, padding: "0 8px 10px" },
+  groupItem: {
+    border: "none",
+    background: "transparent",
+    color: "var(--ff-text-soft)",
+    display: "flex",
+    alignItems: "center",
+    gap: 10,
+    padding: "10px 8px",
+    borderRadius: 10,
+    cursor: "pointer",
+    textAlign: "left",
+  },
+  groupItemDisabled: { cursor: "default", opacity: 0.58 },
+  groupItemIcon: { minWidth: 28, fontSize: 11, fontWeight: 900 },
+  groupItemText: { fontSize: 13, fontWeight: 700 },
+  logoutBtn: {
+    marginTop: "auto",
+    borderRadius: 12,
+    border: "1px solid var(--ff-border)",
+    background: "var(--ff-panel-soft)",
+    color: "var(--ff-text)",
+    padding: "12px 14px",
+    fontSize: 14,
+    fontWeight: 800,
+    cursor: "pointer",
   },
 };

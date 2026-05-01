@@ -1,204 +1,73 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useStore from "../store/useStore";
 import Sidebar from "../components/Sidebar";
 import TopBar from "../components/TopBar";
 import useIsMobile from "../hooks/useIsMobile";
+import { HOME_SECTIONS, TOOL_CATEGORIES } from "../utils/toolCatalog";
 
-const EXAM_TOOLS = [
-  {
-    id: "photo",
-    icon: "📸",
-    label: "Exam Photo",
-    credit: 2,
-    color: "#3b82f6",
-    route: "/tool/photo",
-    tag: "Most Used",
-    tagColor: "#22c55e",
-    desc: "Resize and compress to exact portal spec.",
-  },
-  {
-    id: "sign",
-    icon: "✍️",
-    label: "Exam Signature",
-    credit: 2,
-    color: "#8b5cf6",
-    route: "/tool/signature",
-    tag: null,
-    desc: "Format signature for any exam form.",
-  },
-  {
-    id: "merger",
-    icon: "🪪",
-    label: "Photo + Sign / Date",
-    credit: 6,
-    color: "#f59e0b",
-    route: "/merger",
-    tag: "New",
-    tagColor: "#f97316",
-    desc: "Merge photo, signature and date in one output.",
-  },
-  {
-    id: "docsize",
-    icon: "📐",
-    label: "Document Size Changer",
-    credit: 2,
-    color: "#f97316",
-    route: "/pdf/compress",
-    tag: null,
-    desc: "Compress PDF to exact KB or MB limits.",
-  },
-];
-
-const OTHER_TOOLS = [
-  {
-    id: "crop",
-    icon: "✂️",
-    label: "Crop & Resize",
-    credit: 2,
-    color: "#ec4899",
-    route: "/tool/crop",
-    desc: "Circle, square and manual crop with zoom.",
-    soon: false,
-  },
-  {
-    id: "imgcompress",
-    icon: "🗜️",
-    label: "Image Compressor",
-    credit: 2,
-    color: "#06b6d4",
-    route: "/tool/imgcompress",
-    desc: "Reduce JPG or PNG size to target KB.",
-    soon: false,
-  },
-  {
-    id: "pdfcompress",
-    icon: "📦",
-    label: "PDF Compressor",
-    credit: 2,
-    color: "#a78bfa",
-    route: "/pdf/compress",
-    desc: "Shrink PDF to your required upload size.",
-    soon: false,
-  },
-  {
-    id: "imgtopdf",
-    icon: "🧾",
-    label: "Image to PDF",
-    credit: 2,
-    color: "#14b8a6",
-    route: "/pdf/image-to-pdf",
-    desc: "Convert multiple images into one clean PDF.",
-    soon: false,
-  },
-  {
-    id: "pdfeditor",
-    icon: "📝",
-    label: "PDF Editor",
-    credit: 2,
-    color: "#ef4444",
-    route: "/tool/pdfeditor",
-    desc: "Edit admit cards and other PDF text.",
-    soon: true,
-  },
-  {
-    id: "resume",
-    icon: "📄",
-    label: "Resume Builder",
-    credit: 2,
-    color: "#22c55e",
-    route: "/tool/resume",
-    desc: "Templates for jobs and internships.",
-    soon: true,
-  },
-  {
-    id: "converter",
-    icon: "🔄",
-    label: "PDF Converter",
-    credit: 2,
-    color: "#64748b",
-    route: null,
-    desc: "PDF to Word, JPG, PNG and more.",
-    soon: true,
-  },
-];
-
-const creditLabel = (credit) => `${credit} cr`;
-
-function ExamCard({ tool, onClick, compact }) {
-  const [isHovered, setIsHovered] = useState(false);
+function ToolCard({ item, onOpen, compact = false }) {
+  const [hovered, setHovered] = useState(false);
+  const clickable = Boolean(item.route && item.live !== false);
 
   return (
-    <div
+    <button
+      type="button"
+      disabled={!clickable}
+      onClick={() => clickable && onOpen(item.route)}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
       style={{
-        ...s.examCard,
-        ...(compact ? s.examCardCompact : null),
-        borderColor: isHovered ? tool.color : "var(--ff-border)",
-        boxShadow: isHovered ? `0 10px 24px ${tool.color}22` : "none",
-        transform: isHovered ? "translateY(-4px)" : "translateY(0)",
+        ...s.toolCard,
+        ...(compact ? s.toolCardCompact : null),
+        ...(clickable ? s.toolCardClickable : s.toolCardDisabled),
+        borderColor: hovered && clickable ? `${item.accent}44` : "var(--ff-border)",
+        boxShadow: hovered && clickable ? `0 20px 42px ${item.accent}14` : "none",
+        transform: hovered && clickable ? "translateY(-4px)" : "translateY(0)",
       }}
-      onClick={() => onClick(tool.route)}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
     >
-      <div style={s.examTop}>
-        <div style={{ ...s.examIcon, background: `${tool.color}18`, color: tool.color }}>{tool.icon}</div>
-        {tool.tag && (
-          <span
-            style={{
-              ...s.examTag,
-              background: `${tool.tagColor}20`,
-              color: tool.tagColor,
-              border: `1px solid ${tool.tagColor}44`,
-            }}
-          >
-            {tool.tag}
-          </span>
-        )}
-      </div>
-
-      <p style={{ ...s.examLabel, ...(compact ? s.examLabelCompact : null) }}>{tool.label}</p>
-      <p style={{ ...s.examDesc, ...(compact ? s.examDescCompact : null) }}>{tool.desc}</p>
-
-      <div style={s.examFooter}>
-        <span style={{ ...s.chip, color: tool.color, borderColor: `${tool.color}40` }}>
-          {creditLabel(tool.credit)}
+      <div style={s.toolCardTop}>
+        <span style={{ ...s.toolIcon, background: `${item.accent}14`, color: item.accent }}>
+          {item.icon}
         </span>
-        <span style={{ color: tool.color, fontWeight: 800, fontSize: compact ? 17 : 16 }}>→</span>
+        {!item.live && <span style={s.soonBadge}>Coming Soon</span>}
       </div>
-    </div>
+      <h3 style={{ ...s.toolTitle, ...(compact ? s.toolTitleCompact : null) }}>{item.label}</h3>
+      <p style={{ ...s.toolDesc, ...(compact ? s.toolDescCompact : null) }}>{item.desc}</p>
+      <span style={{ ...s.toolFooter, color: clickable ? item.accent : "var(--ff-text-faint)" }}>
+        {clickable ? "Open tool" : "Listed for upcoming release"}
+      </span>
+    </button>
   );
 }
 
-function OtherCard({ tool, onClick, compact }) {
-  const [isHovered, setIsHovered] = useState(false);
-
+function Section({ section, navigate, compact = false }) {
   return (
-    <div
-      style={{
-        ...s.otherCard,
-        ...(compact ? s.otherCardCompact : null),
-        borderColor: isHovered && !tool.soon ? tool.color : "var(--ff-border)",
-        boxShadow: isHovered && !tool.soon ? `0 8px 18px ${tool.color}18` : "none",
-        opacity: tool.soon ? 0.56 : 1,
-        cursor: tool.soon ? "default" : "pointer",
-      }}
-      onClick={() => !tool.soon && tool.route && onClick(tool.route)}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-    >
-      <div style={{ ...s.otherIcon, background: `${tool.color}18`, color: tool.color }}>{tool.icon}</div>
-      <div style={s.otherBody}>
-        <div style={s.otherRow}>
-          <p style={{ ...s.otherLabel, ...(compact ? s.otherLabelCompact : null) }}>{tool.label}</p>
-          {tool.soon && <span style={s.soonBadge}>Soon</span>}
+    <section style={s.section}>
+      <div style={s.sectionHead}>
+        <div>
+          <h2 style={s.sectionTitle}>{section.title}</h2>
+          {section.subtitle && <p style={s.sectionSub}>{section.subtitle}</p>}
         </div>
-        <p style={{ ...s.otherDesc, ...(compact ? s.otherDescCompact : null) }}>{tool.desc}</p>
+        {section.viewAllLabel && <span style={s.viewAll}>{section.viewAllLabel}</span>}
       </div>
-      <span style={{ ...s.chipSm, color: tool.color, borderColor: `${tool.color}40` }}>
-        {creditLabel(tool.credit)}
-      </span>
-    </div>
+
+      <div style={{ ...s.cardGrid, ...(compact ? s.cardGridCompact : null) }}>
+        {section.items.map((item) => (
+          <ToolCard key={item.id} item={item} onOpen={navigate} compact={compact} />
+        ))}
+      </div>
+
+      {section.pills?.length ? (
+        <div style={s.pillRow}>
+          {section.pills.map((pill) => (
+            <button key={pill.label} type="button" style={s.kbPill} onClick={() => navigate(pill.route)}>
+              {pill.label}
+            </button>
+          ))}
+        </div>
+      ) : null}
+    </section>
   );
 }
 
@@ -206,116 +75,50 @@ export default function Dashboard() {
   const { user, credits, logout } = useStore();
   const navigate = useNavigate();
   const isMobile = useIsMobile(900);
-  const currentCredits = user ? (credits ?? user?.credits ?? 0) : 0;
-  const firstName = user?.name?.split(" ")[0] || "Guest";
-  const isGuest = !user;
+  const currentCredits = user ? credits ?? user?.credits ?? 0 : 0;
+  const allToolCount = useMemo(
+    () => TOOL_CATEGORIES.reduce((sum, category) => sum + category.items.length, 0),
+    []
+  );
 
   return (
     <div style={s.root}>
-      {user && (
-        <Sidebar credits={currentCredits} onLogout={() => { logout(); navigate("/"); }} />
-      )}
+      {user ? (
+        <Sidebar credits={currentCredits} onLogout={() => { logout(); navigate("/"); }} activeNav="All Tools" />
+      ) : null}
+
       <div style={s.main}>
         {user ? (
           <TopBar user={user} credits={currentCredits} onLogout={() => { logout(); navigate("/"); }} />
-        ) : (
-          <div style={s.guestBar}>
-            <span>Explore FormFixer freely. Login only when you need to unlock downloads.</span>
-              <button style={s.guestLoginBtn} onClick={() => navigate("/auth")}>
-                Login / Sign Up
-              </button>
-          </div>
-        )}
+        ) : null}
+
         <div style={{ ...s.content, ...(isMobile ? s.contentMobile : null) }}>
-          <div style={{ ...s.welcomeRow, ...(isMobile ? s.welcomeRowMobile : null) }}>
-            <div>
-              <h2 style={{ ...s.welcomeTitle, ...(isMobile ? s.welcomeTitleMobile : null) }}>
-                {isMobile
-                  ? "Choose a tool"
-                  : user
-                    ? `Namaste, ${firstName}`
-                    : "Choose a tool"}
-              </h2>
-              <p style={{ ...s.welcomeSub, ...(isMobile ? s.welcomeSubMobile : null) }}>
-                {isMobile
-                    ? "Open a tool and continue in seconds."
-                  : user
-                    ? "Use photo, signature, PDF, and conversion tools from one connected hub."
-                    : "Explore tools first, then login only when you need clean final downloads."}
+          <section style={s.heroBand}>
+            <div style={s.heroCopy}>
+              <span style={s.heroBadge}>Complete Document Toolkit</span>
+              <h1 style={{ ...s.heroTitle, ...(isMobile ? s.heroTitleMobile : null) }}>
+                Welcome to FormFixer Tool Hub
+              </h1>
+              <p style={s.heroText}>
+                Your all-in-one document toolkit for exam photo resize, PDF compression,
+                image conversion, signature fixes, and upload-ready browser tools.
               </p>
             </div>
-            <div
-              style={{ ...s.creditCard, ...(isMobile ? s.creditCardMobile : null) }}
-              onClick={() => navigate("/pricing")}
-            >
-              <span style={{ fontSize: 22 }}>⚡</span>
-              <span style={s.creditNum}>{currentCredits}</span>
-              <span style={s.creditLbl}>Credits</span>
-            </div>
-          </div>
-
-          <div style={s.workspaceStrip}>
-            <div>
-              <p style={s.workspaceEyebrow}>Quick categories</p>
-              <h3 style={s.workspaceTitle}>Open the exact tool you need faster</h3>
-              <p style={s.workspaceText}>
-                Jump into the most-used flows for image fixes, PDF uploads, and conversion tasks without guessing where to start.
-              </p>
-            </div>
-            <div style={s.workspaceActions}>
-              <button type="button" style={s.workspaceBtnPrimary} onClick={() => navigate("/pdf/compress")}>
-                Open PDF Tool
-              </button>
-              <button type="button" style={s.workspaceBtnSecondary} onClick={() => navigate("/support")}>
-                Contact / Help
-              </button>
-            </div>
-          </div>
-
-          {user && currentCredits <= 5 && (
-            <div style={s.lowBanner}>
-              Warning: Only <b>{currentCredits} credits</b> left.{" "}
-              <span style={s.link} onClick={() => navigate("/pricing")}>Buy a plan →</span>
-            </div>
-          )}
-
-          <section>
-            <div style={s.secHead}>
-              <div style={s.secHeadLeft}>
-                <span style={{ fontSize: 18 }}>📋</span>
-                <div>
-                  <h2 style={s.secTitle}>Core Upload Tools</h2>
-                  <p style={s.secSub}>Photo, signature and form-ready outputs for exam portals and daily uploads.</p>
-                </div>
+            <div style={s.heroStats}>
+              <div style={s.statTile}>
+                <strong style={s.statNum}>{allToolCount}+</strong>
+                <span style={s.statLabel}>Mapped tools</span>
               </div>
-            </div>
-            <div style={{ ...s.examGrid, ...(isMobile ? s.examGridMobile : null) }}>
-              {EXAM_TOOLS.map((tool) => (
-                <ExamCard key={tool.id} tool={tool} onClick={navigate} compact={isMobile} />
-              ))}
+              <div style={s.statTile}>
+                <strong style={s.statNum}>{currentCredits}</strong>
+                <span style={s.statLabel}>Credits</span>
+              </div>
             </div>
           </section>
 
-          <section>
-            <div style={s.secHead}>
-              <div style={s.secHeadLeft}>
-                <span style={{ fontSize: 18 }}>📦</span>
-                <div>
-                  <h2 style={s.secTitle}>Utility & Conversion Tools</h2>
-                  <p style={s.secSub}>Crop, compress, convert and clean files for quick submissions.</p>
-                </div>
-              </div>
-            </div>
-            <div style={{ ...s.otherGrid, ...(isMobile ? s.otherGridMobile : null) }}>
-              {OTHER_TOOLS.map((tool) => (
-                <OtherCard key={tool.id} tool={tool} onClick={navigate} compact={isMobile} />
-              ))}
-            </div>
-          </section>
-
-          <div style={s.strip}>
-            <b>FormFixer as a tool hub:</b> resize, compress, merge, and convert from one place instead of bouncing across random sites.
-          </div>
+          {HOME_SECTIONS.map((section) => (
+            <Section key={section.id} section={section} navigate={navigate} compact={isMobile} />
+          ))}
         </div>
       </div>
     </div>
@@ -323,132 +126,117 @@ export default function Dashboard() {
 }
 
 const s = {
-  root: { display: "flex", minHeight: "100vh", background: "transparent", fontFamily: "'Segoe UI', sans-serif" },
-  main: { flex: 1, overflowY: "auto", paddingBottom: 48, minWidth: 0 },
+  root: {
+    display: "flex",
+    minHeight: "100vh",
+    background: "transparent",
+    fontFamily: "'Segoe UI', sans-serif",
+  },
+  main: { flex: 1, minWidth: 0, overflowX: "hidden" },
   content: {
-    padding: "24px 28px",
+    maxWidth: 1220,
+    margin: "0 auto",
+    padding: "28px 24px 56px",
     display: "flex",
     flexDirection: "column",
-    gap: 24,
-    maxWidth: 1120,
-    width: "100%",
-    margin: "0 auto",
-    boxSizing: "border-box",
+    gap: 30,
   },
-  contentMobile: { padding: "16px", gap: 18 },
-  link: { color: "var(--ff-orange)", cursor: "pointer", fontWeight: 700 },
-  guestBar: { display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, padding: "20px 28px 0", color: "var(--ff-text-soft)", fontSize: 13, flexWrap: "wrap" },
-  guestLoginBtn: { background: "#f97316", color: "#fff", border: "none", borderRadius: 999, padding: "10px 16px", fontWeight: 700, cursor: "pointer" },
-
-  welcomeRow: { display: "flex", alignItems: "center", justifyContent: "space-between", gap: 14, flexWrap: "wrap" },
-  welcomeRowMobile: { alignItems: "stretch" },
-  welcomeTitle: { color: "var(--ff-text)", fontSize: 24, fontWeight: 800, margin: 0, lineHeight: 1.2 },
-  welcomeTitleMobile: { fontSize: 18, lineHeight: 1.25 },
-  welcomeSub: { color: "var(--ff-text-soft)", fontSize: 15, marginTop: 6, lineHeight: 1.5 },
-  welcomeSubMobile: { fontSize: 14, lineHeight: 1.45, marginTop: 6 },
-  creditCard: {
-    background: "var(--ff-panel-solid)",
-    border: "1px solid var(--ff-border)",
-    borderRadius: 12,
-    padding: "12px 20px",
+  contentMobile: { padding: "18px 14px 44px", gap: 24 },
+  heroBand: {
     display: "flex",
-    alignItems: "center",
-    gap: 9,
-    cursor: "pointer",
-  },
-  creditCardMobile: { width: "100%", justifyContent: "center", padding: "12px 16px" },
-  creditCardGuest: { borderColor: "var(--ff-border)" },
-  creditNum: { color: "var(--ff-orange)", fontWeight: 900, fontSize: 24 },
-  creditLbl: { color: "var(--ff-text-soft)", fontSize: 13 },
-
-  lowBanner: {
-    background: "color-mix(in srgb, var(--ff-orange) 10%, transparent)",
-    border: "1px solid color-mix(in srgb, var(--ff-orange) 28%, transparent)",
-    borderRadius: 10,
-    padding: "10px 16px",
-    color: "var(--ff-orange)",
-    fontSize: 13,
-  },
-  workspaceStrip: {
-    background: "color-mix(in srgb, var(--ff-blue) 8%, var(--ff-panel-solid))",
-    border: "1px solid color-mix(in srgb, var(--ff-blue) 20%, var(--ff-border))",
-    borderRadius: 16,
-    padding: "18px 20px",
-    display: "flex",
-    alignItems: "center",
+    alignItems: "stretch",
     justifyContent: "space-between",
     gap: 16,
     flexWrap: "wrap",
+    padding: "28px",
+    borderRadius: 22,
+    background: "linear-gradient(135deg, #2563eb, #7c3aed 58%, #db2777)",
+    color: "#fff",
+    boxShadow: "0 26px 60px rgba(37, 99, 235, 0.24)",
   },
-  workspaceEyebrow: { margin: "0 0 5px", color: "var(--ff-blue)", fontSize: 11, fontWeight: 800, textTransform: "uppercase", letterSpacing: 0.6 },
-  workspaceTitle: { margin: "0 0 6px", color: "var(--ff-text)", fontSize: 18, fontWeight: 800 },
-  workspaceText: { margin: 0, color: "var(--ff-text-soft)", fontSize: 14, lineHeight: 1.6, maxWidth: 680 },
-  workspaceActions: { display: "flex", gap: 10, flexWrap: "wrap" },
-  workspaceBtnPrimary: { background: "var(--ff-blue)", color: "#fff", border: "none", borderRadius: 10, padding: "10px 14px", fontSize: 13, fontWeight: 800, cursor: "pointer" },
-  workspaceBtnSecondary: { background: "var(--ff-panel-solid)", color: "var(--ff-text-soft)", border: "1px solid var(--ff-border)", borderRadius: 10, padding: "10px 14px", fontSize: 13, fontWeight: 800, cursor: "pointer" },
-
-  secHead: { display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 14, gap: 10, flexWrap: "wrap" },
-  secHeadLeft: { display: "flex", alignItems: "flex-start", gap: 10 },
-  secTitle: { color: "var(--ff-text)", fontWeight: 800, fontSize: 18, margin: "0 0 3px" },
-  secSub: { color: "var(--ff-text-soft)", fontSize: 14, margin: 0, lineHeight: 1.55 },
-
-  examGrid: { display: "grid", gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: 14 },
-  examGridMobile: { gridTemplateColumns: "1fr" },
-  examCard: {
+  heroCopy: { display: "flex", flexDirection: "column", gap: 10, maxWidth: 720 },
+  heroBadge: {
+    width: "fit-content",
+    padding: "6px 10px",
+    borderRadius: 999,
+    background: "rgba(255,255,255,0.16)",
+    border: "1px solid rgba(255,255,255,0.2)",
+    fontSize: 12,
+    fontWeight: 800,
+  },
+  heroTitle: { margin: 0, fontSize: 46, lineHeight: 1.05, fontWeight: 900, letterSpacing: -1.6 },
+  heroTitleMobile: { fontSize: 32, lineHeight: 1.08, letterSpacing: -0.8 },
+  heroText: { margin: 0, fontSize: 18, lineHeight: 1.7, color: "rgba(255,255,255,0.9)" },
+  heroStats: { display: "grid", gap: 12, minWidth: 180, alignContent: "start" },
+  statTile: {
+    padding: "18px 16px",
+    borderRadius: 18,
+    background: "rgba(255,255,255,0.16)",
+    border: "1px solid rgba(255,255,255,0.18)",
+    display: "grid",
+    gap: 6,
+  },
+  statNum: { fontSize: 34, lineHeight: 1, fontWeight: 900 },
+  statLabel: { fontSize: 13, color: "rgba(255,255,255,0.86)" },
+  section: { display: "grid", gap: 16 },
+  sectionHead: { display: "flex", alignItems: "end", justifyContent: "space-between", gap: 12, flexWrap: "wrap" },
+  sectionTitle: { margin: 0, color: "var(--ff-text)", fontSize: 34, lineHeight: 1.06, fontWeight: 900, letterSpacing: -0.8 },
+  sectionSub: { margin: "6px 0 0", color: "var(--ff-text-soft)", fontSize: 15, lineHeight: 1.7 },
+  viewAll: { color: "var(--ff-blue)", fontSize: 14, fontWeight: 800 },
+  cardGrid: { display: "grid", gridTemplateColumns: "repeat(4, minmax(0, 1fr))", gap: 14 },
+  cardGridCompact: { gridTemplateColumns: "1fr 1fr" },
+  toolCard: {
+    borderRadius: 18,
+    border: "1px solid var(--ff-border)",
     background: "var(--ff-panel-solid)",
-    border: "1px solid",
-    borderRadius: 13,
-    padding: 16,
+    padding: "18px 18px 16px",
     display: "flex",
     flexDirection: "column",
-    cursor: "pointer",
-    transition: "transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease",
-    minHeight: 176,
-    boxSizing: "border-box",
+    gap: 10,
+    textAlign: "left",
+    transition: "transform .18s ease, box-shadow .18s ease, border-color .18s ease",
   },
-  examCardCompact: { minHeight: 138, padding: 14 },
-  examTop: { display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10, gap: 8 },
-  examTag: { borderRadius: 6, padding: "2px 8px", fontSize: 10, fontWeight: 700, whiteSpace: "nowrap" },
-  examIcon: { width: 36, height: 36, borderRadius: 9, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18, flexShrink: 0 },
-  examLabel: { color: "var(--ff-text)", fontWeight: 700, fontSize: 16, margin: "0 0 6px" },
-  examLabelCompact: { fontSize: 18, lineHeight: 1.25, marginBottom: 8 },
-  examDesc: { color: "var(--ff-text-soft)", fontSize: 13, margin: 0, lineHeight: 1.6, flex: 1 },
-  examDescCompact: { fontSize: 14, lineHeight: 1.55 },
-  examFooter: { display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 10 },
-  chip: { fontSize: 12, fontWeight: 700, border: "1px solid", borderRadius: 6, padding: "4px 10px" },
-
-  otherGrid: { display: "grid", gridTemplateColumns: "repeat(3, minmax(0, 1fr))", gap: 12 },
-  otherGridMobile: { gridTemplateColumns: "1fr" },
-  otherCard: {
-    background: "var(--ff-panel-solid)",
-    border: "1px solid",
-    borderRadius: 12,
-    padding: "14px 15px",
-    display: "flex",
+  toolCardCompact: { minHeight: 188 },
+  toolCardClickable: { cursor: "pointer" },
+  toolCardDisabled: { cursor: "default", opacity: 0.94 },
+  toolCardTop: { display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8 },
+  toolIcon: {
+    minWidth: 44,
+    height: 44,
+    padding: "0 10px",
+    borderRadius: 13,
+    display: "inline-flex",
     alignItems: "center",
-    gap: 12,
-    transition: "box-shadow 0.15s ease, border-color 0.15s ease",
-    minHeight: 74,
-    boxSizing: "border-box",
-  },
-  otherCardCompact: { padding: "14px 15px", minHeight: 78, gap: 12 },
-  otherIcon: { width: 36, height: 36, borderRadius: 9, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 17, flexShrink: 0 },
-  otherBody: { flex: 1, minWidth: 0 },
-  otherRow: { display: "flex", alignItems: "center", gap: 6, marginBottom: 2, flexWrap: "wrap" },
-  otherLabel: { color: "var(--ff-text)", fontWeight: 700, fontSize: 14, margin: 0 },
-  otherLabelCompact: { fontSize: 15 },
-  otherDesc: { color: "var(--ff-text-soft)", fontSize: 12, margin: 0, lineHeight: 1.45 },
-  otherDescCompact: { fontSize: 13, lineHeight: 1.45 },
-  soonBadge: { background: "var(--ff-panel-soft)", color: "var(--ff-text-faint)", fontSize: 9, fontWeight: 700, borderRadius: 4, padding: "1px 6px", flexShrink: 0 },
-  chipSm: { fontSize: 11, fontWeight: 700, border: "1px solid", borderRadius: 5, padding: "3px 7px", flexShrink: 0, whiteSpace: "nowrap" },
-
-  strip: {
-    background: "color-mix(in srgb, var(--ff-green) 10%, transparent)",
-    border: "1px solid color-mix(in srgb, var(--ff-green) 22%, transparent)",
-    borderRadius: 12,
-    padding: "14px 18px",
-    color: "var(--ff-green)",
+    justifyContent: "center",
     fontSize: 13,
-    lineHeight: 1.6,
+    fontWeight: 900,
+    letterSpacing: 0.2,
+  },
+  soonBadge: {
+    padding: "4px 8px",
+    borderRadius: 999,
+    background: "color-mix(in srgb, var(--ff-orange) 10%, transparent)",
+    color: "var(--ff-orange)",
+    border: "1px solid color-mix(in srgb, var(--ff-orange) 24%, transparent)",
+    fontSize: 10,
+    fontWeight: 800,
+    whiteSpace: "nowrap",
+  },
+  toolTitle: { margin: 0, color: "var(--ff-text)", fontSize: 22, lineHeight: 1.18, fontWeight: 900, letterSpacing: -0.5 },
+  toolTitleCompact: { fontSize: 18 },
+  toolDesc: { margin: 0, color: "var(--ff-text-soft)", fontSize: 14, lineHeight: 1.65, minHeight: 46 },
+  toolDescCompact: { fontSize: 13 },
+  toolFooter: { marginTop: "auto", fontSize: 13, fontWeight: 800 },
+  pillRow: { display: "flex", gap: 12, flexWrap: "wrap" },
+  kbPill: {
+    borderRadius: 18,
+    border: "1px solid var(--ff-border)",
+    background: "var(--ff-panel-solid)",
+    color: "var(--ff-text)",
+    padding: "14px 22px",
+    fontSize: 30,
+    fontWeight: 900,
+    cursor: "pointer",
+    letterSpacing: -0.8,
   },
 };
