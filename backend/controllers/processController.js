@@ -1,8 +1,11 @@
 const User = require('../models/User');
 const History = require('../models/ProcessHistory');
 const examSpecs = require('../data/examSpecs');
-const { uploadBuffer } = require('../utils/cloudinary');
 const { processExamImageBuffer } = require('../lib/imageEngine');
+
+function bufferToDataUrl(buffer, mimeType = 'image/jpeg') {
+  return `data:${mimeType};base64,${buffer.toString('base64')}`;
+}
 
 const TOOL_CREDIT_COST = {
   photo: 2,
@@ -65,16 +68,8 @@ const processImage = async (req, res) => {
   const withinRange = processed.meta.withinMaxKB;
   const creditCost = TOOL_CREDIT_COST[toolType] || 2;
 
-  let uploadResult;
-  try {
-    uploadResult = await uploadBuffer(processed.buffer, `formfixer/${toolType}`);
-  } catch (error) {
-    console.error('[Process] cloudinary upload error:', error.message);
-    return res.status(500).json({ message: 'Upload failed. Check Cloudinary credentials.' });
-  }
-
   res.json({
-    url: uploadResult.secure_url,
+    url: bufferToDataUrl(processed.buffer, 'image/jpeg'),
     sizeKB: finalSizeKB,
     dimensions: `${spec.w}×${spec.h}`,
     targetMaxKB: spec.maxKB,

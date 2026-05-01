@@ -1,5 +1,8 @@
-const { uploadPDFBuffer } = require('../utils/cloudinary');
 const { compressPDFBuffer, convertImagesToPdfBuffer } = require('../lib/pdfEngine');
+
+function bufferToDataUrl(buffer, mimeType = 'application/pdf') {
+  return `data:${mimeType};base64,${buffer.toString('base64')}`;
+}
 
 const compressPDF = async (req, res) => {
   try {
@@ -26,21 +29,13 @@ const compressPDF = async (req, res) => {
     const reduction = Math.max(0, Math.round(((originalKB - compressedKB) / originalKB) * 100));
     const hitTarget = targetKB ? compressedKB <= targetKB : true;
 
-    let uploadResult;
-    try {
-      uploadResult = await uploadPDFBuffer(compressedBuffer);
-    } catch (error) {
-      console.error('[PDF] Cloudinary upload error:', error.message);
-      return res.status(500).json({ message: 'Upload failed. Check Cloudinary credentials.' });
-    }
-
     const engineLabel = compressed.engine === 'ghostscript' ? 'FormFixer PDF Pro' : 'FormFixer PDF Basic';
     const targetReduction = targetKB
       ? Math.max(0, Math.round(((originalKB - targetKB) / originalKB) * 100))
       : null;
 
     return res.json({
-      url: uploadResult.secure_url,
+      url: bufferToDataUrl(compressedBuffer),
       originalKB,
       compressedKB,
       reduction,
@@ -87,16 +82,8 @@ const imageToPdf = async (req, res) => {
       { pageMode, orientation }
     );
 
-    let uploadResult;
-    try {
-      uploadResult = await uploadPDFBuffer(pdfBuffer, 'formfixer/pdfs');
-    } catch (error) {
-      console.error('[ImageToPDF] Cloudinary upload error:', error.message);
-      return res.status(500).json({ message: 'Upload failed. Check Cloudinary credentials.' });
-    }
-
     return res.json({
-      url: uploadResult.secure_url,
+      url: bufferToDataUrl(pdfBuffer),
       originalCount: req.files.length,
       pageCount: req.files.length,
       pdfKB: Math.round(pdfBuffer.length / 1024),
