@@ -315,7 +315,13 @@ export default function Pricing() {
                 <div style={{ ...s.cell, color: "#22c55e", fontWeight: 700, fontSize: 11 }}>FormFixer</div>
               </div>
               {COMPARISON.map((row, index) => (
-                <div key={row.feature} style={{ ...s.tableRow, background: index % 2 === 0 ? "#0d1421" : "#070c18" }}>
+                <div
+                  key={row.feature}
+                  style={{
+                    ...s.tableRow,
+                    background: index % 2 === 0 ? "var(--ff-panel-solid)" : "color-mix(in srgb, var(--ff-panel-soft) 72%, transparent)",
+                  }}
+                >
                   <div style={{ ...s.cell, flex: 1.55, color: "#94a3b8", fontWeight: 600 }}>{row.feature}</div>
                   <div style={{ ...s.cell, color: "#fbbf24" }}>{row.sites}</div>
                   <div style={{ ...s.cell, color: "#22c55e", fontWeight: 700 }}>{row.us}</div>
@@ -325,9 +331,9 @@ export default function Pricing() {
           </div>
 
           <div style={{ ...s.cta, ...(isMobile ? s.ctaMobile : null) }}>
-            <p style={{ color: "#94a3b8", fontSize: isMobile ? 15 : 14, lineHeight: 1.6, margin: 0 }}>
-              Free credits are enough for many first-time users. Choose a paid plan only if you need more downloads.
-            </p>
+              <p style={{ color: "var(--ff-text-soft)", fontSize: isMobile ? 15 : 14, lineHeight: 1.6, margin: 0 }}>
+                Free credits are enough for many first-time users. Choose a paid plan only if you need more downloads.
+              </p>
           </div>
         </div>
       </div>
@@ -338,53 +344,53 @@ export default function Pricing() {
 const s = {
   root: { display: "flex", minHeight: "100vh", background: "transparent", fontFamily: "'Segoe UI', sans-serif" },
   main: { flex: 1, overflowY: "auto", paddingBottom: 60 },
-  content: { padding: "20px 24px", display: "flex", flexDirection: "column", gap: 22, maxWidth: 960, width: "100%", boxSizing: "border-box" },
+  content: { padding: "20px 24px", display: "flex", flexDirection: "column", gap: 22, maxWidth: 960, width: "100%", margin: "0 auto", boxSizing: "border-box" },
   contentMobile: { padding: "16px", gap: 18 },
 
-  pageHdr: {},
-  pageTitle: { color: "#f1f5f9", fontWeight: 800, fontSize: 22, margin: "0 0 6px" },
-  pageSub: { color: "#64748b", fontSize: 14, margin: 0 },
+  pageHdr: { textAlign: "center" },
+  pageTitle: { color: "var(--ff-text)", fontWeight: 800, fontSize: 22, margin: "0 0 6px" },
+  pageSub: { color: "var(--ff-text-soft)", fontSize: 14, margin: 0 },
   pageTitleMobile: { fontSize: 24, lineHeight: 1.2 },
   pageSubMobile: { fontSize: 15, lineHeight: 1.5 },
 
   bannerIcon: { fontSize: 16, fontWeight: 800, flexShrink: 0 },
-  freeBanner: { background: "#052e1620", border: "1px solid #14532d", borderRadius: 14, padding: "14px 18px", display: "flex", alignItems: "center", gap: 14, flexWrap: "wrap" },
+  freeBanner: { background: "color-mix(in srgb, var(--ff-green) 8%, var(--ff-panel-solid))", border: "1px solid color-mix(in srgb, var(--ff-green) 32%, transparent)", borderRadius: 14, padding: "14px 18px", display: "flex", alignItems: "center", gap: 14, flexWrap: "wrap" },
   bannerMobile: { alignItems: "flex-start", gap: 12, padding: "16px" },
-  freeTitle: { color: "#86efac", fontWeight: 700, fontSize: 14, margin: "0 0 2px" },
-  freeSub: { color: "#64748b", fontSize: 12, margin: 0, lineHeight: 1.55 },
+  freeTitle: { color: "var(--ff-green)", fontWeight: 700, fontSize: 14, margin: "0 0 2px" },
+  freeSub: { color: "var(--ff-text-soft)", fontSize: 12, margin: 0, lineHeight: 1.55 },
   bannerTitleMobile: { fontSize: 15, lineHeight: 1.45 },
   bannerSubMobile: { fontSize: 14, lineHeight: 1.6 },
-  freeBadge: { background: "#052e16", color: "#86efac", border: "1px solid #14532d", borderRadius: 8, padding: "4px 14px", fontSize: 13, fontWeight: 800, flexShrink: 0 },
+  freeBadge: { background: "color-mix(in srgb, var(--ff-green) 12%, var(--ff-panel-solid))", color: "var(--ff-green)", border: "1px solid color-mix(in srgb, var(--ff-green) 28%, transparent)", borderRadius: 8, padding: "4px 14px", fontSize: 13, fontWeight: 800, flexShrink: 0 },
 
-  singleBanner: { background: "#0f172a", border: "1px solid #22c55e55", borderRadius: 14, padding: "14px 18px", display: "flex", alignItems: "center", gap: 14, flexWrap: "wrap" },
+  singleBanner: { background: "var(--ff-panel-solid)", border: "1px solid color-mix(in srgb, #22c55e 28%, var(--ff-border))", borderRadius: 14, padding: "14px 18px", display: "flex", alignItems: "center", gap: 14, flexWrap: "wrap" },
   singleTitle: { color: "#22c55e", fontWeight: 800, fontSize: 14, margin: "0 0 2px" },
-  singleSub: { color: "#94a3b8", fontSize: 12, margin: 0, lineHeight: 1.55 },
+  singleSub: { color: "var(--ff-text-soft)", fontSize: 12, margin: 0, lineHeight: 1.55 },
   singleActionWrap: { display: "flex", alignItems: "center", gap: 10, marginLeft: "auto", flexWrap: "wrap" },
   singleActionWrapMobile: { marginLeft: 0, width: "100%", justifyContent: "space-between" },
-  singleBadge: { background: "#052e16", color: "#86efac", border: "1px solid #14532d", borderRadius: 8, padding: "4px 12px", fontSize: 12, fontWeight: 800 },
-  singleInfo: { color: "#64748b", fontSize: 12, lineHeight: 1.5 },
+  singleBadge: { background: "color-mix(in srgb, var(--ff-green) 12%, var(--ff-panel-solid))", color: "var(--ff-green)", border: "1px solid color-mix(in srgb, var(--ff-green) 28%, transparent)", borderRadius: 8, padding: "4px 12px", fontSize: 12, fontWeight: 800 },
+  singleInfo: { color: "var(--ff-text-faint)", fontSize: 12, lineHeight: 1.5 },
 
-  successAlert: { background: "#052e16", border: "1px solid #14532d", borderRadius: 12, padding: "14px 18px", color: "#86efac", fontSize: 14, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, flexWrap: "wrap" },
+  successAlert: { background: "color-mix(in srgb, var(--ff-green) 10%, var(--ff-panel-solid))", border: "1px solid color-mix(in srgb, var(--ff-green) 28%, transparent)", borderRadius: 12, padding: "14px 18px", color: "var(--ff-green)", fontSize: 14, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, flexWrap: "wrap" },
   alertBtn: { background: "#22c55e", color: "#fff", border: "none", borderRadius: 8, padding: "7px 14px", fontWeight: 700, fontSize: 13, cursor: "pointer" },
-  errorAlert: { background: "#450a0a30", border: "1px solid #7f1d1d", borderRadius: 12, padding: "14px 18px", color: "#fca5a5", fontSize: 14 },
+  errorAlert: { background: "color-mix(in srgb, #ef4444 10%, var(--ff-panel-solid))", border: "1px solid color-mix(in srgb, #ef4444 28%, transparent)", borderRadius: 12, padding: "14px 18px", color: "#dc2626", fontSize: 14 },
 
   grid: { display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 16, alignItems: "stretch", width: "100%" },
   gridMobile: { gridTemplateColumns: "1fr", gap: 14 },
 
-  planCard: { background: "#0d1421", border: "1px solid", borderRadius: 16, padding: 18, display: "flex", flexDirection: "column", position: "relative", overflow: "hidden", height: "100%", minHeight: 318, width: "100%", boxSizing: "border-box", transition: "transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease" },
+  planCard: { background: "var(--ff-panel-solid)", border: "1px solid", borderRadius: 16, padding: 18, display: "flex", flexDirection: "column", position: "relative", overflow: "hidden", height: "100%", minHeight: 318, width: "100%", boxSizing: "border-box", transition: "transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease" },
   planCardMobile: { minHeight: "auto", padding: 18 },
   badge: { position: "absolute", top: 0, right: 0, borderRadius: "0 14px 0 10px", padding: "3px 10px", fontSize: 10, fontWeight: 800, color: "#fff" },
   planTop: { display: "flex", alignItems: "flex-start", gap: 10, marginBottom: 12, marginTop: 4 },
   planIcon: { width: 36, height: 36, borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, fontWeight: 800, flexShrink: 0 },
   planName: { fontSize: 16, fontWeight: 800, margin: "0 0 2px", lineHeight: 1.15 },
-  planTag: { color: "#475569", fontSize: 11, margin: 0, lineHeight: 1.4 },
+  planTag: { color: "var(--ff-text-faint)", fontSize: 11, margin: 0, lineHeight: 1.4 },
   planNameMobile: { fontSize: 18, lineHeight: 1.2 },
   planTagMobile: { fontSize: 13, lineHeight: 1.5 },
 
   priceRow: { display: "flex", alignItems: "baseline", gap: 2, marginBottom: 10 },
-  rupee: { color: "#94a3b8", fontSize: 14, fontWeight: 700 },
-  priceNum: { color: "#f1f5f9", fontWeight: 900, fontSize: 30, lineHeight: 1 },
-  pricePd: { color: "#64748b", fontSize: 12, marginLeft: 3 },
+  rupee: { color: "var(--ff-text-soft)", fontSize: 14, fontWeight: 700 },
+  priceNum: { color: "var(--ff-text)", fontWeight: 900, fontSize: 30, lineHeight: 1 },
+  pricePd: { color: "var(--ff-text-faint)", fontSize: 12, marginLeft: 3 },
   priceRowMobile: { gap: 4, marginBottom: 12, flexWrap: "wrap" },
   rupeeMobile: { fontSize: 18 },
   priceNumMobile: { fontSize: 36 },
@@ -392,32 +398,32 @@ const s = {
 
   metaRow: { display: "flex", alignItems: "center", gap: 8, marginBottom: 12, flexWrap: "wrap" },
   metaPill: { border: "1px solid", borderRadius: 999, padding: "4px 9px", fontSize: 11, fontWeight: 700 },
-  validity: { color: "#64748b", fontSize: 11 },
+  validity: { color: "var(--ff-text-faint)", fontSize: 11 },
   metaRowMobile: { gap: 10, marginBottom: 14 },
   metaPillMobile: { padding: "5px 11px", fontSize: 12, borderRadius: 999 },
   validityMobile: { fontSize: 12 },
 
   perks: { listStyle: "none", padding: 0, margin: "0 0 10px", display: "flex", flexDirection: "column", gap: 6, flex: 1 },
-  perk: { color: "#94a3b8", fontSize: 12, display: "flex", alignItems: "flex-start", lineHeight: 1.45 },
+  perk: { color: "var(--ff-text-soft)", fontSize: 12, display: "flex", alignItems: "flex-start", lineHeight: 1.45 },
   perkMobile: { fontSize: 14, lineHeight: 1.55 },
   fupNote: { color: "#f59e0b", fontSize: 11, margin: "0 0 10px", fontStyle: "italic", lineHeight: 1.5 },
   fupNoteMobile: { fontSize: 12, lineHeight: 1.55 },
   buyBtn: { color: "#fff", border: "none", borderRadius: 10, padding: "11px 0", fontWeight: 700, fontSize: 14, cursor: "pointer", width: "100%", marginTop: "auto" },
   buyBtnMobile: { padding: "12px 0", fontSize: 15 },
 
-  payNote: { textAlign: "center", color: "#334155", fontSize: 12 },
+  payNote: { textAlign: "center", color: "var(--ff-text-faint)", fontSize: 12 },
   payNoteMobile: { fontSize: 13, lineHeight: 1.5 },
 
-  tableTitle: { color: "#f1f5f9", fontWeight: 800, fontSize: 18, margin: "0 0 4px" },
-  tableSub: { color: "#64748b", fontSize: 13, margin: "0 0 12px" },
+  tableTitle: { color: "var(--ff-text)", fontWeight: 800, fontSize: 18, margin: "0 0 4px", textAlign: "center" },
+  tableSub: { color: "var(--ff-text-soft)", fontSize: 13, margin: "0 0 12px", textAlign: "center" },
   tableTitleMobile: { fontSize: 20, lineHeight: 1.25 },
   tableSubMobile: { fontSize: 14, lineHeight: 1.55 },
-  table: { border: "1px solid #1e293b", borderRadius: 14, overflow: "hidden" },
+  table: { border: "1px solid var(--ff-border)", borderRadius: 14, overflow: "hidden", background: "var(--ff-panel-solid)" },
   tableMobile: { overflowX: "auto" },
-  tableHead: { display: "flex", background: "#111827", padding: "10px 16px", gap: 8 },
-  tableRow: { display: "flex", padding: "10px 16px", gap: 8, borderTop: "1px solid #1e293b" },
-  cell: { flex: 1, fontSize: 13 },
+  tableHead: { display: "flex", background: "var(--ff-panel-soft)", padding: "10px 16px", gap: 8 },
+  tableRow: { display: "flex", padding: "10px 16px", gap: 8, borderTop: "1px solid var(--ff-border)" },
+  cell: { flex: 1, fontSize: 13, color: "var(--ff-text-soft)" },
 
-  cta: { background: "#0d1421", border: "1px solid #1e293b", borderRadius: 14, padding: "18px 20px", display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap" },
+  cta: { background: "var(--ff-panel-solid)", border: "1px solid var(--ff-border)", borderRadius: 14, padding: "18px 20px", display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap", justifyContent: "center", textAlign: "center" },
   ctaMobile: { padding: "16px", gap: 14 },
 };
