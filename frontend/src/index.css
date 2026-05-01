@@ -121,7 +121,7 @@ a {
 .ff-scene {
   position: absolute;
   inset: -6% -4% auto;
-  height: 540px;
+  height: 430px;
   overflow: hidden;
   pointer-events: none;
   z-index: 0;
@@ -237,6 +237,16 @@ a {
   height: 230px;
   transform: scale(0.82);
   transform-origin: top center;
+}
+
+@media (max-width: 900px) {
+  .ff-scene {
+    height: 280px;
+  }
+
+  .ff-rush-accent {
+    display: none;
+  }
 }
 
 .ff-stage__panel,

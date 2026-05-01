@@ -6,6 +6,7 @@ import useStore from "../store/useStore";
 import AuthModal from "../components/AuthModal";
 import Sidebar from "../components/Sidebar";
 import TopBar from "../components/TopBar";
+import useIsMobile from "../hooks/useIsMobile";
 
 const FEATURES = {
   photo: {
@@ -383,6 +384,7 @@ function PreviewImage({ src, label }) {
 export default function ToolPage() {
   const { toolId } = useParams();
   const navigate = useNavigate();
+  const isMobile = useIsMobile(900);
   const [searchParams] = useSearchParams();
   const { user, credits, updateCredits, logout } = useStore();
   const currentCredits = user ? (credits ?? user?.credits ?? 0) : 0;
@@ -622,13 +624,13 @@ export default function ToolPage() {
         {user ? (
           <TopBar user={user} credits={currentCredits} onLogout={() => { logout(); navigate("/"); }} />
         ) : (
-          <div style={s.guestBar}>
+          <div style={{ ...s.guestBar, ...(isMobile ? s.guestBarMobile : null) }}>
             <span>Use preview first. Login only when you want the final clean download.</span>
             <button style={s.guestLoginBtn} onClick={() => setShowAuthModal(true)}>Login / Sign Up</button>
           </div>
         )}
 
-        <div style={s.content}>
+        <div style={{ ...s.content, ...(isMobile ? s.contentMobile : null), ...(user && isMobile ? s.contentWithFixedTopbar : null) }}>
           <div style={s.toolHeader}>
             <button type="button" style={s.backBtn} onClick={() => navigate(user ? "/dashboard" : "/all-tools")}>Back</button>
             <div>
@@ -644,13 +646,14 @@ export default function ToolPage() {
             </div>
           ) : (
             <>
-              <div style={s.workspace}>
+              <div style={{ ...s.workspace, ...(isMobile ? s.workspaceMobile : null) }}>
                 <div style={s.uploadPanel}>
                   <div style={s.panelLabel}>Upload Area</div>
                   <div
-                    style={{
-                      ...s.uploadZone,
-                      borderColor: preview ? tool.color : "var(--ff-border)",
+                      style={{
+                        ...s.uploadZone,
+                        ...(isMobile ? s.uploadZoneMobile : null),
+                        borderColor: preview ? tool.color : "var(--ff-border)",
                       opacity: done ? 0.5 : 1,
                       pointerEvents: done ? "none" : "auto",
                     }}
@@ -842,17 +845,22 @@ const s = {
   root: { display: "flex", minHeight: "100vh", background: "transparent", fontFamily: "'Segoe UI', sans-serif" },
   main: { flex: 1, overflowY: "auto", paddingBottom: 56 },
   guestBar: { display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, padding: "16px 28px 0", color: "var(--ff-text-soft)", fontSize: 13, flexWrap: "wrap" },
+  guestBarMobile: { padding: "84px 14px 0", gap: 10 },
   guestLoginBtn: { background: "#f97316", color: "#fff", border: "none", borderRadius: 999, padding: "10px 16px", fontWeight: 700, cursor: "pointer" },
   content: { maxWidth: 1180, margin: "0 auto", padding: "18px 28px 0" },
+  contentMobile: { padding: "16px 14px 0" },
+  contentWithFixedTopbar: { paddingTop: 92 },
   toolHeader: { display: "flex", alignItems: "center", gap: 16, marginBottom: 18, flexWrap: "wrap" },
   backBtn: { background: "var(--ff-panel)", border: "1px solid var(--ff-border)", color: "var(--ff-text-soft)", borderRadius: 10, padding: "10px 14px", cursor: "pointer", fontSize: 13, fontWeight: 700 },
   toolTitle: { color: "var(--ff-text)", fontSize: 28, fontWeight: 900, margin: 0, lineHeight: 1.08 },
   toolDesc: { color: "var(--ff-text-soft)", fontSize: 14, margin: "6px 0 0", lineHeight: 1.6 },
   workspace: { display: "grid", gridTemplateColumns: "minmax(0, 1.1fr) minmax(320px, 0.9fr)", gap: 20, alignItems: "start" },
+  workspaceMobile: { gridTemplateColumns: "1fr", gap: 16 },
   uploadPanel: { background: "var(--ff-panel-solid)", border: "1px solid var(--ff-border)", borderRadius: 18, padding: 18 },
   configPanel: { display: "grid", gap: 14 },
   panelLabel: { color: "var(--ff-text-faint)", fontSize: 11, fontWeight: 900, textTransform: "uppercase", letterSpacing: 0.8, marginBottom: 12 },
   uploadZone: { minHeight: 360, border: "2px dashed", borderRadius: 16, background: "var(--ff-panel)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: 28, cursor: "pointer", overflow: "hidden" },
+  uploadZoneMobile: { minHeight: 240, padding: 18 },
   bigIcon: { width: 88, height: 88, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 24, fontWeight: 900, border: "1px solid" },
   uploadText: { color: "var(--ff-text)", fontWeight: 800, fontSize: 18, margin: "12px 0 0" },
   uploadSub: { color: "var(--ff-text-soft)", fontSize: 13, margin: "6px 0 0" },

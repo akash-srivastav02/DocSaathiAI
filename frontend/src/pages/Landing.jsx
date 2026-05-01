@@ -284,14 +284,14 @@ export default function Landing() {
       </header>
 
       <main style={{ ...s.main, ...(isMobile ? s.mainMobile : null) }}>
-        <section style={{ ...s.hero, ...(isMobile ? s.heroMobile : null) }}>
+          <section style={{ ...s.hero, ...(isMobile ? s.heroMobile : null) }}>
           <div style={{ ...s.heroCopy, ...(isMobile ? s.heroCopyMobile : null) }}>
             <div style={{ ...s.heroBadge, ...t.heroBadge }}>Free browser document tools</div>
             <h1 style={{ ...s.heroTitle, ...t.heroTitle, ...(isMobile ? s.heroTitleMobile : null) }}>
               Resize, convert and fix documents
               <span style={{ ...s.heroAccent, ...t.heroAccent, ...(isMobile ? s.heroAccentMobile : null) }}>
                 without switching ten tabs
-                <HeroRushAccent style={rushAccentStyle} />
+                {!isMobile && <HeroRushAccent style={rushAccentStyle} />}
               </span>
             </h1>
             <p style={{ ...s.heroSub, ...t.heroSub, ...(isMobile ? s.heroSubMobile : null) }}>
@@ -364,9 +364,11 @@ export default function Landing() {
             </div>
           </div>
 
-          <div style={{ ...s.heroStage, ...(isMobile ? s.heroStageMobile : null), ...heroStageStyle }}>
-            <WorkflowStage compact={isMobile} style={stageParallaxVars} />
-          </div>
+          {!isMobile && (
+            <div style={{ ...s.heroStage, ...heroStageStyle }}>
+              <WorkflowStage compact={false} style={stageParallaxVars} />
+            </div>
+          )}
         </section>
 
         <section style={s.metrics}>
@@ -585,11 +587,11 @@ const s = {
   main: { maxWidth: 1180, margin: "0 auto", padding: "28px 20px 56px", position: "relative", zIndex: 1 },
   mainMobile: { padding: "18px 12px 44px" },
   hero: {
-    padding: "42px 0 34px",
+    padding: "28px 0 18px",
     display: "grid",
     gridTemplateColumns: "minmax(0, 1.05fr) minmax(320px, 0.95fr)",
     gap: 26,
-    alignItems: "center",
+    alignItems: "start",
   },
   heroMobile: {
     padding: "24px 0 28px",
@@ -636,15 +638,10 @@ const s = {
   heroButtonMobile: { width: "100%" },
   heroStage: {
     minWidth: 0,
-    minHeight: 390,
+    minHeight: 300,
     display: "flex",
-    alignItems: "center",
+    alignItems: "flex-start",
     justifyContent: "center",
-  },
-  heroStageMobile: {
-    minHeight: 250,
-    width: "100%",
-    overflow: "hidden",
   },
   searchShell: { position: "relative", width: "100%", maxWidth: 860, borderRadius: 22, padding: 14 },
   searchShellMobile: { padding: 10, borderRadius: 18 },

@@ -280,7 +280,7 @@ export default function Pricing() {
       <Sidebar credits={currentCredits} onLogout={() => { logout(); navigate("/"); }} />
       <div style={s.main}>
         <TopBar user={user} credits={currentCredits} onLogout={() => { logout(); navigate("/"); }} />
-        <div style={{ ...s.content, ...(isMobile ? s.contentMobile : null) }}>
+          <div style={{ ...s.content, ...(isMobile ? s.contentMobile : null), ...(isMobile ? s.contentWithFixedTopbar : null) }}>
           <div style={s.pageHdr}>
             <h1 style={{ ...s.pageTitle, ...(isMobile ? s.pageTitleMobile : null) }}>Choose Your Workspace Plan</h1>
               <p style={{ ...s.pageSub, ...(isMobile ? s.pageSubMobile : null) }}>Start free, then upgrade only when your exam season needs more downloads, retries, and smoother workflow.</p>
@@ -371,6 +371,7 @@ const s = {
   main: { flex: 1, overflowY: "auto", paddingBottom: 60 },
   content: { padding: "20px 24px", display: "flex", flexDirection: "column", gap: 22, maxWidth: 960, width: "100%", margin: "0 auto", boxSizing: "border-box" },
   contentMobile: { padding: "16px", gap: 18 },
+  contentWithFixedTopbar: { paddingTop: 92 },
 
   pageHdr: { textAlign: "center" },
   pageTitle: { color: "var(--ff-text)", fontWeight: 800, fontSize: 22, margin: "0 0 6px" },

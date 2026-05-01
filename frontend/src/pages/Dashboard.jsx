@@ -94,7 +94,7 @@ export default function Dashboard() {
           <TopBar user={user} credits={currentCredits} onLogout={() => { logout(); navigate("/"); }} />
         ) : null}
 
-        <div style={{ ...s.content, ...(isMobile ? s.contentMobile : null) }}>
+        <div style={{ ...s.content, ...(isMobile ? s.contentMobile : null), ...(user && isMobile ? s.contentWithFixedTopbar : null) }}>
           <section style={s.heroBand}>
             <div style={s.heroCopy}>
               <span style={s.heroBadge}>Complete Document Toolkit</span>
@@ -144,6 +144,7 @@ const s = {
     gap: 30,
   },
   contentMobile: { padding: "18px 14px 44px", gap: 24 },
+  contentWithFixedTopbar: { paddingTop: 92 },
   heroBand: {
     display: "flex",
     alignItems: "stretch",

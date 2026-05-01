@@ -156,7 +156,7 @@ export default function Support() {
       <Sidebar credits={currentCredits} onLogout={() => { logout(); navigate("/"); }} />
       <div style={s.main}>
         <TopBar user={user} credits={currentCredits} onLogout={() => { logout(); navigate("/"); }} />
-        <div style={{ ...s.content, ...(isMobile ? s.contentMobile : null) }}>
+         <div style={{ ...s.content, ...(isMobile ? s.contentMobile : null), ...(isMobile ? s.contentWithFixedTopbar : null) }}>
           <div style={{ ...s.pageHdr, ...(isMobile ? s.pageHdrMobile : null) }}>
             <div>
               <h1 style={{ ...s.pageTitle, ...(isMobile ? s.pageTitleMobile : null) }}>Help & Support</h1>
@@ -265,6 +265,7 @@ const s = {
     margin: "0 auto",
     boxSizing: "border-box",
   },
+  contentWithFixedTopbar: { paddingTop: 92 },
   contentMobile: { padding: "16px", gap: 18 },
 
   pageHdr: { display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16, flexWrap: "wrap" },
