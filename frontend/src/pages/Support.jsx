@@ -3,116 +3,127 @@ import { useNavigate } from "react-router-dom";
 import useStore from "../store/useStore";
 import Sidebar from "../components/Sidebar";
 import TopBar from "../components/TopBar";
+import useIsMobile from "../hooks/useIsMobile";
 
 const FAQS = [
   {
-    category: "📸 Exam Photo & Signature",
+    category: "Exam Photo & Signature",
+    icon: "PH",
+    color: "#f97316",
     items: [
       {
         q: "What is the correct photo size for SSC CGL exam form?",
-        a: "SSC CGL requires a photo of 200×230 pixels, in JPG format, between 20 KB and 50 KB. The background must be white. FormFixer automatically resizes and compresses your photo to these exact specifications — no manual editing needed.",
+        a: "SSC CGL requires a photo of 200x230 pixels, in JPG format, between 20 KB and 50 KB. The background must be white. FormFixer automatically resizes and compresses your photo to these exact specifications.",
       },
       {
         q: "What photo size is required for SBI PO and SBI Clerk?",
-        a: "SBI PO and SBI Clerk exam forms require a photo of 200×200 pixels, JPG format, 20–50 KB with a white background. The signature should be 200×80 pixels, 10–20 KB. FormFixer handles both in seconds.",
+        a: "SBI PO and SBI Clerk exam forms require a photo of 200x200 pixels, JPG format, 20-50 KB with a white background. The signature should be 200x80 pixels, 10-20 KB. FormFixer handles both in seconds.",
       },
       {
         q: "What are JEE Main photo and signature requirements?",
-        a: "JEE Main requires a photo of 3.5×4.5 cm (approximately 236×295 px at 96 DPI), 10–200 KB, JPG format. Signature should be 3.5×1.5 cm, 4–30 KB. Our tool auto-converts any image to these specs.",
+        a: "JEE Main requires a photo of 3.5x4.5 cm, approximately 236x295 px at 96 DPI, 10-200 KB, JPG format. Signature should be 3.5x1.5 cm, 4-30 KB. Our tool converts images to these specs.",
       },
       {
         q: "My photo is getting rejected on the exam portal. Why?",
-        a: "Exam portals reject photos that exceed the maximum KB limit, have the wrong dimensions, or are in the wrong format (e.g., PNG instead of JPG). FormFixer ensures your photo meets all three criteria — correct pixels, correct KB size, and JPG format with white background.",
+        a: "Exam portals reject photos that exceed the KB limit, have the wrong dimensions, use the wrong format, or have an unsuitable background. FormFixer checks the important upload requirements before you download.",
       },
       {
         q: "Can I use a mobile selfie for exam photo?",
-        a: "Yes! Use our Live Camera feature to capture directly from your phone or laptop camera. The photo is automatically cropped, resized, and compressed to exam specifications. Make sure you are in front of a white wall or use a plain background.",
+        a: "Yes. Use a clear front-facing photo with good light and a plain background. The tool crops, resizes and compresses it to the selected exam requirement.",
       },
       {
         q: "How is FormFixer different from other photo resize tools?",
-        a: "Most tools only resize the image. They don't guarantee the file falls within the KB range required by exam portals. FormFixer uses an intelligent compression algorithm to ensure the output is within the exact KB range — not just the right dimensions.",
+        a: "Most tools resize only the image dimensions. FormFixer also targets the required KB range, format and exam-ready output so the file is easier to upload without trial and error.",
       },
     ],
   },
   {
-    category: "📄 PDF Compression",
+    category: "PDF Compression",
+    icon: "PDF",
+    color: "#3b82f6",
     items: [
       {
         q: "How much can FormFixer compress my PDF?",
-        a: "Scanned PDFs (photos of documents) can be compressed by 50–80%. Text-based (digital) PDFs can be compressed by 10–30%. The exact reduction depends on the content. Our tool always shows you the before and after size honestly — if your target cannot be achieved, we tell you clearly.",
+        a: "Scanned PDFs can often be reduced by 50-80%. Text-based PDFs usually compress by 10-30%. The exact result depends on the file content, and the tool shows the before and after size clearly.",
       },
       {
         q: "The portal requires PDF under 500 KB but my file is 2 MB. Can this tool help?",
-        a: "Yes, this is exactly the use case FormFixer is built for. Upload your PDF, enter 500 as the target KB, and select Max Compression. For scanned documents (certificates, marksheets), we can typically achieve 70–80% reduction.",
+        a: "Yes. Upload your PDF, enter 500 as the target KB, and choose a compression mode. Scanned certificates and marksheets usually compress more than digital text PDFs.",
       },
       {
         q: "Will compressing my PDF damage the text or make it unreadable?",
-        a: "No. For text-based PDFs, our compression only removes metadata and optimizes the object structure — text remains perfectly readable. For image-heavy PDFs, slight quality reduction may occur at Maximum Compression, but it remains legible for official submissions.",
+        a: "For text-based PDFs, compression mainly removes extra data and optimizes the file. For image-heavy PDFs, maximum compression can reduce image quality, but the output is intended to stay readable for submissions.",
       },
     ],
   },
   {
-    category: "💳 Credits & Pricing",
+    category: "Credits & Pricing",
+    icon: "INR",
+    color: "#22c55e",
     items: [
       {
         q: "How do credits work on FormFixer?",
-        a: "Each tool usage costs a specific number of credits: Exam Photo costs 2 credits, Exam Signature costs 2 credits, Photo+Sign/Date merger costs 6 credits, and Document Size Changer costs 2 credits. Crop, Image Compressor, and PDF Compressor also cost 2 credits each. New users get 15 free credits. Every 7 days, you get 5 free credits automatically.",
+        a: "Each tool usage costs credits. Exam Photo, Exam Signature and Document Size Changer cost 2 credits, while Photo + Sign / Date costs 6 credits. New users get 15 free credits and receive 5 more every 7 days.",
       },
       {
         q: "What happens when my credits run out?",
-        a: "Your processed file will be ready but will carry a watermark. You can download it free with the watermark, or pay ₹9 for a single clean download without watermark (Single Fix plan).",
+        a: "You can buy a plan from Pricing. Single Fix is useful for one urgent clean download, while Starter and Pro are better for repeated use.",
       },
       {
         q: "Is there a free option?",
-        a: "Yes. You get 15 free credits on signup, and 5 more every 7 days automatically (Weekly Refill). This is enough for most aspirants to process their exam documents at no cost.",
+        a: "Yes. You get 15 credits on signup and 5 more every 7 days. That is enough for many first-time users to prepare exam documents without paying.",
       },
       {
         q: "What is the Single Fix plan?",
-        a: "Single Fix is ₹9 for 1 download without watermark. It's for users who don't want to create an account and just need one quick file processed. Perfect for last-minute form submissions.",
+        a: "Single Fix is Rs.9 for one clean download. It is designed for users who need one file quickly and do not want a full plan.",
       },
       {
         q: "Are payments secure?",
-        a: "Yes. All payments are processed via Razorpay, which is RBI-compliant and supports UPI, credit/debit cards, net banking, and wallets. FormFixer never stores your payment details.",
+        a: "Payments are processed through Razorpay, which supports UPI, cards, net banking and wallets. FormFixer does not store your payment details.",
       },
     ],
   },
   {
-    category: "🛠️ Technical Help",
+    category: "Technical Help",
+    icon: "HL",
+    color: "#8b5cf6",
     items: [
       {
         q: "Why is my camera not working in the Live Camera feature?",
-        a: "Make sure you have allowed camera permission in your browser. In Chrome, click the camera icon in the address bar and select Allow. Then refresh the page and try again. The feature works on all modern browsers including Chrome, Edge, and Firefox.",
+        a: "Check that camera permission is allowed in your browser, then refresh the page. In Chrome or Edge, use the camera or lock icon near the address bar to manage permissions.",
       },
       {
-        q: "My download opens in a new tab instead of saving. How to fix?",
-        a: "This can happen on certain browsers. Right-click the Download button and select 'Save link as'. Alternatively, after the file opens in a new tab, right-click the image and select 'Save image as'. We are working on a fix for all browsers.",
+        q: "My download opens in a new tab instead of saving. How do I fix it?",
+        a: "If this happens, right-click the Download button and choose Save link as. If the image opens in a new tab, right-click it and choose Save image as.",
       },
       {
         q: "Is FormFixer available as a mobile app?",
-        a: "Currently FormFixer is a web application that works on all mobile browsers. Open formfixer.in in Chrome on your Android or Safari on iPhone — it works fully. A dedicated Android and iOS app is on our roadmap.",
+        a: "FormFixer currently works in mobile browsers such as Chrome on Android and Safari on iPhone. A dedicated app can be added later.",
       },
       {
         q: "Which exams does FormFixer support?",
-        a: "We support 40+ Indian competitive exams including SSC CGL, SSC CHSL, SSC MTS, SSC GD, SBI PO, SBI Clerk, IBPS PO, IBPS Clerk, IBPS RRB, RRB NTPC, RRB Group D, UPSC CSE, UPSC CDS, NDA, JEE Main, NEET UG, Delhi Police, UP Police, GATE, and many more. New exams are added regularly.",
+        a: "FormFixer supports common Indian competitive exam uploads such as SSC, SBI, IBPS, RRB, UPSC, NDA, JEE Main, NEET UG, Delhi Police, UP Police, GATE and more.",
       },
     ],
   },
 ];
 
-function FAQItem({ q, a }) {
+const CONTACTS = [
+  { label: "Email Support", value: "supportformfixer@gmail.com", icon: "EM", color: "#f97316" },
+  { label: "Response Time", value: "Within 24 hours", icon: "24", color: "#3b82f6" },
+  { label: "Tool Hours", value: "Available 24/7", icon: "ON", color: "#22c55e" },
+];
+
+function FAQItem({ q, a, color, compact }) {
   const [open, setOpen] = useState(false);
+
   return (
-    <div style={{ borderTop: "1px solid #1e293b" }}>
-      <button
-        style={s.faqQ}
-        onClick={() => setOpen(!open)}
-      >
-        <span style={{ flex: 1, textAlign: "left" }}>{q}</span>
-        <span style={{ color: "#f97316", fontSize: 18, flexShrink: 0, transition: "transform 0.2s", transform: open ? "rotate(45deg)" : "none" }}>
-          +
-        </span>
+    <div style={s.faqItem}>
+      <button type="button" style={{ ...s.faqQ, ...(compact ? s.faqQMobile : null) }} onClick={() => setOpen(!open)}>
+        <span style={s.questionText}>{q}</span>
+        <span style={{ ...s.plus, color, transform: open ? "rotate(45deg)" : "rotate(0deg)" }}>+</span>
       </button>
-      {open && <div style={s.faqA}>{a}</div>}
+      {open && <div style={{ ...s.faqA, ...(compact ? s.faqAMobile : null) }}>{a}</div>}
     </div>
   );
 }
@@ -120,81 +131,74 @@ function FAQItem({ q, a }) {
 export default function Support() {
   const { user, credits, logout } = useStore();
   const navigate = useNavigate();
-  const [activeNav, setActiveNav]     = useState("Support");
-  const [showPricing, setShowPricing] = useState(false);
+  const isMobile = useIsMobile(900);
   const currentCredits = credits ?? user?.credits ?? 0;
 
   return (
     <div style={s.root}>
-      <Sidebar
-        credits={currentCredits} activeNav={activeNav}
-        setActiveNav={setActiveNav} setShowPricing={setShowPricing}
-        onLogout={() => { logout(); navigate("/"); }}
-      />
+      <Sidebar credits={currentCredits} onLogout={() => { logout(); navigate("/"); }} />
       <div style={s.main}>
         <TopBar user={user} credits={currentCredits} onLogout={() => { logout(); navigate("/"); }} />
-        <div style={s.content}>
-
-          {/* Header */}
-          <div style={s.hero}>
-            <h1 style={s.heroTitle}>💬 Help & Support</h1>
-            <p style={s.heroSub}>
-              Everything you need to know about using FormFixer for your exam form preparation.
-            </p>
+        <div style={{ ...s.content, ...(isMobile ? s.contentMobile : null) }}>
+          <div style={{ ...s.pageHdr, ...(isMobile ? s.pageHdrMobile : null) }}>
+            <div>
+              <h1 style={{ ...s.pageTitle, ...(isMobile ? s.pageTitleMobile : null) }}>Help & Support</h1>
+              <p style={{ ...s.pageSub, ...(isMobile ? s.pageSubMobile : null) }}>
+                Answers for exam photos, signatures, PDFs, credits and downloads.
+              </p>
+            </div>
+            <button type="button" style={s.dashboardBtn} onClick={() => navigate("/dashboard")}>
+              Dashboard
+            </button>
           </div>
 
-          {/* Contact strip */}
-          <div style={s.contactStrip}>
-            <div style={s.contactItem}>
-              <span style={{ fontSize: 20 }}>📧</span>
-              <div>
-                <p style={s.contactLabel}>Email Support</p>
-                <p style={s.contactVal}>supportformfixer@gmail.com</p>
+          <div style={{ ...s.contactGrid, ...(isMobile ? s.contactGridMobile : null) }}>
+            {CONTACTS.map((item) => (
+              <div key={item.label} style={s.contactItem}>
+                <span style={{ ...s.contactIcon, background: `${item.color}18`, color: item.color }}>{item.icon}</span>
+                <div style={s.contactBody}>
+                  <p style={s.contactLabel}>{item.label}</p>
+                  <p style={{ ...s.contactVal, ...(isMobile ? s.contactValMobile : null) }}>{item.value}</p>
+                </div>
               </div>
-            </div>
-            <div style={s.contactItem}>
-              <span style={{ fontSize: 20 }}>⚡</span>
-              <div>
-                <p style={s.contactLabel}>Response Time</p>
-                <p style={s.contactVal}>Within 24 hours</p>
-              </div>
-            </div>
-            <div style={s.contactItem}>
-              <span style={{ fontSize: 20 }}>🕐</span>
-              <div>
-                <p style={s.contactLabel}>Working Hours</p>
-                <p style={s.contactVal}>24/7 (Tool always available)</p>
-              </div>
-            </div>
+            ))}
           </div>
 
-          {/* FAQ sections */}
+          <div style={{ ...s.quickCard, ...(isMobile ? s.quickCardMobile : null) }}>
+            <div>
+              <p style={s.quickTitle}>Need a direct reply?</p>
+              <p style={s.quickText}>Send your issue with the exam name, target size and a screenshot if the portal shows an error.</p>
+            </div>
+            <a href="mailto:supportformfixer@gmail.com" style={s.mailBtn}>Email Support</a>
+          </div>
+
           {FAQS.map((section) => (
-            <div key={section.category} style={s.faqSection}>
-              <h2 style={s.catTitle}>{section.category}</h2>
+            <section key={section.category}>
+              <div style={s.secHead}>
+                <div style={s.secHeadLeft}>
+                  <span style={{ ...s.secIcon, background: `${section.color}18`, color: section.color }}>{section.icon}</span>
+                  <div>
+                    <h2 style={s.secTitle}>{section.category}</h2>
+                    <p style={s.secSub}>{section.items.length} common questions</p>
+                  </div>
+                </div>
+              </div>
               <div style={s.faqCard}>
                 {section.items.map((item) => (
-                  <FAQItem key={item.q} q={item.q} a={item.a} />
+                  <FAQItem key={item.q} q={item.q} a={item.a} color={section.color} compact={isMobile} />
                 ))}
               </div>
-            </div>
+            </section>
           ))}
 
-          {/* Still stuck */}
-          <div style={s.stuckCard}>
-            <h3 style={{ color: "#f1f5f9", fontWeight: 800, fontSize: 17, margin: "0 0 8px" }}>
-              Still stuck? 🙋
-            </h3>
-            <p style={{ color: "#64748b", fontSize: 14, margin: "0 0 16px" }}>
-              Can't find your answer? Send us a message and we'll reply within 24 hours.
-            </p>
-            <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
-              <a href="mailto:supportformfixer@gmail.com" style={s.mailBtn}>
-                📧 Email Us
-              </a>
-              <button style={s.backBtn} onClick={() => navigate("/dashboard")}>
-                ← Back to Dashboard
-              </button>
+          <div style={{ ...s.bottomCard, ...(isMobile ? s.bottomCardMobile : null) }}>
+            <div>
+              <h3 style={s.bottomTitle}>Still stuck?</h3>
+              <p style={s.bottomText}>The fastest path is to email the exact portal requirement and what went wrong.</p>
+            </div>
+            <div style={s.bottomActions}>
+              <a href="mailto:supportformfixer@gmail.com" style={s.mailBtn}>Email Us</a>
+              <button type="button" style={s.backBtn} onClick={() => navigate("/dashboard")}>Back to Dashboard</button>
             </div>
           </div>
         </div>
@@ -205,25 +209,127 @@ export default function Support() {
 
 const s = {
   root: { display: "flex", minHeight: "100vh", background: "transparent", fontFamily: "'Segoe UI', sans-serif" },
-  main: { flex: 1, overflowY: "auto", paddingBottom: 60 },
-  content: { padding: "24px 28px", display: "flex", flexDirection: "column", gap: 24, maxWidth: 860 },
+  main: { flex: 1, overflowY: "auto", paddingBottom: 60, minWidth: 0 },
+  content: {
+    padding: "24px 28px",
+    display: "flex",
+    flexDirection: "column",
+    gap: 22,
+    maxWidth: 960,
+    width: "100%",
+    margin: "0 auto",
+    boxSizing: "border-box",
+  },
+  contentMobile: { padding: "16px", gap: 18 },
 
-  hero: { padding: "8px 0 4px" },
-  heroTitle: { color: "#f1f5f9", fontWeight: 800, fontSize: 24, margin: "0 0 8px" },
-  heroSub: { color: "#64748b", fontSize: 15, margin: 0, lineHeight: 1.6 },
+  pageHdr: { display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16, flexWrap: "wrap" },
+  pageHdrMobile: { alignItems: "stretch" },
+  pageTitle: { color: "var(--ff-text)", fontWeight: 800, fontSize: 24, margin: "0 0 6px", lineHeight: 1.2 },
+  pageTitleMobile: { fontSize: 24 },
+  pageSub: { color: "var(--ff-text-soft)", fontSize: 15, margin: 0, lineHeight: 1.5 },
+  pageSubMobile: { fontSize: 14, lineHeight: 1.55 },
+  dashboardBtn: {
+    background: "var(--ff-panel-solid)",
+    border: "1px solid var(--ff-border)",
+    color: "var(--ff-text-soft)",
+    borderRadius: 10,
+    padding: "10px 14px",
+    fontSize: 13,
+    fontWeight: 700,
+    cursor: "pointer",
+  },
 
-  contactStrip: { display: "flex", gap: 16, flexWrap: "wrap" },
-  contactItem: { display: "flex", alignItems: "center", gap: 12, background: "#0d1421", border: "1px solid #1e293b", borderRadius: 12, padding: "14px 18px", flex: 1, minWidth: 180 },
-  contactLabel: { color: "#64748b", fontSize: 11, margin: "0 0 2px", textTransform: "uppercase", letterSpacing: 0.5 },
-  contactVal: { color: "#f1f5f9", fontWeight: 600, fontSize: 14, margin: 0 },
+  contactGrid: { display: "grid", gridTemplateColumns: "repeat(3, minmax(0, 1fr))", gap: 14 },
+  contactGridMobile: { gridTemplateColumns: "1fr" },
+  contactItem: {
+    background: "var(--ff-panel-solid)",
+    border: "1px solid var(--ff-border)",
+    borderRadius: 14,
+    padding: "15px 16px",
+    display: "flex",
+    alignItems: "center",
+    gap: 12,
+    minWidth: 0,
+  },
+  contactIcon: {
+    width: 38,
+    height: 38,
+    borderRadius: 10,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    fontSize: 12,
+    fontWeight: 900,
+    flexShrink: 0,
+  },
+  contactBody: { minWidth: 0 },
+  contactLabel: { color: "var(--ff-text-faint)", fontSize: 11, margin: "0 0 3px", textTransform: "uppercase", fontWeight: 800, letterSpacing: 0.4 },
+  contactVal: { color: "var(--ff-text)", fontWeight: 800, fontSize: 14, margin: 0, overflowWrap: "anywhere", lineHeight: 1.35 },
+  contactValMobile: { fontSize: 15 },
 
-  faqSection: {},
-  catTitle: { color: "#f97316", fontWeight: 800, fontSize: 15, margin: "0 0 12px" },
-  faqCard: { background: "#0d1421", border: "1px solid #1e293b", borderRadius: 14, overflow: "hidden" },
-  faqQ: { width: "100%", display: "flex", alignItems: "center", gap: 12, padding: "14px 18px", background: "transparent", border: "none", color: "#f1f5f9", fontSize: 14, fontWeight: 600, cursor: "pointer", lineHeight: 1.5 },
-  faqA: { padding: "0 18px 16px 18px", color: "#94a3b8", fontSize: 13, lineHeight: 1.7 },
+  quickCard: {
+    background: "color-mix(in srgb, var(--ff-orange) 9%, var(--ff-panel-solid))",
+    border: "1px solid color-mix(in srgb, var(--ff-orange) 24%, var(--ff-border))",
+    borderRadius: 14,
+    padding: "16px 18px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: 14,
+    flexWrap: "wrap",
+  },
+  quickCardMobile: { alignItems: "stretch", padding: 16 },
+  quickTitle: { color: "var(--ff-orange)", fontWeight: 800, fontSize: 14, margin: "0 0 3px" },
+  quickText: { color: "var(--ff-text-soft)", fontSize: 13, margin: 0, lineHeight: 1.55 },
 
-  stuckCard: { background: "#0d1421", border: "1px solid #1e293b", borderRadius: 16, padding: "24px 22px" },
-  mailBtn: { background: "linear-gradient(135deg,#f97316,#ea580c)", color: "#fff", textDecoration: "none", borderRadius: 10, padding: "10px 20px", fontSize: 14, fontWeight: 700 },
-  backBtn: { background: "#1e293b", border: "1px solid #374151", color: "#94a3b8", borderRadius: 10, padding: "10px 18px", fontSize: 14, fontWeight: 600, cursor: "pointer" },
+  secHead: { display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 12, gap: 10 },
+  secHeadLeft: { display: "flex", alignItems: "center", gap: 10 },
+  secIcon: { width: 34, height: 34, borderRadius: 9, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, fontWeight: 900, flexShrink: 0 },
+  secTitle: { color: "var(--ff-text)", fontWeight: 800, fontSize: 17, margin: "0 0 2px" },
+  secSub: { color: "var(--ff-text-faint)", fontSize: 12, margin: 0 },
+  faqCard: { background: "var(--ff-panel-solid)", border: "1px solid var(--ff-border)", borderRadius: 14, overflow: "hidden" },
+  faqItem: { borderTop: "1px solid var(--ff-border)" },
+  faqQ: { width: "100%", display: "flex", alignItems: "center", gap: 12, padding: "16px 18px", background: "transparent", border: "none", color: "var(--ff-text)", fontSize: 14, fontWeight: 800, cursor: "pointer", lineHeight: 1.45 },
+  faqQMobile: { padding: "15px 16px", fontSize: 14, alignItems: "flex-start" },
+  questionText: { flex: 1, textAlign: "left" },
+  plus: { fontSize: 18, fontWeight: 900, flexShrink: 0, transition: "transform 0.18s ease" },
+  faqA: { padding: "0 18px 17px", color: "var(--ff-text-soft)", fontSize: 13, lineHeight: 1.7 },
+  faqAMobile: { padding: "0 16px 16px", fontSize: 14, lineHeight: 1.65 },
+
+  bottomCard: {
+    background: "var(--ff-panel-solid)",
+    border: "1px solid var(--ff-border)",
+    borderRadius: 14,
+    padding: "18px 20px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: 14,
+    flexWrap: "wrap",
+  },
+  bottomCardMobile: { alignItems: "stretch", padding: 16 },
+  bottomTitle: { color: "var(--ff-text)", fontWeight: 800, fontSize: 17, margin: "0 0 4px" },
+  bottomText: { color: "var(--ff-text-soft)", fontSize: 13, lineHeight: 1.6, margin: 0 },
+  bottomActions: { display: "flex", gap: 10, flexWrap: "wrap" },
+  mailBtn: {
+    background: "linear-gradient(135deg,#f97316,#ea580c)",
+    color: "#fff",
+    textDecoration: "none",
+    borderRadius: 10,
+    padding: "10px 16px",
+    fontSize: 13,
+    fontWeight: 800,
+    textAlign: "center",
+    border: "none",
+  },
+  backBtn: {
+    background: "var(--ff-panel-soft)",
+    border: "1px solid var(--ff-border)",
+    color: "var(--ff-text-soft)",
+    borderRadius: 10,
+    padding: "10px 16px",
+    fontSize: 13,
+    fontWeight: 800,
+    cursor: "pointer",
+  },
 };
