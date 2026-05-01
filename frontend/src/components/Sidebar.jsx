@@ -71,14 +71,14 @@ export default function Sidebar({ credits, onLogout, activeNav }) {
       >
         {!isMobile ? (
           <>
-            <div style={s.brand}>
+            <button type="button" style={s.brand} onClick={() => navigate("/")}>
               <div style={s.iconBox}>
                 <img src="/favicon.png" alt="FormFixer logo" style={s.iconImage} />
               </div>
               <div>
                 <span style={s.brandMain}>FormFixer</span>
               </div>
-            </div>
+            </button>
 
             <div style={s.creditBlock}>
               <div style={s.ringWrap}>
@@ -109,6 +109,14 @@ export default function Sidebar({ credits, onLogout, activeNav }) {
 
         {isMobile ? (
           <div style={s.mobileToolWrap}>
+            <button type="button" style={{ ...s.brand, ...s.mobileBrand }} onClick={() => navigate("/")}>
+              <div style={s.iconBox}>
+                <img src="/favicon.png" alt="FormFixer logo" style={s.iconImage} />
+              </div>
+              <div>
+                <span style={s.brandMain}>FormFixer</span>
+              </div>
+            </button>
             <div style={s.mobileSection}>
               <p style={s.mobileSectionLabel}>Tools</p>
               <p style={s.mobileSectionSub}>Choose a tool category and continue.</p>
@@ -234,15 +242,22 @@ const s = {
   brand: {
     display: "flex",
     alignItems: "center",
-    gap: 10,
+    gap: 12,
     paddingBottom: 18,
     marginBottom: 18,
     borderBottom: "1px solid var(--ff-border)",
+    background: "transparent",
+    borderTop: "none",
+    borderLeft: "none",
+    borderRight: "none",
+    width: "100%",
+    cursor: "pointer",
+    textAlign: "left",
   },
   iconBox: {
-    width: 36,
-    height: 36,
-    borderRadius: 9,
+    width: 42,
+    height: 42,
+    borderRadius: 11,
     background: "color-mix(in srgb, var(--ff-orange) 12%, transparent)",
     border: "1px solid color-mix(in srgb, var(--ff-orange) 24%, transparent)",
     display: "flex",
@@ -251,8 +266,9 @@ const s = {
     flexShrink: 0,
     overflow: "hidden",
   },
-  iconImage: { width: 24, height: 24, objectFit: "contain", display: "block" },
-  brandMain: { fontSize: 15, fontWeight: 800, color: "var(--ff-text)", letterSpacing: -0.3 },
+  iconImage: { width: 28, height: 28, objectFit: "contain", display: "block" },
+  brandMain: { fontSize: 18, fontWeight: 900, color: "var(--ff-text)", letterSpacing: -0.4, lineHeight: 1.1 },
+  mobileBrand: { paddingBottom: 14, marginBottom: 14 },
   mobileSection: { paddingBottom: 12, marginBottom: 10, borderBottom: "1px solid var(--ff-border)" },
   mobileSectionLabel: {
     color: "var(--ff-text-soft)",

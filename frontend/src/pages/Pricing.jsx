@@ -38,9 +38,24 @@ const PLANS = [
     note: null,
   },
   {
+    id: "plus",
+    name: "Exam Sprint",
+    price: 59,
+    period: "60 days",
+    credits: 120,
+    validity: "60 Days",
+    color: "#06b6d4",
+    badge: "Best for Exam Season",
+    tag: "Best when you are applying to many forms together",
+    icon: "ES",
+    highlight: true,
+    perks: ["120 Credits", "Valid 60 Days", "Tools + tracker workflow", "Best for form-heavy months"],
+    note: null,
+  },
+  {
     id: "pro",
     name: "Pro Unlimited",
-    price: 79,
+    price: 99,
     period: "30 days",
     credits: "Unlimited*",
     validity: "30 Days",
@@ -99,6 +114,11 @@ const COMPARISON = [
     feature: "Value for repeat users",
     sites: "Separate charges across pages",
     us: "Free start, then clear plans for repeat use",
+  },
+  {
+    feature: "Application season support",
+    sites: "No plan built around repeated form submissions",
+    us: "Exam Sprint is made for busy application months",
   },
 ];
 
@@ -263,7 +283,7 @@ export default function Pricing() {
         <div style={{ ...s.content, ...(isMobile ? s.contentMobile : null) }}>
           <div style={s.pageHdr}>
             <h1 style={{ ...s.pageTitle, ...(isMobile ? s.pageTitleMobile : null) }}>Choose Your Workspace Plan</h1>
-            <p style={{ ...s.pageSub, ...(isMobile ? s.pageSubMobile : null) }}>Start free, use the tools and tracker, then pay only when you need more clean downloads.</p>
+              <p style={{ ...s.pageSub, ...(isMobile ? s.pageSubMobile : null) }}>Start free, then upgrade only when your exam season needs more downloads, retries, and smoother workflow.</p>
           </div>
 
           <div style={{ ...s.freeBanner, ...(isMobile ? s.bannerMobile : null) }}>
@@ -336,9 +356,9 @@ export default function Pricing() {
           </div>
 
           <div style={{ ...s.cta, ...(isMobile ? s.ctaMobile : null) }}>
-              <p style={{ color: "var(--ff-text-soft)", fontSize: isMobile ? 15 : 14, lineHeight: 1.6, margin: 0 }}>
-                Free credits are enough for many first-time users. Upgrade only when your exam workflow needs more clean outputs.
-              </p>
+                <p style={{ color: "var(--ff-text-soft)", fontSize: isMobile ? 15 : 14, lineHeight: 1.6, margin: 0 }}>
+                  Free is enough to try. Starter works for regular use, Exam Sprint fits busy application months, and Pro is for heavy daily workflows.
+                </p>
           </div>
         </div>
       </div>
