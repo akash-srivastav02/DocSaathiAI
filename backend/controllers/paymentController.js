@@ -22,7 +22,7 @@ const getRazorpayClient = () => {
 const PLANS = {
   single:  { amount: 900,  credits: 1,   label: 'Single Fix',       validDays: null },
   starter: { amount: 2900, credits: 40,  label: 'Starter',          validDays: 30 },
-  plus:    { amount: 5900, credits: 120, label: 'Exam Sprint',      validDays: 60 },
+  plus:    { amount: 5900, credits: 80,  label: 'Exam Sprint',      validDays: 30 },
   pro:     { amount: 9900, credits: -1,  label: 'Pro Unlimited',    validDays: 30 },
 };
 
