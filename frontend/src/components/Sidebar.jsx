@@ -188,6 +188,7 @@ const s = {
     maxWidth: "88vw",
     width: 292,
     height: "100dvh",
+    paddingTop: 84,
     transition: "transform .22s ease",
     boxShadow: "0 28px 70px rgba(2, 6, 23, 0.35)",
     zIndex: 42,

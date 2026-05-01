@@ -24,7 +24,11 @@ export default function TopBar({ user, credits, onLogout }) {
 
   return (
     <div style={{ ...s.topbar, ...t.topbar, ...(isMobile ? s.topbarMobile : null) }}>
-      <div style={{ ...s.left, ...(isMobile ? s.leftMobile : null) }}>
+      <button
+        type="button"
+        style={{ ...s.left, ...s.brandButton, ...(isMobile ? s.leftMobile : null) }}
+        onClick={() => navigate("/")}
+      >
         {isMobile && (
           <div style={{ ...s.mobileBrandIcon, ...t.mobileBrandIcon }}>
             <img src="/favicon.png" alt="FormFixer logo" style={s.mobileBrandImage} />
@@ -40,7 +44,7 @@ export default function TopBar({ user, credits, onLogout }) {
             Welcome, <b style={t.greetingStrong}>{firstName}</b>
           </p>
         )}
-      </div>
+      </button>
 
       <div style={{ ...s.right, ...(isMobile ? s.rightMobile : null) }}>
         <button type="button" style={{ ...s.themeBtn, ...t.themeBtn }} onClick={toggleTheme} aria-label="Toggle theme">
@@ -125,6 +129,14 @@ const s = {
   },
   left: { display: "flex", alignItems: "center", gap: 10, minWidth: 0 },
   leftMobile: { gap: 10 },
+  brandButton: {
+    background: "transparent",
+    border: "none",
+    padding: 0,
+    cursor: "pointer",
+    textAlign: "left",
+    flex: 1,
+  },
   greeting: { fontSize: 17, margin: 0, lineHeight: 1.4 },
   right: { display: "flex", alignItems: "center", gap: 12 },
   rightMobile: { gap: 8 },
