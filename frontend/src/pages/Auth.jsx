@@ -187,7 +187,7 @@ export default function Auth() {
 }
 
 const s = {
-  root: { minHeight: "100vh", background: "#070c18", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: 16, fontFamily: "'Segoe UI', sans-serif", position: "relative", overflow: "hidden" },
+  root: { minHeight: "100vh", background: "transparent", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: 16, fontFamily: "'Segoe UI', sans-serif", position: "relative", overflow: "hidden" },
   glow1: { position: "absolute", width: 400, height: 400, borderRadius: "50%", background: "#f9731614", filter: "blur(80px)", top: "-10%", left: "-10%", pointerEvents: "none" },
   glow2: { position: "absolute", width: 400, height: 400, borderRadius: "50%", background: "#3b82f610", filter: "blur(80px)", bottom: "-10%", right: "-10%", pointerEvents: "none" },
 

@@ -445,7 +445,7 @@ export default function MergerPage() {
 }
 
 const s = {
-  root: { display: "flex", minHeight: "100vh", background: "#070c18", fontFamily: "'Segoe UI', sans-serif" },
+  root: { display: "flex", minHeight: "100vh", background: "transparent", fontFamily: "'Segoe UI', sans-serif" },
   main: { flex: 1, overflowY: "auto", paddingBottom: 48 },
   guestBar: { display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, padding: "16px 24px 0", color: "#94a3b8", fontSize: 13, flexWrap: "wrap" },
   guestBarMobile: { padding: "14px 16px 0", gap: 10, alignItems: "flex-start" },

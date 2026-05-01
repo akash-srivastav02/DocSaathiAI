@@ -130,7 +130,7 @@ export default function Vault() {
 }
 
 const s = {
-  root: { display: "flex", minHeight: "100vh", background: "#070c18", fontFamily: "'Segoe UI', sans-serif" },
+  root: { display: "flex", minHeight: "100vh", background: "transparent", fontFamily: "'Segoe UI', sans-serif" },
   main: { flex: 1, overflowY: "auto", paddingBottom: 40 },
   header: { padding: "24px 28px 12px" },
   title: { color: "#f1f5f9", fontWeight: 800, fontSize: 18, margin: 0 },

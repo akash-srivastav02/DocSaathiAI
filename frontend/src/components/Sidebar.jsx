@@ -181,8 +181,9 @@ export default function Sidebar({ credits, onLogout, activeNav }) {
 const s = {
   sidebar: {
     width: 220,
-    background: "#0a0f1e",
-    borderRight: "1px solid #1e293b",
+    background: "linear-gradient(180deg, rgba(10,15,30,0.92), rgba(8,12,24,0.82))",
+    borderRight: "1px solid rgba(79,97,130,0.2)",
+    backdropFilter: "blur(18px)",
     display: "flex",
     flexDirection: "column",
     padding: "18px 14px",
@@ -215,7 +216,7 @@ const s = {
     height: 40,
     borderRadius: 10,
     border: "1px solid #334155",
-    background: "#0f172a",
+    background: "linear-gradient(180deg, rgba(15,23,42,0.95), rgba(15,23,42,0.8))",
     color: "#f8fafc",
     fontSize: 19,
     fontWeight: 700,
@@ -236,7 +237,7 @@ const s = {
     gap: 10,
     paddingBottom: 18,
     marginBottom: 18,
-    borderBottom: "1px solid #1e293b",
+    borderBottom: "1px solid rgba(79,97,130,0.18)",
   },
   iconBox: {
     width: 36,
@@ -252,7 +253,7 @@ const s = {
   },
   iconImage: { width: 24, height: 24, objectFit: "contain", display: "block" },
   brandMain: { fontSize: 15, fontWeight: 800, color: "#f1f5f9", letterSpacing: -0.3 },
-  mobileSection: { paddingBottom: 12, marginBottom: 10, borderBottom: "1px solid #1e293b" },
+  mobileSection: { paddingBottom: 12, marginBottom: 10, borderBottom: "1px solid rgba(79,97,130,0.18)" },
   mobileSectionLabel: {
     color: "#94a3b8",
     fontSize: 11,
@@ -273,7 +274,7 @@ const s = {
     gap: 10,
     padding: "11px 12px",
     border: "1px solid #1e293b",
-    background: "#0f172a",
+    background: "linear-gradient(180deg, rgba(15,23,42,0.88), rgba(17,24,39,0.84))",
     color: "#cbd5e1",
     borderRadius: 10,
     cursor: "pointer",
@@ -299,7 +300,7 @@ const s = {
     alignItems: "center",
     paddingBottom: 18,
     marginBottom: 14,
-    borderBottom: "1px solid #1e293b",
+    borderBottom: "1px solid rgba(79,97,130,0.18)",
   },
   ringWrap: { position: "relative", width: 76, height: 76, marginBottom: 8 },
   ringNum: {
@@ -349,7 +350,7 @@ const s = {
     color: "inherit",
   },
   navActive: { background: "#f9731618", color: "#f97316", fontWeight: 700 },
-  footer: { borderTop: "1px solid #1e293b", paddingTop: 14, marginTop: "auto", paddingBottom: 18, flexShrink: 0 },
+  footer: { borderTop: "1px solid rgba(79,97,130,0.18)", paddingTop: 14, marginTop: "auto", paddingBottom: 18, flexShrink: 0 },
   footerText: { color: "#334155", fontSize: 11, margin: "0 0 10px" },
   mobileActionStack: { display: "grid", gap: 10 },
   logoutBtn: {

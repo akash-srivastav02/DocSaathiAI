@@ -306,7 +306,7 @@ export default function Dashboard() {
 }
 
 const s = {
-  root: { display: "flex", minHeight: "100vh", background: "#070c18", fontFamily: "'Segoe UI', sans-serif" },
+  root: { display: "flex", minHeight: "100vh", background: "transparent", fontFamily: "'Segoe UI', sans-serif" },
   main: { flex: 1, overflowY: "auto", paddingBottom: 48, minWidth: 0 },
   content: {
     padding: "24px 28px",

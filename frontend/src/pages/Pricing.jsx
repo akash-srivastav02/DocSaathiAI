@@ -336,7 +336,7 @@ export default function Pricing() {
 }
 
 const s = {
-  root: { display: "flex", minHeight: "100vh", background: "#070c18", fontFamily: "'Segoe UI', sans-serif" },
+  root: { display: "flex", minHeight: "100vh", background: "transparent", fontFamily: "'Segoe UI', sans-serif" },
   main: { flex: 1, overflowY: "auto", paddingBottom: 60 },
   content: { padding: "20px 24px", display: "flex", flexDirection: "column", gap: 22, maxWidth: 960, width: "100%", boxSizing: "border-box" },
   contentMobile: { padding: "16px", gap: 18 },

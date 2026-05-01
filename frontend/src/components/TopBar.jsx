@@ -226,7 +226,11 @@ const s = {
 };
 
 const darkTheme = {
-  topbar: { borderBottom: "1px solid #1e293b", background: "#0a0f1e" },
+  topbar: {
+    borderBottom: "1px solid rgba(79,97,130,0.18)",
+    background: "linear-gradient(180deg, rgba(10,15,30,0.88), rgba(13,20,33,0.76))",
+    backdropFilter: "blur(18px)",
+  },
   mobileBrandIcon: { background: "#f9731620", border: "1px solid #f9731633" },
   mobileIntroLabel: { color: "#f1f5f9" },
   mobileIntroName: { color: "#94a3b8" },
@@ -246,7 +250,11 @@ const darkTheme = {
 };
 
 const lightTheme = {
-  topbar: { borderBottom: "1px solid rgba(133, 99, 66, 0.14)", background: "#fffaf2" },
+  topbar: {
+    borderBottom: "1px solid rgba(133, 99, 66, 0.14)",
+    background: "linear-gradient(180deg, rgba(255,250,242,0.88), rgba(255,253,248,0.76))",
+    backdropFilter: "blur(18px)",
+  },
   mobileBrandIcon: { background: "rgba(216, 90, 6, 0.08)", border: "1px solid rgba(216, 90, 6, 0.18)" },
   mobileIntroLabel: { color: "#162033" },
   mobileIntroName: { color: "#6b7789" },

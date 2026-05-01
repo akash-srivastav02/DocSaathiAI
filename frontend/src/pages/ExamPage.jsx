@@ -178,7 +178,7 @@ export default function ExamPage() {
 }
 
 const s = {
-  root: { minHeight: "100vh", background: "radial-gradient(circle at top, #101a31 0%, #070c18 45%)", color: "#f8fafc", fontFamily: "'Segoe UI', sans-serif" },
+  root: { minHeight: "100vh", background: "transparent", color: "#f8fafc", fontFamily: "'Segoe UI', sans-serif" },
   wrap: { maxWidth: 1080, margin: "0 auto", padding: "28px 20px 56px" },
   backBtn: { background: "#111827", border: "1px solid #334155", color: "#cbd5e1", padding: "10px 16px", borderRadius: 10, cursor: "pointer", fontWeight: 700 },
   hero: { marginTop: 22, display: "flex", flexDirection: "column", gap: 10 },

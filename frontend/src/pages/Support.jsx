@@ -204,7 +204,7 @@ export default function Support() {
 }
 
 const s = {
-  root: { display: "flex", minHeight: "100vh", background: "#070c18", fontFamily: "'Segoe UI', sans-serif" },
+  root: { display: "flex", minHeight: "100vh", background: "transparent", fontFamily: "'Segoe UI', sans-serif" },
   main: { flex: 1, overflowY: "auto", paddingBottom: 60 },
   content: { padding: "24px 28px", display: "flex", flexDirection: "column", gap: 24, maxWidth: 860 },
 

@@ -61,6 +61,8 @@ body {
 
 .ff-app-shell {
   min-height: 100vh;
+  position: relative;
+  isolation: isolate;
 }
 
 .ff-app-shell--light:not(.ff-app-shell--landing) {
@@ -73,6 +75,34 @@ body {
 .ff-app-shell--light:not(.ff-app-shell--landing) canvas,
 .ff-app-shell--light:not(.ff-app-shell--landing) svg {
   filter: invert(1) hue-rotate(180deg);
+}
+
+.ff-app-shell--standard::before,
+.ff-app-shell--standard::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.ff-app-shell--standard::before {
+  background:
+    radial-gradient(circle at 12% 16%, rgba(249, 115, 22, 0.18), transparent 24%),
+    radial-gradient(circle at 82% 12%, rgba(96, 165, 250, 0.16), transparent 22%),
+    radial-gradient(circle at 72% 86%, rgba(52, 211, 153, 0.1), transparent 20%);
+  animation: ffBackdropFloat 16s ease-in-out infinite;
+}
+
+.ff-app-shell--standard::after {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+  background-size: 88px 88px;
+  transform: perspective(1000px) rotateX(78deg);
+  transform-origin: top center;
+  opacity: 0.08;
+  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.8), transparent 74%);
 }
 
 button,
@@ -367,6 +397,16 @@ a {
   }
   50% {
     transform: translate3d(0, -18px, 0) scale(1.07);
+  }
+}
+
+@keyframes ffBackdropFloat {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(0, -24px, 0) scale(1.02);
   }
 }
 

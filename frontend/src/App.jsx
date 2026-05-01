@@ -38,6 +38,7 @@ function ThemedRoutes() {
     "ff-app-shell",
     isDark ? "ff-app-shell--dark" : "ff-app-shell--light",
     isLanding ? "ff-app-shell--landing" : "",
+    !isLanding ? "ff-app-shell--standard" : "",
   ]
     .filter(Boolean)
     .join(" ");
