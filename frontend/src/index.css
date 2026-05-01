@@ -534,59 +534,60 @@ a {
   }
 
   .ff-stage {
-    width: min(360px, 100%);
-    height: 252px;
+    width: min(310px, 100%);
+    height: 210px;
     margin: 0 auto;
   }
 
   .ff-stage--compact {
-    width: min(292px, 100%);
-    height: 210px;
+    width: min(250px, 100%);
+    height: 176px;
     transform: none;
   }
 
   .ff-stage__panel {
-    inset: 34px 14px 20px;
-    padding: 16px 14px;
+    inset: 28px 12px 14px;
+    padding: 14px 12px;
     border-radius: 18px;
+    transform: rotateX(10deg) rotateY(-10deg) rotateZ(3deg);
   }
 
   .ff-stage__title {
-    font-size: 20px;
-    letter-spacing: -0.7px;
+    font-size: 16px;
+    letter-spacing: -0.4px;
   }
 
   .ff-stage__text {
-    max-width: 150px;
-    font-size: 12px;
-    line-height: 1.45;
+    max-width: 132px;
+    font-size: 10px;
+    line-height: 1.35;
   }
 
   .ff-stage__card {
-    width: 108px;
-    padding: 8px;
-    border-radius: 16px;
-    font-size: 11px;
-    gap: 4px;
+    width: 88px;
+    padding: 6px;
+    border-radius: 14px;
+    font-size: 10px;
+    gap: 3px;
   }
 
   .ff-stage__chip {
-    font-size: 9px;
+    font-size: 8px;
   }
 
   .ff-stage__card--one {
-    top: 4px;
-    left: 2px;
+    top: 0;
+    left: 0;
   }
 
   .ff-stage__card--two {
-    top: 82px;
-    right: 0;
+    top: 72px;
+    right: 4px;
   }
 
   .ff-stage__card--three {
-    left: 18px;
-    bottom: 0;
+    left: 10px;
+    bottom: 4px;
   }
 
   .ff-rush-accent {
@@ -618,33 +619,33 @@ a {
 
 @media (max-width: 420px) {
   .ff-stage {
-    width: min(280px, 100%);
-    height: 224px;
+    width: min(240px, 100%);
+    height: 184px;
   }
 
   .ff-stage__panel {
-    inset: 34px 14px 18px;
-    transform: rotateX(14deg) rotateY(-13deg) rotateZ(4deg);
+    inset: 24px 10px 12px;
+    transform: rotateX(8deg) rotateY(-8deg) rotateZ(2deg);
   }
 
   .ff-stage__title {
-    font-size: 18px;
+    font-size: 15px;
   }
 
   .ff-stage__text {
-    max-width: 138px;
+    max-width: 116px;
   }
 
   .ff-stage__card {
-    width: 100px;
-    gap: 4px;
+    width: 80px;
+    gap: 2px;
   }
 
   .ff-stage__card--two {
-    top: 78px;
+    top: 62px;
   }
 
   .ff-stage__card--three {
-    left: 26px;
+    left: 8px;
   }
 }

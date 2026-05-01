@@ -112,19 +112,23 @@ export default function Landing() {
     transform: `translate3d(0, ${Math.min(scrollY * 0.08, 68)}px, 0) scale(${1 + Math.min(scrollY / 5000, 0.03)})`,
   };
 
-  const heroStageStyle = {
-    transform: `translate3d(0, ${Math.min(scrollY * 0.12, 84)}px, 0)`,
-  };
+  const heroStageStyle = isMobile
+    ? { transform: "none" }
+    : { transform: `translate3d(0, ${Math.min(scrollY * 0.12, 84)}px, 0)` };
 
-  const stageParallaxVars = {
-    "--ff-stage-scroll": `${Math.min(scrollY * 0.1, 54)}px`,
-    "--ff-stage-rotate": `${Math.min(scrollY * 0.01, 4)}deg`,
-  };
+  const stageParallaxVars = isMobile
+    ? { "--ff-stage-scroll": "0px", "--ff-stage-rotate": "0deg" }
+    : {
+        "--ff-stage-scroll": `${Math.min(scrollY * 0.1, 54)}px`,
+        "--ff-stage-rotate": `${Math.min(scrollY * 0.01, 4)}deg`,
+      };
 
-  const rushAccentStyle = {
-    "--ff-rush-scroll": `${Math.min(scrollY * 0.14, 30)}px`,
-    "--ff-rush-spin": `${Math.min(scrollY * 0.08, 28)}deg`,
-  };
+  const rushAccentStyle = isMobile
+    ? { "--ff-rush-scroll": "0px", "--ff-rush-spin": "0deg" }
+    : {
+        "--ff-rush-scroll": `${Math.min(scrollY * 0.14, 30)}px`,
+        "--ff-rush-spin": `${Math.min(scrollY * 0.08, 28)}deg`,
+      };
 
   const searchResults = useMemo(() => {
     const normalized = normalizeText(query.trim());
@@ -243,8 +247,8 @@ export default function Landing() {
       style={{
         ...s.root,
         ...t.root,
-        "--ff-stage-scroll": `${Math.min(scrollY * 0.1, 54)}px`,
-        "--ff-stage-rotate": `${Math.min(scrollY * 0.01, 4)}deg`,
+        "--ff-stage-scroll": isMobile ? "0px" : `${Math.min(scrollY * 0.1, 54)}px`,
+        "--ff-stage-rotate": isMobile ? "0deg" : `${Math.min(scrollY * 0.01, 4)}deg`,
       }}
     >
       <Seo

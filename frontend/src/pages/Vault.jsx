@@ -36,6 +36,13 @@ const emptyForm = {
   notes: "",
 };
 
+const sortApplications = (items) =>
+  [...items].sort((a, b) => {
+    const da = a.deadline ? new Date(a.deadline).getTime() : Number.MAX_SAFE_INTEGER;
+    const db = b.deadline ? new Date(b.deadline).getTime() : Number.MAX_SAFE_INTEGER;
+    return da - db;
+  });
+
 function formatDate(date) {
   if (!date) return "No deadline";
   return new Date(date).toLocaleDateString("en-IN", {
@@ -67,19 +74,56 @@ export default function Vault() {
   const [error, setError] = useState("");
   const [deletingId, setDeletingId] = useState(null);
   const [updatingId, setUpdatingId] = useState(null);
+  const [trackerMode, setTrackerMode] = useState("cloud");
+  const storageKey = useMemo(
+    () => `formfixer_tracker_${user?._id || user?.email || "guest"}`,
+    [user?._id, user?.email]
+  );
+
+  const readLocalApplications = () => {
+    try {
+      const raw = window.localStorage.getItem(storageKey);
+      const parsed = raw ? JSON.parse(raw) : [];
+      return Array.isArray(parsed) ? sortApplications(parsed) : [];
+    } catch {
+      return [];
+    }
+  };
+
+  const writeLocalApplications = (items) => {
+    try {
+      window.localStorage.setItem(storageKey, JSON.stringify(sortApplications(items)));
+    } catch {
+      // ignore storage write failures
+    }
+  };
 
   useEffect(() => {
     let active = true;
     const loadTracker = async () => {
-      try {
-        setLoading(true);
-        const { data } = await API.get("/tracker");
-        if (active) setApplications(data.applications || []);
-      } catch (err) {
-        if (active) setError(err.response?.data?.message || "Could not load tracker right now.");
-      } finally {
-        if (active) setLoading(false);
-      }
+        try {
+          setLoading(true);
+          const { data } = await API.get("/tracker");
+          if (active) {
+            const next = sortApplications(data.applications || []);
+            setApplications(next);
+            setTrackerMode("cloud");
+            writeLocalApplications(next);
+          }
+        } catch (err) {
+          if (active) {
+            const localItems = readLocalApplications();
+            setApplications(localItems);
+            setTrackerMode("local");
+            if (localItems.length) {
+              setMessage("Tracker is currently using local device storage.");
+            } else {
+              setError(err.response?.data?.message || "Could not load tracker right now.");
+            }
+          }
+        } finally {
+          if (active) setLoading(false);
+        }
     };
     loadTracker();
     return () => {
@@ -131,16 +175,28 @@ export default function Vault() {
         ...form,
         deadline: form.deadline || null,
       };
-      const { data } = await API.post("/tracker", payload);
-      setApplications((prev) =>
-        [data.application, ...prev].sort((a, b) => {
-          const da = a.deadline ? new Date(a.deadline).getTime() : Number.MAX_SAFE_INTEGER;
-          const db = b.deadline ? new Date(b.deadline).getTime() : Number.MAX_SAFE_INTEGER;
-          return da - db;
-        })
-      );
+      if (trackerMode === "local") {
+        const localItem = {
+          ...payload,
+          _id: `local-${Date.now()}`,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        };
+        setApplications((prev) => {
+          const next = sortApplications([localItem, ...prev]);
+          writeLocalApplications(next);
+          return next;
+        });
+      } else {
+        const { data } = await API.post("/tracker", payload);
+        setApplications((prev) => {
+          const next = sortApplications([data.application, ...prev]);
+          writeLocalApplications(next);
+          return next;
+        });
+      }
       setForm(emptyForm);
-      setMessage("Application saved to your tracker.");
+      setMessage(trackerMode === "local" ? "Application saved on this device." : "Application saved to your tracker.");
     } catch (err) {
       setError(err.response?.data?.message || "Could not save this application.");
     } finally {
@@ -151,8 +207,22 @@ export default function Vault() {
   const handleStatusChange = async (item, status) => {
     try {
       setUpdatingId(item._id);
-      const { data } = await API.put(`/tracker/${item._id}`, { status });
-      setApplications((prev) => prev.map((entry) => (entry._id === item._id ? data.application : entry)));
+      if (trackerMode === "local" || String(item._id).startsWith("local-")) {
+        setApplications((prev) => {
+          const next = prev.map((entry) =>
+            entry._id === item._id ? { ...entry, status, updatedAt: new Date().toISOString() } : entry
+          );
+          writeLocalApplications(next);
+          return next;
+        });
+      } else {
+        const { data } = await API.put(`/tracker/${item._id}`, { status });
+        setApplications((prev) => {
+          const next = prev.map((entry) => (entry._id === item._id ? data.application : entry));
+          writeLocalApplications(next);
+          return next;
+        });
+      }
     } catch (err) {
       setError(err.response?.data?.message || "Could not update status.");
     } finally {
@@ -163,8 +233,20 @@ export default function Vault() {
   const handleDelete = async (itemId) => {
     try {
       setDeletingId(itemId);
-      await API.delete(`/tracker/${itemId}`);
-      setApplications((prev) => prev.filter((item) => item._id !== itemId));
+      if (trackerMode === "local" || String(itemId).startsWith("local-")) {
+        setApplications((prev) => {
+          const next = prev.filter((item) => item._id !== itemId);
+          writeLocalApplications(next);
+          return next;
+        });
+      } else {
+        await API.delete(`/tracker/${itemId}`);
+        setApplications((prev) => {
+          const next = prev.filter((item) => item._id !== itemId);
+          writeLocalApplications(next);
+          return next;
+        });
+      }
     } catch (err) {
       setError(err.response?.data?.message || "Could not remove this item.");
     } finally {
@@ -185,6 +267,11 @@ export default function Vault() {
               <h1 style={{ ...s.title, ...(isMobile ? s.titleMobile : null) }}>Application Tracker</h1>
               <p style={{ ...s.subtitle, ...(isMobile ? s.subtitleMobile : null) }}>
                 Save the forms you care about, track deadlines, and stay organized before admit card season gets messy.
+              </p>
+              <p style={s.modeNote}>
+                {trackerMode === "cloud"
+                  ? "Sync mode: saved to your account"
+                  : "Local mode: saved on this device until tracker sync is available"}
               </p>
             </div>
             <div style={{ ...s.headerActions, ...(isMobile ? s.headerActionsMobile : null) }}>
@@ -470,6 +557,7 @@ const s = {
   titleMobile: { fontSize: 24 },
   subtitle: { margin: 0, color: "var(--ff-text-soft)", fontSize: 15, lineHeight: 1.65, maxWidth: 740 },
   subtitleMobile: { fontSize: 14 },
+  modeNote: { margin: "10px 0 0", color: "var(--ff-text-faint)", fontSize: 12, lineHeight: 1.6 },
   headerActions: { display: "flex", gap: 10, flexWrap: "wrap" },
   headerActionsMobile: { width: "100%" },
   primaryBtn: { background: "linear-gradient(135deg,#f97316,#ea580c)", color: "#fff", border: "none", borderRadius: 12, padding: "11px 16px", fontWeight: 800, fontSize: 14, cursor: "pointer" },
