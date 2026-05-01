@@ -52,11 +52,13 @@ function Section({ section, navigate, compact = false }) {
         {section.viewAllLabel && <span style={s.viewAll}>{section.viewAllLabel}</span>}
       </div>
 
-      <div style={{ ...s.cardGrid, ...(compact ? s.cardGridCompact : null) }}>
-        {section.items.map((item) => (
-          <ToolCard key={item.id} item={item} onOpen={navigate} compact={compact} />
-        ))}
-      </div>
+      {section.items?.length ? (
+        <div style={{ ...s.cardGrid, ...(compact ? s.cardGridCompact : null) }}>
+          {section.items.map((item) => (
+            <ToolCard key={item.id} item={item} onOpen={navigate} compact={compact} />
+          ))}
+        </div>
+      ) : null}
 
       {section.pills?.length ? (
         <div style={s.pillRow}>
@@ -84,7 +86,7 @@ export default function Dashboard() {
   return (
     <div style={s.root}>
       {user ? (
-        <Sidebar credits={currentCredits} onLogout={() => { logout(); navigate("/"); }} activeNav="All Tools" />
+        <Sidebar credits={currentCredits} onLogout={() => { logout(); navigate("/"); }} activeNav="Dashboard" />
       ) : null}
 
       <div style={s.main}>

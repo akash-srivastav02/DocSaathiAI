@@ -88,6 +88,12 @@ export const HOME_SECTIONS = [
       { id: "school-admission", label: "School Admission", icon: "SC", desc: "KV, NVS and more", live: false, accent: "#8b5cf6" },
       { id: "driving-licence", label: "Driving Licence", icon: "DL", desc: "35x45mm, <20KB", live: false, accent: "#ef4444" },
     ],
+  },
+  {
+    id: "exact-kb",
+    title: "Resize Image to Exact KB",
+    subtitle: "Direct utility pages for the exact upload sizes students actually search for.",
+    items: [],
     pills: [
       { label: "20KB", route: "/utility/compress-image-to-20kb" },
       { label: "50KB", route: "/utility/compress-image-to-50kb" },

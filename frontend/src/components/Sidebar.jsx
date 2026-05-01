@@ -9,6 +9,13 @@ const NAV_ITEMS = [
   { label: "Contact", path: "/support", icon: "CT" },
 ];
 
+const EXAM_LINKS = [
+  { label: "SSC CGL", path: "/exam/ssc-cgl" },
+  { label: "UPSC CDS", path: "/exam/upsc-cds" },
+  { label: "JEE Main", path: "/exam/jee-main" },
+  { label: "NEET UG", path: "/exam/neet-ug" },
+];
+
 export default function Sidebar({ credits, onLogout, activeNav }) {
   const navigate = useNavigate();
   const location = useLocation();
@@ -90,6 +97,24 @@ export default function Sidebar({ credits, onLogout, activeNav }) {
             >
               <span style={{ ...s.quickIcon, color: item.accent }}>{item.icon}</span>
               <span style={s.quickText}>{item.label}</span>
+            </button>
+          ))}
+        </div>
+
+        <div style={s.sectionLabel}>Exam Section</div>
+        <div style={s.quickAccess}>
+          {EXAM_LINKS.map((exam) => (
+            <button
+              key={exam.path}
+              type="button"
+              style={{
+                ...s.quickItem,
+                ...(location.pathname === exam.path ? s.quickItemActive : null),
+              }}
+              onClick={() => navigate(exam.path)}
+            >
+              <span style={{ ...s.quickIcon, color: "var(--ff-blue)" }}>EX</span>
+              <span style={s.quickText}>{exam.label}</span>
             </button>
           ))}
         </div>
@@ -277,6 +302,11 @@ const s = {
   },
   quickIcon: { minWidth: 28, fontSize: 12, fontWeight: 900 },
   quickText: { fontSize: 14, fontWeight: 700 },
+  quickItemActive: {
+    background: "color-mix(in srgb, var(--ff-blue) 10%, transparent)",
+    color: "var(--ff-text)",
+    border: "1px solid color-mix(in srgb, var(--ff-blue) 22%, transparent)",
+  },
   groupWrap: { display: "grid", gap: 10, marginTop: 2 },
   groupCard: {
     borderRadius: 18,
