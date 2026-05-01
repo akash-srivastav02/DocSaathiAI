@@ -291,7 +291,7 @@ export default function Landing() {
               Resize, convert and fix documents
               <span style={{ ...s.heroAccent, ...t.heroAccent, ...(isMobile ? s.heroAccentMobile : null) }}>
                 without switching ten tabs
-                {!isMobile && <HeroRushAccent style={rushAccentStyle} />}
+                <HeroRushAccent style={rushAccentStyle} compact={isMobile} />
               </span>
             </h1>
             <p style={{ ...s.heroSub, ...t.heroSub, ...(isMobile ? s.heroSubMobile : null) }}>
@@ -364,11 +364,9 @@ export default function Landing() {
             </div>
           </div>
 
-          {!isMobile && (
-            <div style={{ ...s.heroStage, ...heroStageStyle }}>
-              <WorkflowStage compact={false} style={stageParallaxVars} />
-            </div>
-          )}
+          <div style={{ ...s.heroStage, ...(isMobile ? s.heroStageMobile : null), ...heroStageStyle }}>
+            <WorkflowStage compact={isMobile} style={stageParallaxVars} />
+          </div>
         </section>
 
         <section style={s.metrics}>
@@ -545,9 +543,9 @@ function WorkflowStage({ compact = false, style = {} }) {
   );
 }
 
-function HeroRushAccent({ style }) {
+function HeroRushAccent({ style, compact = false }) {
   return (
-    <span className="ff-rush-accent" aria-hidden="true" style={style}>
+    <span className={`ff-rush-accent${compact ? " ff-rush-accent--compact" : ""}`} aria-hidden="true" style={style}>
       <span className="ff-rush-accent__ring" />
       <span className="ff-rush-accent__cube" />
       <span className="ff-rush-accent__spark ff-rush-accent__spark--one" />
@@ -642,6 +640,13 @@ const s = {
     display: "flex",
     alignItems: "flex-start",
     justifyContent: "center",
+  },
+  heroStageMobile: {
+    minHeight: 180,
+    width: "100%",
+    overflow: "hidden",
+    justifyContent: "flex-start",
+    paddingTop: 4,
   },
   searchShell: { position: "relative", width: "100%", maxWidth: 860, borderRadius: 22, padding: 14 },
   searchShellMobile: { padding: 10, borderRadius: 18 },

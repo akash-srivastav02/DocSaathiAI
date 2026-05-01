@@ -39,7 +39,7 @@ export default function Sidebar({ credits, onLogout, activeNav }) {
           aria-label={isOpen ? "Close menu" : "Open menu"}
           onClick={() => setIsOpen((prev) => !prev)}
         >
-          {isOpen ? "X" : "|||"}
+          {isOpen ? "✕" : "☰"}
         </button>
       )}
       {isMobile && isOpen && <div style={s.backdrop} onClick={() => setIsOpen(false)} />}
@@ -51,15 +51,17 @@ export default function Sidebar({ credits, onLogout, activeNav }) {
           transform: isMobile ? (isOpen ? "translateX(0)" : "translateX(-110%)") : "translateX(0)",
         }}
       >
-        <button type="button" style={s.brand} onClick={() => navigate("/")}>
-          <div style={s.brandIconBox}>
-            <img src="/favicon.png" alt="FormFixer logo" style={s.brandIcon} />
-          </div>
-          <div>
-            <div style={s.brandTitle}>FormFixer</div>
-            <div style={s.brandSub}>Document toolkit</div>
-          </div>
-        </button>
+        {!isMobile && (
+          <button type="button" style={s.brand} onClick={() => navigate("/")}>
+            <div style={s.brandIconBox}>
+              <img src="/favicon.png" alt="FormFixer logo" style={s.brandIcon} />
+            </div>
+            <div>
+              <div style={s.brandTitle}>FormFixer</div>
+              <div style={s.brandSub}>Document toolkit</div>
+            </div>
+          </button>
+        )}
 
         <nav style={s.nav}>
           {NAV_ITEMS.map((item) => (
@@ -198,12 +200,14 @@ const s = {
     width: 42,
     height: 42,
     borderRadius: 12,
-    border: "1px solid var(--ff-border)",
-    background: "color-mix(in srgb, var(--ff-panel-solid) 92%, transparent)",
+    border: "1px solid color-mix(in srgb, var(--ff-orange) 22%, var(--ff-border))",
+    background: "linear-gradient(180deg, color-mix(in srgb, var(--ff-panel-solid) 94%, transparent), color-mix(in srgb, var(--ff-panel) 96%, transparent))",
     backdropFilter: "blur(14px)",
     color: "var(--ff-text)",
     cursor: "pointer",
     fontWeight: 900,
+    fontSize: 18,
+    boxShadow: "0 14px 30px rgba(2, 6, 23, 0.22)",
   },
   backdrop: { position: "fixed", inset: 0, background: "rgba(2, 6, 23, 0.68)", zIndex: 41 },
   brand: {

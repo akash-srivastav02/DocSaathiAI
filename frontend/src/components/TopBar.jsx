@@ -115,7 +115,7 @@ const s = {
     gap: 12,
   },
   topbarMobile: {
-    padding: "12px 16px 12px 62px",
+    padding: "10px 14px 10px 62px",
     position: "fixed",
     top: 0,
     left: 0,
@@ -130,7 +130,7 @@ const s = {
   rightMobile: { gap: 8 },
   mobileIntro: { minWidth: 0, display: "flex", flexDirection: "column", gap: 1 },
   mobileIntroLabel: {
-    fontSize: 15,
+    fontSize: 18,
     fontWeight: 800,
     letterSpacing: -0.2,
     margin: 0,
@@ -139,7 +139,7 @@ const s = {
     textOverflow: "ellipsis",
   },
   mobileIntroName: {
-    fontSize: 13,
+    fontSize: 14,
     fontWeight: 600,
     lineHeight: 1.35,
     margin: 0,
@@ -148,8 +148,8 @@ const s = {
     textOverflow: "ellipsis",
   },
   mobileBrandIcon: {
-    width: 28,
-    height: 28,
+    width: 38,
+    height: 38,
     borderRadius: 8,
     display: "flex",
     alignItems: "center",
@@ -157,7 +157,7 @@ const s = {
     flexShrink: 0,
     overflow: "hidden",
   },
-  mobileBrandImage: { width: 20, height: 20, objectFit: "contain", display: "block" },
+  mobileBrandImage: { width: 26, height: 26, objectFit: "contain", display: "block" },
   themeBtn: {
     width: 36,
     height: 36,
