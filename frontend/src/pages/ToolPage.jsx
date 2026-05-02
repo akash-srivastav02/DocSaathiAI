@@ -50,9 +50,9 @@ const FEATURES = {
     label: "Universal Image Converter",
     credit: 1,
     color: "#10b981",
-    desc: "Convert PNG, WEBP, HEIC, and other supported images into JPG/JPEG.",
+    desc: "Convert images or the first page of a PDF into clean JPG/JPEG output.",
     needsExam: false,
-    uploadLabel: "Upload image to convert into JPG",
+    uploadLabel: "Upload image or PDF to convert into JPG",
   },
   crop: {
     icon: "CR",
@@ -691,19 +691,34 @@ export default function ToolPage() {
                     }}
                     onClick={() => !done && document.getElementById("toolFileInput")?.click()}
                   >
-                    {preview ? (
-                      <img src={preview} alt="preview" style={s.previewImageInline} />
-                    ) : (
+                     {preview ? (
+                       <img src={preview} alt="preview" style={s.previewImageInline} />
+                    ) : file && isImageConverterTool && file.type === "application/pdf" ? (
                       <>
                         <div style={{ ...s.bigIcon, color: tool.color, borderColor: `${tool.color}33`, background: `${tool.color}12` }}>
+                          PDF
+                        </div>
+                        <p style={s.uploadText}>{file.name}</p>
+                        <p style={s.uploadSub}>First PDF page will be converted to JPG</p>
+                      </>
+                     ) : (
+                       <>
+                         <div style={{ ...s.bigIcon, color: tool.color, borderColor: `${tool.color}33`, background: `${tool.color}12` }}>
                           {tool.icon}
                         </div>
                         <p style={s.uploadText}>{tool.uploadLabel}</p>
-                        <p style={s.uploadSub}>JPG, PNG, WEBP supported</p>
+                        <p style={s.uploadSub}>{isImageConverterTool ? "JPG, PNG, WEBP, HEIC, PDF supported" : "JPG, PNG, WEBP supported"}</p>
                       </>
                     )}
                   </div>
-                  <input id="toolFileInput" type="file" accept="image/*" style={{ display: "none" }} onChange={(e) => handleFileSelection(e.target.files?.[0])} disabled={done} />
+                  <input
+                    id="toolFileInput"
+                    type="file"
+                    accept={isImageConverterTool ? "image/*,application/pdf" : "image/*"}
+                    style={{ display: "none" }}
+                    onChange={(e) => handleFileSelection(e.target.files?.[0])}
+                    disabled={done}
+                  />
                   <div style={s.uploadActions}>
                     <button type="button" style={s.btnSecondary} onClick={() => !done && document.getElementById("toolFileInput")?.click()} disabled={done}>Browse File</button>
                     <button type="button" style={s.btnSecondary} onClick={() => !done && setShowCamera(true)} disabled={done}>Live Camera</button>
@@ -778,9 +793,9 @@ export default function ToolPage() {
                       <>
                         <div style={s.configCard}>
                           <div style={s.configTitle}>Output Format</div>
-                          <p style={s.helperText}>This tool converts supported image formats into clean JPG/JPEG output.</p>
+                          <p style={s.helperText}>This tool converts supported images, or the first page of a PDF, into clean JPG/JPEG output.</p>
                           <div style={s.resultPills}>
-                            <span style={s.resultPill}>Input: PNG / WEBP / HEIC / HEIF / JPG</span>
+                            <span style={s.resultPill}>Input: PNG / WEBP / HEIC / HEIF / JPG / PDF</span>
                             <span style={s.resultPill}>Output: JPG</span>
                           </div>
                         </div>
@@ -887,7 +902,11 @@ export default function ToolPage() {
                     {isImageCompressTool && <span style={s.resultPill}>Target: {result.targetKB} KB</span>}
                       {toolId === "photo" && <span style={s.resultPill}>{result.processing?.focusGuided ? "Face-guided framing" : "Centered framing"}</span>}
                       {isSignatureCleanerTool && <span style={s.resultPill}>{result.processing?.trimmed ? "Auto-trimmed" : "Cleaned output"}</span>}
-                      {isImageConverterTool && <span style={s.resultPill}>Converted to JPG</span>}
+                      {isImageConverterTool && (
+                        <span style={s.resultPill}>
+                          {result.processing?.sourceType === "pdf-first-page" ? "PDF first page to JPG" : "Converted to JPG"}
+                        </span>
+                      )}
                       <span style={s.resultPill}>Watermarked preview</span>
                     </div>
 

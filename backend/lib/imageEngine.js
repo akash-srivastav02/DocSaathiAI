@@ -299,9 +299,12 @@ async function cleanSignatureBuffer(inputBuffer, { trim = true } = {}) {
   };
 }
 
-async function convertImageBuffer(inputBuffer, { quality = 92 } = {}) {
-  const output = await sharp(inputBuffer)
-    .rotate()
+async function convertImageBuffer(inputBuffer, { quality = 92, inputMimeType = 'image/jpeg' } = {}) {
+  const source = inputMimeType === 'application/pdf'
+    ? sharp(inputBuffer, { density: 220, page: 0 })
+    : sharp(inputBuffer).rotate();
+
+  const output = await source
     .resize({
       width: 2400,
       height: 2400,
@@ -324,6 +327,7 @@ async function convertImageBuffer(inputBuffer, { quality = 92 } = {}) {
       height: output.info.height,
       sizeKB: Math.round(output.data.length / 1024),
       format: 'jpg',
+      sourceType: inputMimeType === 'application/pdf' ? 'pdf-first-page' : 'image',
     },
   };
 }

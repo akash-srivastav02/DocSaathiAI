@@ -81,9 +81,8 @@ export default function AuthModal({ onClose, onSuccess, title = "Login Required"
             useOneTap={false}
             theme="outline"
             size="large"
-            text={authMode === "login" ? "signin_with" : "signup_with"}
-            shape="pill"
-            width="320"
+            type="icon"
+            shape="circle"
           />
         </div>
 
@@ -210,7 +209,14 @@ const s = {
   googleWrap: {
     display: "flex",
     justifyContent: "center",
-    marginBottom: 14,
+    alignItems: "center",
+    width: 74,
+    height: 74,
+    margin: "0 auto 14px",
+    borderRadius: "50%",
+    background: "linear-gradient(180deg, #f8fafc, #eef2f7)",
+    border: "1px solid #d8e0ea",
+    boxShadow: "0 8px 24px rgba(15, 23, 42, 0.18)",
   },
   divider: {
     display: "flex",

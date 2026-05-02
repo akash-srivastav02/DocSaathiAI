@@ -3,6 +3,7 @@ import { create } from 'zustand';
 // Read stored user once at startup
 const storedUser = JSON.parse(localStorage.getItem('docsaathi_user') || 'null');
 const apiBase = (import.meta.env.VITE_API_URL || 'http://localhost:5000/api').replace(/\/$/, '');
+const ACTIVITY_KEY = 'formfixer_last_activity';
 
 const useStore = create((set) => ({
   user:    storedUser,
@@ -11,6 +12,7 @@ const useStore = create((set) => ({
 
   setUser: (userData) => {
     localStorage.setItem('docsaathi_user', JSON.stringify(userData));
+    localStorage.setItem(ACTIVITY_KEY, String(Date.now()));
     set({
       user:    userData,
       credits: userData.credits ?? 0,  // sync credits at login/signup
@@ -38,6 +40,7 @@ const useStore = create((set) => ({
       }).catch(() => {});
     }
     localStorage.removeItem('docsaathi_user');
+    localStorage.removeItem(ACTIVITY_KEY);
     set({ user: null, credits: 0 });
   },
 }));

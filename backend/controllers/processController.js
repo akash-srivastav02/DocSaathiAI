@@ -202,14 +202,15 @@ const convertImage = async (req, res) => {
     return res.status(400).json({ message: 'No image uploaded.' });
   }
 
-  const allowed = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/heic', 'image/heif'];
+  const allowed = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/heic', 'image/heif', 'application/pdf'];
   if (!allowed.includes(req.file.mimetype)) {
-    return res.status(400).json({ message: 'Only JPG, PNG, WEBP, HEIC, and HEIF images are supported.' });
+    return res.status(400).json({ message: 'Only JPG, PNG, WEBP, HEIC, HEIF images, and PDF are supported.' });
   }
 
   try {
     const converted = await convertImageBuffer(req.file.buffer, {
       quality: req.body.quality,
+      inputMimeType: req.file.mimetype,
     });
 
     res.json({
@@ -223,6 +224,7 @@ const convertImage = async (req, res) => {
       engine: 'formfixer-image-converter',
       processing: {
         format: converted.meta.format,
+        sourceType: converted.meta.sourceType,
       },
     });
   } catch (error) {
