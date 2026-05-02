@@ -16,7 +16,14 @@ const EXAM_TOOL_LINKS = [
   { label: "Custom Image Resizer", path: "/tool/crop", icon: "RS" },
 ];
 
-export default function Sidebar({ credits, onLogout, activeNav, planLabel = "Free Tier", isUnlimited = false }) {
+export default function Sidebar({
+  credits,
+  onLogout,
+  activeNav,
+  planLabel = "Free Tier",
+  isUnlimited = false,
+  showPlanCard = true,
+}) {
   const navigate = useNavigate();
   const location = useLocation();
   const isMobile = useIsMobile(960);
@@ -80,13 +87,15 @@ export default function Sidebar({ credits, onLogout, activeNav, planLabel = "Fre
           ))}
         </nav>
 
-        <div style={s.creditCard}>
-          <div style={s.creditNum}>{planLabel}</div>
-          <div style={s.creditLabel}>{isUnlimited ? "Unlimited access active" : `${credits ?? 0} downloads left`}</div>
-          <button type="button" style={s.buyBtn} onClick={() => navigate("/pricing")}>
-            View Tiers
-          </button>
-        </div>
+        {showPlanCard ? (
+          <div style={s.creditCard}>
+            <div style={s.creditNum}>{planLabel}</div>
+            <div style={s.creditLabel}>{isUnlimited ? "Unlimited access active" : `${credits ?? 0} downloads left`}</div>
+            <button type="button" style={s.buyBtn} onClick={() => navigate("/pricing")}>
+              View Tiers
+            </button>
+          </div>
+        ) : null}
 
         <div style={s.sectionLabel}>Quick Access</div>
         <div style={s.quickAccess}>

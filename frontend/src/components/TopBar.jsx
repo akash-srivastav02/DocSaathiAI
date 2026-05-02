@@ -9,7 +9,7 @@ const ACCOUNT_LINKS = [
   { label: "Contact", path: "/support" },
 ];
 
-export default function TopBar({ user, credits, onLogout }) {
+export default function TopBar({ user, credits, onLogout, showPlanSummary = true }) {
   const navigate = useNavigate();
   const location = useLocation();
   const isMobile = useIsMobile(900);
@@ -53,17 +53,19 @@ export default function TopBar({ user, credits, onLogout }) {
           {theme === "dark" ? "☼" : "☾"}
         </button>
 
-        <div
-          style={{ ...s.creditPill, ...t.creditPill, ...(isMobile ? s.creditPillMobile : null) }}
-          onClick={() => navigate("/pricing")}
-          title="View plans"
-        >
-          <span>⚡</span>
-          <div style={s.planWrap}>
-            <b style={{ color: "#f97316" }}>{planLabel}</b>
-            {!isMobile && <span style={{ ...s.creditLabel, ...t.creditLabel }}>{usageSummary}</span>}
+        {showPlanSummary ? (
+          <div
+            style={{ ...s.creditPill, ...t.creditPill, ...(isMobile ? s.creditPillMobile : null) }}
+            onClick={() => navigate("/pricing")}
+            title="View plans"
+          >
+            <span>⚡</span>
+            <div style={s.planWrap}>
+              <b style={{ color: "#f97316" }}>{planLabel}</b>
+              {!isMobile && <span style={{ ...s.creditLabel, ...t.creditLabel }}>{usageSummary}</span>}
+            </div>
           </div>
-        </div>
+        ) : null}
 
         <div style={s.avatarWrap}>
           <button
@@ -97,11 +99,11 @@ export default function TopBar({ user, credits, onLogout }) {
                     {item.label}
                   </button>
                 ))}
-                {onLogout && (
+                {onLogout ? (
                   <button type="button" style={{ ...s.accountLogout, ...t.accountLogout }} onClick={onLogout}>
                     Logout
                   </button>
-                )}
+                ) : null}
               </div>
             </div>
           )}

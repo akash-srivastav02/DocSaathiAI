@@ -86,12 +86,24 @@ export default function Dashboard() {
   return (
     <div style={s.root}>
       {user ? (
-        <Sidebar credits={currentCredits} planLabel={user?.planLabel} isUnlimited={user?.isUnlimited} onLogout={() => { logout(); navigate("/"); }} activeNav="Dashboard" />
+        <Sidebar
+          credits={currentCredits}
+          planLabel={user?.planLabel}
+          isUnlimited={user?.isUnlimited}
+          showPlanCard={false}
+          onLogout={() => { logout(); navigate("/"); }}
+          activeNav="Dashboard"
+        />
       ) : null}
 
       <div style={s.main}>
         {user ? (
-          <TopBar user={user} credits={currentCredits} onLogout={() => { logout(); navigate("/"); }} />
+          <TopBar
+            user={user}
+            credits={currentCredits}
+            showPlanSummary={false}
+            onLogout={() => { logout(); navigate("/"); }}
+          />
         ) : null}
 
         <div style={{ ...s.content, ...(isMobile ? s.contentMobile : null), ...(user && isMobile ? s.contentWithFixedTopbar : null) }}>
@@ -110,10 +122,6 @@ export default function Dashboard() {
               <div style={s.statTile}>
                 <strong style={s.statNum}>{allToolCount}+</strong>
                 <span style={s.statLabel}>Mapped tools</span>
-              </div>
-              <div style={s.statTile}>
-                <strong style={s.statNum}>{currentCredits}</strong>
-                <span style={s.statLabel}>Credits</span>
               </div>
             </div>
           </section>
