@@ -94,15 +94,17 @@ export default function Auth() {
 
         {googleClientId ? (
           <div style={s.googleSection}>
-            <GoogleLogin
-              onSuccess={handleGoogleSuccess}
-              onError={handleGoogleError}
-              useOneTap={false}
-              theme="filled_black"
-              size="large"
-              type="icon"
-              shape="circle"
-            />
+            <div style={s.googleClip}>
+              <GoogleLogin
+                onSuccess={handleGoogleSuccess}
+                onError={handleGoogleError}
+                useOneTap={false}
+                theme="filled_black"
+                size="large"
+                type="icon"
+                shape="circle"
+              />
+            </div>
             <p style={s.googleSub}>Continue with Google</p>
           </div>
         ) : (
@@ -249,6 +251,16 @@ const s = {
     alignItems: "center",
     gap: 10,
     marginBottom: 16,
+  },
+  googleClip: {
+    width: 44,
+    height: 44,
+    borderRadius: "50%",
+    overflow: "hidden",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    boxShadow: "0 10px 24px rgba(15, 23, 42, 0.24)",
   },
   googleSub: {
     color: "#94a3b8",

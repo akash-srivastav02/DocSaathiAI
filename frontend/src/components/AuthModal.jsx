@@ -75,15 +75,17 @@ export default function AuthModal({ onClose, onSuccess, title = "Login Required"
         </div>
 
         <div style={s.googleWrap}>
-          <GoogleLogin
-            onSuccess={handleGoogleSuccess}
-            onError={() => setError("Google login was cancelled or failed.")}
-            useOneTap={false}
-            theme="filled_black"
-            size="large"
-            type="icon"
-            shape="circle"
-          />
+          <div style={s.googleClip}>
+            <GoogleLogin
+              onSuccess={handleGoogleSuccess}
+              onError={() => setError("Google login was cancelled or failed.")}
+              useOneTap={false}
+              theme="filled_black"
+              size="large"
+              type="icon"
+              shape="circle"
+            />
+          </div>
         </div>
 
         <div style={s.divider}>
@@ -210,6 +212,16 @@ const s = {
     display: "flex",
     justifyContent: "center",
     margin: "0 auto 14px",
+  },
+  googleClip: {
+    width: 44,
+    height: 44,
+    borderRadius: "50%",
+    overflow: "hidden",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    boxShadow: "0 10px 24px rgba(15, 23, 42, 0.24)",
   },
   divider: {
     display: "flex",
