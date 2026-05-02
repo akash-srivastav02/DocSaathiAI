@@ -79,7 +79,7 @@ export default function AuthModal({ onClose, onSuccess, title = "Login Required"
             onSuccess={handleGoogleSuccess}
             onError={() => setError("Google login was cancelled or failed.")}
             useOneTap={false}
-            theme="outline"
+            theme="filled_black"
             size="large"
             type="icon"
             shape="circle"
@@ -209,14 +209,7 @@ const s = {
   googleWrap: {
     display: "flex",
     justifyContent: "center",
-    alignItems: "center",
-    width: 74,
-    height: 74,
     margin: "0 auto 14px",
-    borderRadius: "50%",
-    background: "linear-gradient(180deg, #f8fafc, #eef2f7)",
-    border: "1px solid #d8e0ea",
-    boxShadow: "0 8px 24px rgba(15, 23, 42, 0.18)",
   },
   divider: {
     display: "flex",

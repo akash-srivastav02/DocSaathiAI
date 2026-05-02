@@ -176,7 +176,7 @@ export default function Landing() {
         "@context": "https://schema.org",
         "@type": "Organization",
         name: "FormFixer",
-        alternateName: ["Form Fixer", "formfixer.in"],
+        alternateName: ["Form Fixer", "From Fixer", "formfixer.in"],
         url: SITE_URL,
         logo: `${SITE_URL}/favicon.png`,
       },
@@ -184,7 +184,7 @@ export default function Landing() {
         "@context": "https://schema.org",
         "@type": "WebSite",
         name: "FormFixer",
-        alternateName: "Form Fixer",
+        alternateName: ["Form Fixer", "From Fixer"],
         url: SITE_URL,
         potentialAction: {
           "@type": "SearchAction",
@@ -196,7 +196,7 @@ export default function Landing() {
         "@context": "https://schema.org",
         "@type": "WebApplication",
         name: "FormFixer",
-        alternateName: "Form Fixer",
+        alternateName: ["Form Fixer", "From Fixer"],
         url: SITE_URL,
         applicationCategory: "UtilityApplication",
         operatingSystem: "Web",
@@ -236,6 +236,14 @@ export default function Landing() {
               text: "FormFixer combines exact photo and signature tools, PDF utilities, conversion pages, and exam guides in one place, so users do not need to switch between multiple websites.",
             },
           },
+          {
+            "@type": "Question",
+            name: "Is FormFixer also searched as Form Fixer or from fixer?",
+            acceptedAnswer: {
+              "@type": "Answer",
+              text: "Yes. Users may search FormFixer as Form Fixer, and sometimes even type from fixer by mistake. The official website is formfixer.in.",
+            },
+          },
         ],
       },
     ],
@@ -252,10 +260,10 @@ export default function Landing() {
       }}
     >
       <Seo
-        title="FormFixer (Form Fixer) | Browser Document Tools for Photos, PDFs & Converters"
-        description="FormFixer, also searched as Form Fixer, helps users resize exam photos and signatures, compress PDFs and images, merge files, and use browser document tools without switching tabs."
+        title="FormFixer (Form Fixer) | Official formfixer.in Photo, PDF & Document Tools"
+        description="FormFixer, also searched as Form Fixer, is the official formfixer.in toolkit for exam photo resize, signature resize, PDF compression, image conversion, and upload-ready document fixes."
         canonical={SITE_URL}
-        keywords="FormFixer, Form Fixer, exam photo resize, signature resize, compress image to 20kb, compress pdf to 200kb, SSC CGL photo resize, JEE Main photo resize, NEET photo resize"
+        keywords="FormFixer, Form Fixer, from fixer, formfixer.in, exam photo resize, signature resize, compress image to 20kb, compress pdf to 200kb, SSC CGL photo resize, JEE Main photo resize, NEET photo resize"
         ldJson={landingSchema}
       />
       <div className="ff-scene" aria-hidden="true" style={sceneStyle}>

@@ -94,17 +94,15 @@ export default function Auth() {
 
         {googleClientId ? (
           <div style={s.googleSection}>
-            <div style={s.googleOrbWrap}>
-              <GoogleLogin
-                onSuccess={handleGoogleSuccess}
-                onError={handleGoogleError}
-                useOneTap={false}
-                theme="outline"
-                size="large"
-                type="icon"
-                shape="circle"
-              />
-            </div>
+            <GoogleLogin
+              onSuccess={handleGoogleSuccess}
+              onError={handleGoogleError}
+              useOneTap={false}
+              theme="filled_black"
+              size="large"
+              type="icon"
+              shape="circle"
+            />
             <p style={s.googleSub}>Continue with Google</p>
           </div>
         ) : (
@@ -251,17 +249,6 @@ const s = {
     alignItems: "center",
     gap: 10,
     marginBottom: 16,
-  },
-  googleOrbWrap: {
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    width: 74,
-    height: 74,
-    borderRadius: "50%",
-    background: "linear-gradient(180deg, #f8fafc, #eef2f7)",
-    border: "1px solid #d8e0ea",
-    boxShadow: "0 8px 24px rgba(15, 23, 42, 0.18)",
   },
   googleSub: {
     color: "#94a3b8",
