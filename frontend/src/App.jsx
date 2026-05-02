@@ -7,6 +7,7 @@ import Dashboard       from "./pages/Dashboard";
 import ToolPage        from "./pages/ToolPage";
 import PDFCompressPage from "./pages/PDFCompressPage";
 import ImageToPdfPage  from "./pages/ImageToPdfPage";
+import PassportSheetPage from "./pages/PassportSheetPage";
 import Support         from "./pages/Support";
 import MergerPage      from "./pages/MergerPage";
 import Pricing         from "./pages/Pricing";
@@ -55,6 +56,7 @@ function ThemedRoutes() {
 
         <Route path="/all-tools" element={<Dashboard />} />
         <Route path="/tool/:toolId" element={<ToolPage />} />
+        <Route path="/tool/passport-sheet" element={<PassportSheetPage />} />
         <Route path="/pdf/compress" element={<PDFCompressPage />} />
         <Route path="/pdf/image-to-pdf" element={<ImageToPdfPage />} />
         <Route path="/merger"       element={<MergerPage />} />

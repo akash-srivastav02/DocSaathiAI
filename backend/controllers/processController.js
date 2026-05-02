@@ -1,7 +1,7 @@
 const User = require('../models/User');
 const History = require('../models/ProcessHistory');
 const examSpecs = require('../data/examSpecs');
-const { processExamImageBuffer, cleanSignatureBuffer } = require('../lib/imageEngine');
+const { processExamImageBuffer, cleanSignatureBuffer, convertImageBuffer } = require('../lib/imageEngine');
 
 function bufferToDataUrl(buffer, mimeType = 'image/jpeg') {
   return `data:${mimeType};base64,${buffer.toString('base64')}`;
@@ -16,6 +16,8 @@ const TOOL_CREDIT_COST = {
   pdfcompress: 1,
   merger: 1,
   sigclean: 1,
+  imgconvert: 1,
+  passportsheet: 1,
 };
 
 function sanitizeStoredUrl(url) {
@@ -193,4 +195,40 @@ const cleanSignature = async (req, res) => {
   }
 };
 
-module.exports = { processImage, cleanSignature, confirmDownload, getHistory, getExams };
+const convertImage = async (req, res) => {
+  const user = req.user || null;
+
+  if (!req.file) {
+    return res.status(400).json({ message: 'No image uploaded.' });
+  }
+
+  const allowed = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/heic', 'image/heif'];
+  if (!allowed.includes(req.file.mimetype)) {
+    return res.status(400).json({ message: 'Only JPG, PNG, WEBP, HEIC, and HEIF images are supported.' });
+  }
+
+  try {
+    const converted = await convertImageBuffer(req.file.buffer, {
+      quality: req.body.quality,
+    });
+
+    res.json({
+      url: bufferToDataUrl(converted.buffer, 'image/jpeg'),
+      sizeKB: converted.meta.sizeKB,
+      dimensions: `${converted.meta.width}×${converted.meta.height}`,
+      hasWatermark: true,
+      creditsLeft: user ? user.credits : null,
+      creditCost: TOOL_CREDIT_COST.imgconvert,
+      type: 'imgconvert',
+      engine: 'formfixer-image-converter',
+      processing: {
+        format: converted.meta.format,
+      },
+    });
+  } catch (error) {
+    console.error('[Process] image converter error:', error.message);
+    return res.status(500).json({ message: 'Image conversion failed.' });
+  }
+};
+
+module.exports = { processImage, cleanSignature, convertImage, confirmDownload, getHistory, getExams };

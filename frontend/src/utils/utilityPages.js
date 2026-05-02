@@ -23,6 +23,42 @@ const pdfPages = PDF_TARGETS.map((target) => ({
 
 const converterPages = [
   {
+    slug: "png-to-jpg-online",
+    title: "PNG to JPG",
+    summary: "Convert PNG images into JPG/JPEG for exam forms, uploads, and smaller file sizes.",
+    route: "/tool/imgconvert?source=png",
+    category: "Converter",
+    kind: "converter",
+    bestFor: "PNG screenshots and transparent images",
+  },
+  {
+    slug: "webp-to-jpg-online",
+    title: "WEBP to JPG",
+    summary: "Convert WEBP images into standard JPG/JPEG files that work on more upload portals.",
+    route: "/tool/imgconvert?source=webp",
+    category: "Converter",
+    kind: "converter",
+    bestFor: "WEBP images saved from browsers and phones",
+  },
+  {
+    slug: "heic-to-jpg-online",
+    title: "HEIC to JPG",
+    summary: "Convert HEIC and HEIF images into upload-friendly JPG/JPEG files without extra apps.",
+    route: "/tool/imgconvert?source=heic",
+    category: "Converter",
+    kind: "converter",
+    bestFor: "iPhone HEIC photos",
+  },
+  {
+    slug: "jfif-to-jpg-online",
+    title: "JFIF to JPG",
+    summary: "Convert JFIF and JPEG-family images into clean JPG files for easier upload compatibility.",
+    route: "/tool/imgconvert?source=jfif",
+    category: "Converter",
+    kind: "converter",
+    bestFor: "JFIF and older JPEG-format images",
+  },
+  {
     slug: "image-to-pdf-online",
     title: "Image to PDF",
     summary: "Convert multiple images into one clean PDF without switching between different sites.",

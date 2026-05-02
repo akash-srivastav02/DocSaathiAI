@@ -299,9 +299,39 @@ async function cleanSignatureBuffer(inputBuffer, { trim = true } = {}) {
   };
 }
 
+async function convertImageBuffer(inputBuffer, { quality = 92 } = {}) {
+  const output = await sharp(inputBuffer)
+    .rotate()
+    .resize({
+      width: 2400,
+      height: 2400,
+      fit: 'inside',
+      withoutEnlargement: true,
+      kernel: sharp.kernel.lanczos3,
+    })
+    .flatten({ background: { r: 255, g: 255, b: 255 } })
+    .jpeg({
+      quality: clamp(Number(quality) || 92, 60, 96),
+      chromaSubsampling: '4:4:4',
+      mozjpeg: false,
+    })
+    .toBuffer({ resolveWithObject: true });
+
+  return {
+    buffer: output.data,
+    meta: {
+      width: output.info.width,
+      height: output.info.height,
+      sizeKB: Math.round(output.data.length / 1024),
+      format: 'jpg',
+    },
+  };
+}
+
 module.exports = {
   clamp,
   processExamImageBuffer,
   compressImageToTargetBuffer,
   cleanSignatureBuffer,
+  convertImageBuffer,
 };

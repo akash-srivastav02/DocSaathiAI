@@ -45,6 +45,15 @@ const FEATURES = {
     needsExam: false,
     uploadLabel: "Upload image to compress",
   },
+  imgconvert: {
+    icon: "UC",
+    label: "Universal Image Converter",
+    credit: 1,
+    color: "#10b981",
+    desc: "Convert PNG, WEBP, HEIC, and other supported images into JPG/JPEG.",
+    needsExam: false,
+    uploadLabel: "Upload image to convert into JPG",
+  },
   crop: {
     icon: "CR",
     label: "Custom Image Resizer",
@@ -402,6 +411,7 @@ export default function ToolPage() {
   const isCropTool = toolId === "crop";
   const isImageCompressTool = toolId === "imgcompress";
   const isSignatureCleanerTool = toolId === "sigclean";
+  const isImageConverterTool = toolId === "imgconvert";
   const needsExam = tool?.needsExam ?? false;
 
   const [file, setFile] = useState(null);
@@ -428,6 +438,7 @@ export default function ToolPage() {
   const [targetValue, setTargetValue] = useState("");
   const [targetUnit, setTargetUnit] = useState("KB");
   const [compressQuality, setCompressQuality] = useState("medium");
+  const [convertQuality, setConvertQuality] = useState("92");
 
   useEffect(() => {
     API.get("/process/exams")
@@ -555,7 +566,15 @@ export default function ToolPage() {
         }
       }
 
-      const endpoint = isSignatureCleanerTool ? "/process/signature-cleaner" : `/process/${toolId}`;
+      if (isImageConverterTool) {
+        formData.append("quality", convertQuality);
+      }
+
+      const endpoint = isSignatureCleanerTool
+        ? "/process/signature-cleaner"
+        : isImageConverterTool
+          ? "/process/image-converter"
+          : `/process/${toolId}`;
       const { data } = await API.post(endpoint, formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
@@ -733,7 +752,7 @@ export default function ToolPage() {
                     </div>
                   )}
 
-                    {!isCropTool && !isImageCompressTool && !isSignatureCleanerTool && (
+                    {!isCropTool && !isImageCompressTool && !isSignatureCleanerTool && !isImageConverterTool && (
                       <div style={s.configCard}>
                         <div style={s.configTitle}>Photo Guidance</div>
                         <ul style={s.guideList}>
@@ -753,6 +772,28 @@ export default function ToolPage() {
                           <li>The cleaner auto-trims extra white space and darkens the sign.</li>
                         </ul>
                       </div>
+                    )}
+
+                    {isImageConverterTool && (
+                      <>
+                        <div style={s.configCard}>
+                          <div style={s.configTitle}>Output Format</div>
+                          <p style={s.helperText}>This tool converts supported image formats into clean JPG/JPEG output.</p>
+                          <div style={s.resultPills}>
+                            <span style={s.resultPill}>Input: PNG / WEBP / HEIC / HEIF / JPG</span>
+                            <span style={s.resultPill}>Output: JPG</span>
+                          </div>
+                        </div>
+
+                        <div style={s.configCard}>
+                          <div style={s.configTitle}>JPG Quality</div>
+                          <select value={convertQuality} onChange={(e) => setConvertQuality(e.target.value)} style={s.select}>
+                            <option value="96">Maximum Quality</option>
+                            <option value="92">Balanced Quality</option>
+                            <option value="86">Smaller File</option>
+                          </select>
+                        </div>
+                      </>
                     )}
 
                   {isImageCompressTool && (
@@ -846,8 +887,9 @@ export default function ToolPage() {
                     {isImageCompressTool && <span style={s.resultPill}>Target: {result.targetKB} KB</span>}
                       {toolId === "photo" && <span style={s.resultPill}>{result.processing?.focusGuided ? "Face-guided framing" : "Centered framing"}</span>}
                       {isSignatureCleanerTool && <span style={s.resultPill}>{result.processing?.trimmed ? "Auto-trimmed" : "Cleaned output"}</span>}
+                      {isImageConverterTool && <span style={s.resultPill}>Converted to JPG</span>}
                       <span style={s.resultPill}>Watermarked preview</span>
-                  </div>
+                    </div>
 
                   <p style={s.resultMessage}>Preview ready. One plan use is counted only when you export the final file.</p>
                   <div style={s.resultActions}>
