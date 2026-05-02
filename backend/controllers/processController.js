@@ -1,7 +1,7 @@
 const User = require('../models/User');
 const History = require('../models/ProcessHistory');
 const examSpecs = require('../data/examSpecs');
-const { processExamImageBuffer } = require('../lib/imageEngine');
+const { processExamImageBuffer, cleanSignatureBuffer } = require('../lib/imageEngine');
 
 function bufferToDataUrl(buffer, mimeType = 'image/jpeg') {
   return `data:${mimeType};base64,${buffer.toString('base64')}`;
@@ -15,6 +15,7 @@ const TOOL_CREDIT_COST = {
   imgtopdf: 1,
   pdfcompress: 1,
   merger: 1,
+  sigclean: 1,
 };
 
 function sanitizeStoredUrl(url) {
@@ -155,4 +156,41 @@ const getExams = async (req, res) => {
   res.json(list);
 };
 
-module.exports = { processImage, confirmDownload, getHistory, getExams };
+const cleanSignature = async (req, res) => {
+  const user = req.user || null;
+
+  if (!req.file) {
+    return res.status(400).json({ message: 'No signature image uploaded.' });
+  }
+
+  const allowed = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+  if (!allowed.includes(req.file.mimetype)) {
+    return res.status(400).json({ message: 'Only JPG, PNG, WEBP images are supported.' });
+  }
+
+  try {
+    const cleaned = await cleanSignatureBuffer(req.file.buffer, {
+      trim: req.body.trim !== 'false',
+    });
+
+    res.json({
+      url: bufferToDataUrl(cleaned.buffer, 'image/png'),
+      sizeKB: cleaned.meta.sizeKB,
+      dimensions: `${cleaned.meta.width}×${cleaned.meta.height}`,
+      hasWatermark: true,
+      creditsLeft: user ? user.credits : null,
+      creditCost: TOOL_CREDIT_COST.sigclean,
+      type: 'sigclean',
+      engine: 'formfixer-signature-cleaner',
+      processing: {
+        trimmed: cleaned.meta.trimmed,
+        format: cleaned.meta.format,
+      },
+    });
+  } catch (error) {
+    console.error('[Process] signature cleaner error:', error.message);
+    return res.status(500).json({ message: 'Signature cleaning failed.' });
+  }
+};
+
+module.exports = { processImage, cleanSignature, confirmDownload, getHistory, getExams };

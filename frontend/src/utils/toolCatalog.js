@@ -4,7 +4,7 @@ export const TOOL_CATEGORIES = [
     title: "Quick Access",
     items: [
       { id: "photo", label: "Resize Photo", route: "/tool/photo", icon: "PH", desc: "Exam photo presets", live: true, accent: "#3b82f6" },
-      { id: "signature", label: "Signature Cleaner", route: "/tool/signature", icon: "SG", desc: "Resize and clean sign", live: true, accent: "#8b5cf6" },
+      { id: "sigclean", label: "Signature Cleaner", route: "/tool/sigclean", icon: "SG", desc: "Auto blacken and clean sign", live: true, accent: "#8b5cf6" },
       { id: "compress-pdf", label: "Compress PDF", route: "/pdf/compress", icon: "PDF", desc: "Target KB and MB", live: true, accent: "#14b8a6" },
       { id: "img-to-pdf", label: "Images to PDF", route: "/pdf/image-to-pdf", icon: "IP", desc: "JPG, PNG, WEBP, HEIC", live: true, accent: "#22c55e" },
       { id: "crop", label: "Resize Image", route: "/tool/crop", icon: "CR", desc: "Crop and resize", live: true, accent: "#ec4899" },
@@ -40,7 +40,7 @@ export const TOOL_CATEGORIES = [
     id: "smart",
     title: "Smart Productivity Tools",
     items: [
-      { id: "signature-cleaner", label: "Signature Cleaner", route: "/tool/signature", icon: "CL", desc: "Better contrast and sizing", live: true, accent: "#6366f1" },
+      { id: "signature-cleaner", label: "Signature Cleaner", route: "/tool/sigclean", icon: "CL", desc: "Auto clean, trim and blacken", live: true, accent: "#6366f1" },
       { id: "utility-jpg-pdf", label: "JPG to PDF", route: "/utility/jpg-to-pdf-online", icon: "JP", desc: "Quick document combine", live: true, accent: "#3b82f6" },
       { id: "unicode-devlys", label: "Unicode → Devlys", icon: "UD", desc: "Hindi typing conversion", live: false, accent: "#22c55e" },
       { id: "qr-generator", label: "QR Generator", icon: "QR", desc: "Static QR code maker", live: false, accent: "#14b8a6" },

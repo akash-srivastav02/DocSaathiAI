@@ -27,6 +27,15 @@ const FEATURES = {
     needsExam: true,
     uploadLabel: "Upload signature image",
   },
+  sigclean: {
+    icon: "CL",
+    label: "Signature Cleaner",
+    credit: 1,
+    color: "#6366f1",
+    desc: "Auto clean, trim and blacken signatures for clearer uploads.",
+    needsExam: false,
+    uploadLabel: "Upload signature to clean",
+  },
   imgcompress: {
     icon: "IC",
     label: "Image Compressor",
@@ -392,6 +401,7 @@ export default function ToolPage() {
   const tool = FEATURES[toolId];
   const isCropTool = toolId === "crop";
   const isImageCompressTool = toolId === "imgcompress";
+  const isSignatureCleanerTool = toolId === "sigclean";
   const needsExam = tool?.needsExam ?? false;
 
   const [file, setFile] = useState(null);
@@ -534,7 +544,9 @@ export default function ToolPage() {
 
       const formData = new FormData();
       formData.append("image", file);
-      formData.append("examName", selectedExam);
+      if (selectedExam) {
+        formData.append("examName", selectedExam);
+      }
 
       if (toolId === "photo" && preview) {
         const faceBox = await detectPrimaryFace(preview);
@@ -543,7 +555,8 @@ export default function ToolPage() {
         }
       }
 
-      const { data } = await API.post(`/process/${toolId}`, formData, {
+      const endpoint = isSignatureCleanerTool ? "/process/signature-cleaner" : `/process/${toolId}`;
+      const { data } = await API.post(endpoint, formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
       setResult({ ...data, kind: "remote" });
@@ -720,16 +733,27 @@ export default function ToolPage() {
                     </div>
                   )}
 
-                  {!isCropTool && !isImageCompressTool && (
-                    <div style={s.configCard}>
-                      <div style={s.configTitle}>Photo Guidance</div>
-                      <ul style={s.guideList}>
+                    {!isCropTool && !isImageCompressTool && !isSignatureCleanerTool && (
+                      <div style={s.configCard}>
+                        <div style={s.configTitle}>Photo Guidance</div>
+                        <ul style={s.guideList}>
                         <li>Use a front-facing, clearly visible source photo or signature.</li>
                         <li>Prefer good lighting and plain background for better output quality.</li>
                         <li>Avoid low-resolution or heavily cropped social-media images.</li>
                       </ul>
-                    </div>
-                  )}
+                      </div>
+                    )}
+
+                    {isSignatureCleanerTool && (
+                      <div style={s.configCard}>
+                        <div style={s.configTitle}>Signature Cleanup</div>
+                        <ul style={s.guideList}>
+                          <li>Upload a blue-ink or black-ink signature on plain paper.</li>
+                          <li>Best results come from bright photos or scans with clear contrast.</li>
+                          <li>The cleaner auto-trims extra white space and darkens the sign.</li>
+                        </ul>
+                      </div>
+                    )}
 
                   {isImageCompressTool && (
                     <div style={s.configCard}>
@@ -820,8 +844,9 @@ export default function ToolPage() {
                   <div style={s.resultPills}>
                     {isCropTool && <span style={s.resultPill}>Mode: {cropMode}</span>}
                     {isImageCompressTool && <span style={s.resultPill}>Target: {result.targetKB} KB</span>}
-                    {toolId === "photo" && <span style={s.resultPill}>{result.processing?.focusGuided ? "Face-guided framing" : "Centered framing"}</span>}
-                    <span style={s.resultPill}>Watermarked preview</span>
+                      {toolId === "photo" && <span style={s.resultPill}>{result.processing?.focusGuided ? "Face-guided framing" : "Centered framing"}</span>}
+                      {isSignatureCleanerTool && <span style={s.resultPill}>{result.processing?.trimmed ? "Auto-trimmed" : "Cleaned output"}</span>}
+                      <span style={s.resultPill}>Watermarked preview</span>
                   </div>
 
                   <p style={s.resultMessage}>Preview ready. One plan use is counted only when you export the final file.</p>

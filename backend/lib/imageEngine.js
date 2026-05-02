@@ -251,8 +251,57 @@ async function compressImageToTargetBuffer(inputBuffer, { targetKB, qualityBias 
   };
 }
 
+async function cleanSignatureBuffer(inputBuffer, { trim = true } = {}) {
+  const base = sharp(inputBuffer).rotate().ensureAlpha();
+  const metadata = await base.metadata();
+  const sourceWidth = metadata.width || 1000;
+  const sourceHeight = metadata.height || 400;
+  const maxWidth = 1600;
+
+  let pipeline = sharp(inputBuffer)
+    .rotate()
+    .resize({
+      width: Math.min(sourceWidth, maxWidth),
+      withoutEnlargement: true,
+      fit: 'inside',
+      kernel: sharp.kernel.lanczos3,
+    })
+    .greyscale()
+    .normalise()
+    .linear(1.18, -18)
+    .threshold(208, { grayscale: true });
+
+  if (trim) {
+    pipeline = pipeline.trim({ threshold: 12 });
+  }
+
+  const output = await pipeline
+    .extend({
+      top: 18,
+      bottom: 18,
+      left: 24,
+      right: 24,
+      background: { r: 255, g: 255, b: 255, alpha: 1 },
+    })
+    .flatten({ background: { r: 255, g: 255, b: 255 } })
+    .png({ compressionLevel: 9, palette: true })
+    .toBuffer({ resolveWithObject: true });
+
+  return {
+    buffer: output.data,
+    meta: {
+      width: output.info.width,
+      height: output.info.height,
+      sizeKB: Math.round(output.data.length / 1024),
+      format: 'png',
+      trimmed: trim,
+    },
+  };
+}
+
 module.exports = {
   clamp,
   processExamImageBuffer,
   compressImageToTargetBuffer,
+  cleanSignatureBuffer,
 };
