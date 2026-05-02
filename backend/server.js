@@ -2,6 +2,7 @@ const express    = require('express');
 const dotenv     = require('dotenv');
 const cors       = require('cors');
 const connectDB  = require('./config/db');
+const { restorePendingAssetCleanups } = require('./utils/assetCleanup');
 
 dotenv.config();
 connectDB();
@@ -37,7 +38,6 @@ app.use('/api/auth',    require('./routes/authRoutes'));
 app.use('/api/process', require('./routes/processRoutes'));
 app.use('/api/pdf',     require('./routes/pdfRoutes'));
 app.use('/api/payment', require('./routes/paymentRoutes'));
-app.use('/api/tracker', require('./routes/trackerRoutes'));
 
 // ── Health check ──────────────────────────────────────────────────────────────
 app.get('/', (req, res) =>
@@ -56,4 +56,11 @@ app.use((err, req, res, next) => {
 });
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`🚀 FormFixer server running on port ${PORT}`));
+app.listen(PORT, async () => {
+  console.log(`🚀 FormFixer server running on port ${PORT}`);
+  try {
+    await restorePendingAssetCleanups();
+  } catch (error) {
+    console.error('[Cleanup] Could not restore pending asset cleanups:', error.message);
+  }
+});

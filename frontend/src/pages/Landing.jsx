@@ -372,11 +372,11 @@ export default function Landing() {
         <section style={s.metrics}>
           <div style={{ ...s.metricCard, ...t.metricCard }} className="ff-glass ff-hover-lift">
             <strong style={{ ...s.metricNum, ...t.metricNum }}>15</strong>
-            <span style={{ ...s.metricLabel, ...t.metricLabel }}>Free credits on signup</span>
+            <span style={{ ...s.metricLabel, ...t.metricLabel }}>Free exports on signup</span>
           </div>
           <div style={{ ...s.metricCard, ...t.metricCard }} className="ff-glass ff-hover-lift">
             <strong style={{ ...s.metricNum, ...t.metricNum }}>5</strong>
-            <span style={{ ...s.metricLabel, ...t.metricLabel }}>Weekly refill credits</span>
+            <span style={{ ...s.metricLabel, ...t.metricLabel }}>Weekly refill exports</span>
           </div>
           <div style={{ ...s.metricCard, ...t.metricCard }} className="ff-glass ff-hover-lift">
             <strong style={{ ...s.metricNum, ...t.metricNum }}>10s</strong>

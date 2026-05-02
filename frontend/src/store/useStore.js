@@ -2,6 +2,7 @@ import { create } from 'zustand';
 
 // Read stored user once at startup
 const storedUser = JSON.parse(localStorage.getItem('docsaathi_user') || 'null');
+const apiBase = (import.meta.env.VITE_API_URL || 'http://localhost:5000/api').replace(/\/$/, '');
 
 const useStore = create((set) => ({
   user:    storedUser,
@@ -27,6 +28,15 @@ const useStore = create((set) => ({
   },
 
   logout: () => {
+    const currentUser = JSON.parse(localStorage.getItem('docsaathi_user') || 'null');
+    if (currentUser?.token) {
+      fetch(`${apiBase}/auth/logout`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${currentUser.token}`,
+        },
+      }).catch(() => {});
+    }
     localStorage.removeItem('docsaathi_user');
     set({ user: null, credits: 0 });
   },

@@ -57,25 +57,25 @@ const FAQS = [
     ],
   },
   {
-    category: "Credits & Pricing",
+    category: "Plans & Usage",
     icon: "INR",
     color: "#22c55e",
     items: [
       {
-        q: "How do credits work on FormFixer?",
-        a: "Each tool usage costs credits. Exam Photo, Exam Signature and Document Size Changer cost 2 credits, while Photo + Sign / Date costs 6 credits. New users get 15 free credits and receive 5 more every 7 days.",
+        q: "How do plans work on FormFixer?",
+        a: "FormFixer now uses tiers instead of visible credits. Free Tier users get 5 exports and another 5 every 7 days. Paid tiers unlock more monthly exports or unlimited fair-use access.",
       },
       {
-        q: "What happens when my credits run out?",
-        a: "You can buy a plan from Pricing. Single Fix is useful for one urgent clean download, while Starter and Pro are better for repeated use.",
+        q: "What happens when my free exports run out?",
+        a: "You can upgrade from Pricing. Single Pass is useful for one urgent export, while Starter, Pro, and Unlimited tiers are better for repeated use.",
       },
       {
         q: "Is there a free option?",
-        a: "Yes. You get 15 credits on signup and 5 more every 7 days. That is enough for many first-time users to prepare exam documents without paying.",
+        a: "Yes. You get 5 free exports on signup and 5 more every 7 days. That is enough for first-time users to try the main workflows without paying.",
       },
       {
-        q: "What is the Single Fix plan?",
-        a: "Single Fix is Rs.9 for one clean download. It is designed for users who need one file quickly and do not want a full plan.",
+        q: "What is the Single Pass plan?",
+        a: "Single Pass is Rs.9 for one final export. It is designed for users who need one file quickly and do not want a full monthly tier.",
       },
       {
         q: "Are payments secure?",
@@ -124,7 +124,7 @@ const LEGAL_LINKS = [
   },
   {
     label: "Terms & Conditions",
-    value: "Usage rules, credits, fair-use, and service limits.",
+    value: "Usage rules, tiers, fair-use, and service limits.",
     path: "/terms-and-conditions",
     icon: "TC",
     color: "#0ea5e9",
@@ -153,7 +153,7 @@ export default function Support() {
 
   return (
     <div style={s.root}>
-      <Sidebar credits={currentCredits} onLogout={() => { logout(); navigate("/"); }} />
+      <Sidebar credits={currentCredits} planLabel={user?.planLabel} isUnlimited={user?.isUnlimited} onLogout={() => { logout(); navigate("/"); }} />
       <div style={s.main}>
         <TopBar user={user} credits={currentCredits} onLogout={() => { logout(); navigate("/"); }} />
          <div style={{ ...s.content, ...(isMobile ? s.contentMobile : null), ...(isMobile ? s.contentWithFixedTopbar : null) }}>
@@ -161,7 +161,7 @@ export default function Support() {
             <div>
               <h1 style={{ ...s.pageTitle, ...(isMobile ? s.pageTitleMobile : null) }}>Help & Support</h1>
               <p style={{ ...s.pageSub, ...(isMobile ? s.pageSubMobile : null) }}>
-                Answers for exam photos, signatures, PDFs, credits and downloads.
+                Answers for exam photos, signatures, PDFs, plans, and downloads.
               </p>
             </div>
             <button type="button" style={s.dashboardBtn} onClick={() => navigate("/dashboard")}>

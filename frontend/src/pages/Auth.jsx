@@ -153,7 +153,7 @@ export default function Auth() {
 
           {authMode === "signup" && (
             <div style={s.freeBadge}>
-              🎁 You'll get <b>15 FREE credits</b> on signup!
+              🎁 You'll get <b>5 FREE exports</b> on signup!
             </div>
           )}
 
@@ -178,7 +178,7 @@ export default function Auth() {
 
       {/* Stats row */}
       <div style={s.stats}>
-        {["50+ Exams Supported", "15 Free Credits on Signup", "₹9 Single Fix Plan"].map(t => (
+        {["50+ Exams Supported", "5 Free Exports on Signup", "₹9 Single Pass"].map(t => (
           <div key={t} style={s.statPill}>{t}</div>
         ))}
       </div>

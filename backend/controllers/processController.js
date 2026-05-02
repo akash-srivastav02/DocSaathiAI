@@ -8,14 +8,20 @@ function bufferToDataUrl(buffer, mimeType = 'image/jpeg') {
 }
 
 const TOOL_CREDIT_COST = {
-  photo: 2,
-  signature: 2,
-  crop: 2,
-  imgcompress: 2,
-  imgtopdf: 2,
-  pdfcompress: 2,
-  merger: 6,
+  photo: 1,
+  signature: 1,
+  crop: 1,
+  imgcompress: 1,
+  imgtopdf: 1,
+  pdfcompress: 1,
+  merger: 1,
 };
+
+function sanitizeStoredUrl(url) {
+  if (!url || typeof url !== 'string') return '';
+  if (url.startsWith('data:')) return '';
+  return url;
+}
 
 const processImage = async (req, res) => {
   const toolType = req.path.replace('/', '');
@@ -105,7 +111,7 @@ const confirmDownload = async (req, res) => {
 
     if (user.credits < creditCost) {
       return res.status(400).json({
-        message: `Need ${creditCost} credits to download this file.`,
+        message: `Need an active tier or at least ${creditCost} download left to export this file.`,
         creditsLeft: user.credits,
       });
     }
@@ -117,7 +123,7 @@ const confirmDownload = async (req, res) => {
       user: user._id,
       toolType,
       examName: examName || toolType,
-      processedUrl: processedUrl || '',
+      processedUrl: sanitizeStoredUrl(processedUrl),
       creditsUsed: creditCost,
       hasWatermark: false,
     });

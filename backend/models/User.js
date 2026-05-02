@@ -1,18 +1,6 @@
 const mongoose = require('mongoose');
 const bcrypt   = require('bcryptjs');
 
-const applicationSchema = new mongoose.Schema({
-  title:        { type: String, required: true, trim: true },
-  organization: { type: String, required: true, trim: true },
-  category:     { type: String, default: 'Government Exam', trim: true },
-  status:       { type: String, default: 'Interested' },
-  deadline:     { type: Date },
-  officialLink: { type: String, trim: true },
-  notes:        { type: String, trim: true, maxlength: 1200 },
-  createdAt:    { type: Date, default: Date.now },
-  updatedAt:    { type: Date, default: Date.now },
-});
-
 const userSchema = new mongoose.Schema({
   name:  { type: String, required: true, trim: true },
   email: { type: String, required: true, unique: true, lowercase: true, trim: true },
@@ -25,9 +13,9 @@ const userSchema = new mongoose.Schema({
   avatar:   { type: String }, // Google profile picture URL
 
   // Credits & plan
-  credits:      { type: Number, default: 15 },
+  credits:      { type: Number, default: 5 },
   plan:         { type: String, default: 'free' },
-  planLabel:    { type: String, default: 'Free' },
+  planLabel:    { type: String, default: 'Free Tier' },
   isUnlimited:  { type: Boolean, default: false }, // Daily Unlimited plan
   dailyOpsLimit:{ type: Number, default: 50 },     // Max ops/day on unlimited plan
   dailyOpsUsed: { type: Number, default: 0 },      // Resets every day
@@ -37,8 +25,10 @@ const userSchema = new mongoose.Schema({
   // Weekly free refill tracking
   lastWeeklyRefill: { type: Date },
 
-  // Aspirant workspace
-  applications: { type: [applicationSchema], default: [] },
+  lastSeenAt: { type: Date, default: Date.now },
+  lastLogoutAt: { type: Date },
+  cleanupAfter: { type: Date },
+  lastAssetCleanupAt: { type: Date },
 
   createdAt: { type: Date, default: Date.now },
 });

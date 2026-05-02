@@ -25,7 +25,7 @@ function PreviewCard({ fileName }) {
           </div>
         </div>
         <div style={s.previewBody}>
-          Final PDF download will be watermark-free. Credits are deducted only at final download.
+          Final PDF download will be watermark-free. One plan use is counted only at final export.
         </div>
       </div>
     </div>
@@ -192,7 +192,7 @@ export default function PDFCompressPage() {
         />
       )}
 
-      {user && <Sidebar credits={currentCredits} onLogout={() => { logout(); navigate("/"); }} />}
+      {user && <Sidebar credits={currentCredits} planLabel={user?.planLabel} isUnlimited={user?.isUnlimited} onLogout={() => { logout(); navigate("/"); }} />}
       <div style={s.main}>
         {user ? (
           <TopBar user={user} credits={currentCredits} onLogout={() => { logout(); navigate("/"); }} />
@@ -342,7 +342,7 @@ export default function PDFCompressPage() {
               </div>
               <p style={s.resultMessage}>
                 {result.hitTarget
-                  ? "Preview ready. Final PDF will download watermark-free after credit deduction."
+                  ? "Preview ready. Final PDF will download watermark-free after one plan use."
                   : `This PDF could not go below ${result.compressedKB} KB. That is the smallest achievable size for this file.`}
               </p>
               <div style={s.resultActions}>
@@ -354,7 +354,7 @@ export default function PDFCompressPage() {
                   }}
                   disabled={downloading}
                 >
-                  {downloading ? "Unlocking Download..." : downloadUnlocked ? "Download Again" : "Download Final PDF (2 Credits)"}
+                  {downloading ? "Unlocking Download..." : downloadUnlocked ? "Download Again" : "Download Final PDF (1 Use)"}
                 </button>
                 <button style={s.btnSecondary} onClick={handleReset}>Process Another</button>
               </div>

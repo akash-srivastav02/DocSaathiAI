@@ -86,7 +86,7 @@ export default function Dashboard() {
   return (
     <div style={s.root}>
       {user ? (
-        <Sidebar credits={currentCredits} onLogout={() => { logout(); navigate("/"); }} activeNav="Dashboard" />
+        <Sidebar credits={currentCredits} planLabel={user?.planLabel} isUnlimited={user?.isUnlimited} onLogout={() => { logout(); navigate("/"); }} activeNav="Dashboard" />
       ) : null}
 
       <div style={s.main}>

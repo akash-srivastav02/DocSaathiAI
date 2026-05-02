@@ -16,7 +16,7 @@ const EXAM_TOOL_LINKS = [
   { label: "Custom Image Resizer", path: "/tool/crop", icon: "RS" },
 ];
 
-export default function Sidebar({ credits, onLogout, activeNav }) {
+export default function Sidebar({ credits, onLogout, activeNav, planLabel = "Free Tier", isUnlimited = false }) {
   const navigate = useNavigate();
   const location = useLocation();
   const isMobile = useIsMobile(960);
@@ -81,10 +81,10 @@ export default function Sidebar({ credits, onLogout, activeNav }) {
         </nav>
 
         <div style={s.creditCard}>
-          <div style={s.creditNum}>{credits ?? 0}</div>
-          <div style={s.creditLabel}>Credits remaining</div>
+          <div style={s.creditNum}>{planLabel}</div>
+          <div style={s.creditLabel}>{isUnlimited ? "Unlimited access active" : `${credits ?? 0} downloads left`}</div>
           <button type="button" style={s.buyBtn} onClick={() => navigate("/pricing")}>
-            + Buy Credits
+            View Tiers
           </button>
         </div>
 
@@ -266,7 +266,7 @@ const s = {
     gap: 8,
     justifyItems: "start",
   },
-  creditNum: { color: "var(--ff-orange)", fontSize: 34, lineHeight: 1, fontWeight: 900 },
+  creditNum: { color: "var(--ff-orange)", fontSize: 28, lineHeight: 1.1, fontWeight: 900 },
   creditLabel: { color: "var(--ff-text-soft)", fontSize: 13 },
   buyBtn: {
     border: "none",

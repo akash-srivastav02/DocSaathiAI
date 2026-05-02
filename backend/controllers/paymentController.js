@@ -20,10 +20,10 @@ const getRazorpayClient = () => {
 // ─── Plan definitions — single source of truth ────────────────────────────────
 // amount is in PAISE (₹1 = 100 paise)
 const PLANS = {
-  single:  { amount: 900,  credits: 1,   label: 'Single Fix',       validDays: null },
-  starter: { amount: 2900, credits: 40,  label: 'Starter',          validDays: 30 },
-  plus:    { amount: 5900, credits: 80,  label: 'Exam Sprint',      validDays: 30 },
-  pro:     { amount: 9900, credits: -1,  label: 'Pro Unlimited',    validDays: 30 },
+  single:  { amount: 900,  credits: 1,   label: 'Single Pass',      validDays: null },
+  starter: { amount: 2900, credits: 40,  label: 'Starter Tier',     validDays: 30 },
+  pro:     { amount: 7900, credits: 150, label: 'Pro Tier',         validDays: 30 },
+  max:     { amount: 14900, credits: -1, label: 'Unlimited Tier',   validDays: 30 },
 };
 
 /* ─────────────────────────────────────────────────────────────────────────────

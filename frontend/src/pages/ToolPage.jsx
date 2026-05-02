@@ -12,7 +12,7 @@ const FEATURES = {
   photo: {
     icon: "PH",
     label: "Exam Photo",
-    credit: 2,
+    credit: 1,
     color: "#3b82f6",
     desc: "Resize, compress, and prepare exam-ready photo output.",
     needsExam: true,
@@ -21,7 +21,7 @@ const FEATURES = {
   signature: {
     icon: "SG",
     label: "Exam Signature",
-    credit: 2,
+    credit: 1,
     color: "#8b5cf6",
     desc: "Resize and fit signature to exact exam requirements.",
     needsExam: true,
@@ -30,7 +30,7 @@ const FEATURES = {
   imgcompress: {
     icon: "IC",
     label: "Image Compressor",
-    credit: 2,
+    credit: 1,
     color: "#14b8a6",
     desc: "Compress image to exact KB or MB target.",
     needsExam: false,
@@ -39,7 +39,7 @@ const FEATURES = {
   crop: {
     icon: "CR",
     label: "Custom Image Resizer",
-    credit: 2,
+    credit: 1,
     color: "#ec4899",
     desc: "Manual crop and resize with zoom, positioning and custom output controls.",
     needsExam: false,
@@ -48,7 +48,7 @@ const FEATURES = {
   pdfeditor: {
     icon: "PE",
     label: "PDF Editor",
-    credit: 2,
+    credit: 1,
     color: "#ef4444",
     desc: "Upcoming PDF text editing tools.",
     needsExam: false,
@@ -57,7 +57,7 @@ const FEATURES = {
   resume: {
     icon: "RB",
     label: "Resume Builder",
-    credit: 2,
+    credit: 1,
     color: "#22c55e",
     desc: "Upcoming ATS-friendly resume builder.",
     needsExam: false,
@@ -619,7 +619,7 @@ export default function ToolPage() {
 
       {showCamera && <CameraModal onCapture={(capturedFile, previewUrl) => { handleFileSelection(capturedFile); setPreview(previewUrl); setShowCamera(false); }} onClose={() => setShowCamera(false)} />}
 
-      {user && <Sidebar credits={currentCredits} onLogout={() => { logout(); navigate("/"); }} />}
+      {user && <Sidebar credits={currentCredits} planLabel={user?.planLabel} isUnlimited={user?.isUnlimited} onLogout={() => { logout(); navigate("/"); }} />}
       <div style={s.main}>
         {user ? (
           <TopBar user={user} credits={currentCredits} onLogout={() => { logout(); navigate("/"); }} />
@@ -635,7 +635,7 @@ export default function ToolPage() {
             <button type="button" style={s.backBtn} onClick={() => navigate(user ? "/dashboard" : "/all-tools")}>Back</button>
             <div>
               <h1 style={s.toolTitle}>{tool.label}</h1>
-              <p style={s.toolDesc}>{tool.desc} · {tool.credit} credits on final download</p>
+              <p style={s.toolDesc}>{tool.desc} · {tool.credit} plan use on final export</p>
             </div>
           </div>
 
@@ -824,10 +824,10 @@ export default function ToolPage() {
                     <span style={s.resultPill}>Watermarked preview</span>
                   </div>
 
-                  <p style={s.resultMessage}>Preview ready. Credits are deducted only when you download the final file.</p>
+                  <p style={s.resultMessage}>Preview ready. One plan use is counted only when you export the final file.</p>
                   <div style={s.resultActions}>
                     <button type="button" style={s.btnPrimary} onClick={handleDownload} disabled={downloading}>
-                      {downloading ? "Unlocking Download..." : downloadUnlocked ? "Download Again" : `Download Final File (${tool.credit} credits)`}
+                      {downloading ? "Unlocking Download..." : downloadUnlocked ? "Download Again" : `Download Final File (${tool.credit} use)`}
                     </button>
                     <button type="button" style={s.btnSecondary} onClick={handleReset}>Process Another</button>
                   </div>

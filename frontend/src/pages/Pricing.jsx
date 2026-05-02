@@ -8,63 +8,63 @@ import useIsMobile from "../hooks/useIsMobile";
 const PLANS = [
   {
     id: "single",
-    name: "Single Fix",
+    name: "Single Pass",
     price: 9,
     period: "one-time",
     credits: 1,
-    creditsLabel: "1 clean download",
+    creditsLabel: "1 final export",
     validity: "One-time",
     color: "#22c55e",
     badge: null,
-    tag: "One clean file when you need it",
+    tag: "For one urgent file only",
     icon: "SF",
     highlight: false,
-    perks: ["1 Clean Download", "No watermark", "Perfect for urgent one-off use"],
+    perks: ["1 Final Export", "No watermark", "Perfect for urgent one-off use"],
     note: null,
   },
   {
     id: "starter",
-    name: "Starter",
+    name: "Starter Tier",
     price: 29,
     period: "30 days",
     credits: 40,
     validity: "30 Days",
     color: "#f97316",
-    badge: "Most Popular",
-    tag: "Best for regular use",
+    badge: "Limited-Time Launch",
+    tag: "Best for light regular use",
     icon: "ST",
     highlight: true,
-    perks: ["40 Credits", "Valid 30 Days", "All core tools", "Best for regular aspirants"],
-    note: null,
-  },
-  {
-    id: "plus",
-    name: "Exam Sprint",
-    price: 59,
-    period: "30 days",
-    credits: 80,
-    validity: "30 Days",
-    color: "#06b6d4",
-    badge: "Best for Exam Season",
-    tag: "Best when you are applying to many forms together",
-    icon: "ES",
-    highlight: true,
-    perks: ["80 Credits", "Valid 30 Days", "Tools + tracker workflow", "Best for form-heavy months"],
+    perks: ["40 Final Exports", "Valid 30 Days", "All core tools", "Best for regular form work"],
     note: null,
   },
   {
     id: "pro",
-    name: "Pro Unlimited",
-    price: 99,
+    name: "Pro Tier",
+    price: 79,
+    period: "30 days",
+    credits: 150,
+    validity: "30 Days",
+    color: "#06b6d4",
+    badge: "Best for Repeat Use",
+    tag: "Built for heavy application months",
+    icon: "PR",
+    highlight: true,
+    perks: ["150 Final Exports", "Valid 30 Days", "All tool categories", "Best for active users"],
+    note: null,
+  },
+  {
+    id: "max",
+    name: "Unlimited Tier",
+    price: 149,
     period: "30 days",
     credits: "Unlimited*",
     validity: "30 Days",
     color: "#8b5cf6",
-    badge: "Best Value",
-    tag: "Best for heavy daily use",
-    icon: "PR",
+    badge: "For Power Users",
+    tag: "Best for daily high-volume work",
+    icon: "UL",
     highlight: true,
-    perks: ["Unlimited operations*", "Valid 30 Days", "All features", "Best for heavy daily use"],
+    perks: ["Unlimited exports*", "Valid 30 Days", "All features", "Best for heavy daily use"],
     note: "* Fair usage policy: max 80 operations/day",
   },
 ];
@@ -78,7 +78,7 @@ const COMPARISON = [
   {
     feature: "Multiple tasks in one place",
     sites: "Jump between different tools",
-    us: "Photo, sign, merge, PDF, converter, and tracker in one workspace",
+    us: "Photo, sign, merge, PDF, and converter tools in one workflow",
   },
   {
     feature: "Clean mobile experience",
@@ -93,7 +93,7 @@ const COMPARISON = [
   {
     feature: "Urgent one-time use",
     sites: "Plans or heavy upsell",
-    us: "Rs.9 Single Fix option",
+    us: "Rs.9 one-time pass",
   },
   {
     feature: "Output guidance",
@@ -103,7 +103,7 @@ const COMPARISON = [
   {
     feature: "Application tracking",
     sites: "Users manage dates separately in notes or WhatsApp",
-    us: "Tracker keeps deadlines, links, and status in one place",
+    us: "Cleaner outputs, simpler flows, and fewer broken uploads",
   },
   {
     feature: "Search intent coverage",
@@ -122,7 +122,7 @@ const COMPARISON = [
   },
 ];
 
-const singleFixPlan = PLANS.find((plan) => plan.id === "single");
+  const singleFixPlan = PLANS.find((plan) => plan.id === "single");
 const paidPlans = PLANS.filter((plan) => plan.id !== "single");
 
 async function openRazorpay({ order, plan, user, onSuccess, onFailure }) {
@@ -195,7 +195,7 @@ function PlanCard({ plan, onBuy, loading, compact }) {
 
       <div style={{ ...s.metaRow, ...(compact ? s.metaRowMobile : null) }}>
         <span style={{ ...s.metaPill, ...(compact ? s.metaPillMobile : null), color: plan.color, borderColor: `${plan.color}44` }}>
-          {plan.creditsLabel || `${plan.credits} ${typeof plan.credits === "number" ? "credits" : ""}`}
+          {plan.creditsLabel || `${plan.credits} ${typeof plan.credits === "number" ? "exports" : ""}`}
         </span>
         <span style={{ ...s.validity, ...(compact ? s.validityMobile : null) }}>{plan.validity}</span>
       </div>
@@ -257,8 +257,8 @@ export default function Pricing() {
               `Payment successful! ${
                 result.creditsAdded === "Unlimited"
                   ? "Unlimited access activated"
-                  : `${result.creditsAdded} credits added`
-              }. Enjoy ${plan.name}!`
+                  : `${result.creditsAdded} exports added`
+                }. Enjoy ${plan.name}!`
             );
           } catch {
             setPayError("Payment received but verification failed. Contact support with your payment ID.");
@@ -277,7 +277,7 @@ export default function Pricing() {
 
   return (
     <div style={s.root}>
-      <Sidebar credits={currentCredits} onLogout={() => { logout(); navigate("/"); }} />
+      <Sidebar credits={currentCredits} planLabel={user?.planLabel} isUnlimited={user?.isUnlimited} onLogout={() => { logout(); navigate("/"); }} />
       <div style={s.main}>
         <TopBar user={user} credits={currentCredits} onLogout={() => { logout(); navigate("/"); }} />
           <div style={{ ...s.content, ...(isMobile ? s.contentMobile : null), ...(isMobile ? s.contentWithFixedTopbar : null) }}>
@@ -289,8 +289,8 @@ export default function Pricing() {
           <div style={{ ...s.freeBanner, ...(isMobile ? s.bannerMobile : null) }}>
             <span style={s.bannerIcon}>FR</span>
             <div style={{ flex: 1 }}>
-              <p style={{ ...s.freeTitle, ...(isMobile ? s.bannerTitleMobile : null) }}>Free - 15 credits + 5 every 7 days</p>
-              <p style={{ ...s.freeSub, ...(isMobile ? s.bannerSubMobile : null) }}>Try the tools and tracker first. No payment needed to get started.</p>
+              <p style={{ ...s.freeTitle, ...(isMobile ? s.bannerTitleMobile : null) }}>Free Tier - 5 exports + 5 every 7 days</p>
+              <p style={{ ...s.freeSub, ...(isMobile ? s.bannerSubMobile : null) }}>Try the tools first. Upgrade only when you need more output volume.</p>
             </div>
             <span style={s.freeBadge}>FREE</span>
           </div>
@@ -298,8 +298,8 @@ export default function Pricing() {
           <div style={{ ...s.singleBanner, ...(isMobile ? s.bannerMobile : null) }}>
             <span style={s.bannerIcon}>{singleFixPlan.icon}</span>
             <div style={{ flex: 1, minWidth: 220 }}>
-              <p style={{ ...s.singleTitle, ...(isMobile ? s.bannerTitleMobile : null) }}>Single Fix - Rs.{singleFixPlan.price} for 1 clean download</p>
-              <p style={{ ...s.singleSub, ...(isMobile ? s.bannerSubMobile : null) }}>Best for one urgent file when you do not need a full workspace plan.</p>
+              <p style={{ ...s.singleTitle, ...(isMobile ? s.bannerTitleMobile : null) }}>Single Pass - Rs.{singleFixPlan.price} for 1 final export</p>
+              <p style={{ ...s.singleSub, ...(isMobile ? s.bannerSubMobile : null) }}>Best for one urgent file when you do not need a full monthly tier.</p>
             </div>
             <div style={{ ...s.singleActionWrap, ...(isMobile ? s.singleActionWrapMobile : null) }}>
               <span style={s.singleBadge}>ONE-TIME</span>

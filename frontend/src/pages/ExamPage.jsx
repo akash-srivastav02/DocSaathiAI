@@ -137,9 +137,9 @@ export default function ExamPage() {
           <button style={s.secondaryBtn} onClick={() => navigate(`/tool/signature?exam=${encodeURIComponent(exam.name)}`)}>
             Fix {exam.name} Signature
           </button>
-          <button style={s.secondaryBtn} onClick={() => navigate(user ? "/tracker" : "/auth")}>
-            Track This Exam
-          </button>
+                <button style={s.secondaryBtn} onClick={() => navigate(user ? `/tool/photo?exam=${encodeURIComponent(exam.name)}` : "/auth")}>
+                  Open Photo Tool
+                </button>
           <button style={s.secondaryBtn} onClick={() => navigate("/merger")}>
             Merge Photo + Sign / Date
           </button>
@@ -209,7 +209,7 @@ export default function ExamPage() {
 
         <SectionCard title={`How FormFixer Helps With ${exam.name} Photo Resize`}>
           <p style={s.infoText}>
-            Instead of guessing dimensions, background, and file size, you can use the exact {exam.name} photo resize and signature resize flow here, then move to merge, PDF, or tracker workflows without switching websites.
+                Instead of guessing dimensions, background, and file size, you can use the exact {exam.name} photo resize and signature resize flow here, then move to merge or PDF workflows without switching websites.
           </p>
         </SectionCard>
 

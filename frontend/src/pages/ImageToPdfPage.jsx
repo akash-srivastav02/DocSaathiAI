@@ -20,7 +20,7 @@ function PreviewCard({ count, pageMode, orientation }) {
             </div>
           </div>
         </div>
-        <div style={s.previewBody}>Final PDF will be watermark-free. Credits are deducted only at final download.</div>
+        <div style={s.previewBody}>Final PDF will be watermark-free. One plan use is counted only at final export.</div>
       </div>
     </div>
   );
@@ -176,7 +176,7 @@ export default function ImageToPdfPage() {
           subtitle="Preview is available in guest mode. Final PDF download needs quick login."
         />
       )}
-      {user && <Sidebar credits={currentCredits} onLogout={() => { logout(); navigate("/"); }} />}
+      {user && <Sidebar credits={currentCredits} planLabel={user?.planLabel} isUnlimited={user?.isUnlimited} onLogout={() => { logout(); navigate("/"); }} />}
       <div style={s.main}>
         {user ? (
           <TopBar user={user} credits={currentCredits} onLogout={() => { logout(); navigate("/"); }} />
@@ -327,7 +327,7 @@ export default function ImageToPdfPage() {
                   <div style={s.statLabel}>PDF size</div>
                 </div>
               </div>
-              <p style={s.resultMessage}>Preview ready. Final PDF will download watermark-free after credit deduction.</p>
+              <p style={s.resultMessage}>Preview ready. Final PDF will download watermark-free after one plan use.</p>
               <div style={s.resultActions}>
                 <button
                   style={s.btnPrimary}
@@ -337,7 +337,7 @@ export default function ImageToPdfPage() {
                   }}
                   disabled={downloading}
                 >
-                  {downloading ? "Unlocking Download..." : downloadUnlocked ? "Download Again" : "Download Final PDF (2 Credits)"}
+                  {downloading ? "Unlocking Download..." : downloadUnlocked ? "Download Again" : "Download Final PDF (1 Use)"}
                 </button>
                 <button style={s.btnSecondary} onClick={handleReset}>Convert More Images</button>
               </div>

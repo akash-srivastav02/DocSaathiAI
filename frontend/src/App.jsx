@@ -12,7 +12,6 @@ import MergerPage      from "./pages/MergerPage";
 import Pricing         from "./pages/Pricing";
 import PrivacyPage     from "./pages/PrivacyPage";
 import TermsPage       from "./pages/TermsPage";
-import Vault           from "./pages/Vault";
 import useStore        from "./store/useStore";
 import useTheme        from "./hooks/useTheme";
 
@@ -66,8 +65,6 @@ function ThemedRoutes() {
         <Route path="/dashboard"    element={<Protected><Dashboard /></Protected>} />
         <Route path="/support"      element={<Protected><Support /></Protected>} />
         <Route path="/pricing"      element={<Protected><Pricing /></Protected>} />
-        <Route path="/vault"        element={<Protected><Vault /></Protected>} />
-        <Route path="/tracker"      element={<Protected><Vault /></Protected>} />
 
         {/* Fallback */}
         <Route path="*" element={<Navigate to="/" replace />} />

@@ -71,7 +71,7 @@ function ModeCard({ accent, badge, title, description, selected, onClick, isMobi
       <div style={s.modeCopy}>
         <p style={{ ...s.modeTitle, color: selected ? accent : "#f1f5f9" }}>{title}</p>
         <p style={s.modeDescription}>{description}</p>
-        <span style={{ ...s.creditBadge, color: accent, borderColor: `${accent}44` }}>6 credits on download</span>
+        <span style={{ ...s.creditBadge, color: accent, borderColor: `${accent}44` }}>1 plan use on export</span>
       </div>
     </button>
   );
@@ -99,7 +99,7 @@ export default function MergerPage() {
   const [downloadUnlocked, setDownloadUnlocked] = useState(false);
   const [downloading, setDownloading] = useState(false);
 
-  const creditCost = 6;
+  const creditCost = 1;
 
   const handlePhoto = (file) => {
     if (!file) return;
@@ -220,19 +220,6 @@ export default function MergerPage() {
       setDone(true);
       setDownloadUnlocked(false);
 
-      try {
-        const vaultKey = `vault_${user?._id || "guest"}`;
-        const existing = JSON.parse(localStorage.getItem(vaultKey) || "[]");
-        existing.unshift({
-          id: Date.now(),
-          toolType: "merger",
-          examName: mode === "sign" ? "Photo + Signature" : "Photo + Date",
-          url: output,
-          sizeKB: Math.round((output.length * 0.75) / 1024),
-          date: new Date().toISOString(),
-        });
-        localStorage.setItem(vaultKey, JSON.stringify(existing.slice(0, 50)));
-      } catch {}
     } catch {
       setError("Merge failed. Please check your image files.");
     } finally {
@@ -304,7 +291,7 @@ export default function MergerPage() {
       )}
 
       <canvas ref={canvasRef} style={{ display: "none" }} />
-      {user && <Sidebar credits={currentCredits} onLogout={() => { logout(); navigate("/"); }} />}
+      {user && <Sidebar credits={currentCredits} planLabel={user?.planLabel} isUnlimited={user?.isUnlimited} onLogout={() => { logout(); navigate("/"); }} />}
 
       <div style={s.main}>
         {user ? (
@@ -324,14 +311,14 @@ export default function MergerPage() {
             </div>
             <div style={{ ...s.headerCopy, ...(isMobile ? s.headerCopyMobile : {}) }}>
               <h2 style={s.headerTitle}>Photo + Sign / Date Merger</h2>
-              <p style={s.headerDesc}>Preview watermarked rahega. Final JPG download par hi {creditCost} credits cut honge.</p>
+              <p style={s.headerDesc}>Preview watermarked rahega. Final JPG export par hi {creditCost} plan use count hoga.</p>
             </div>
           </div>
 
           {!downloadUnlocked && user && currentCredits < creditCost && mode && (
             <div style={s.warnBox}>
-              Download ke liye <b>{creditCost} credits</b> chahiye, aapke paas <b>{currentCredits}</b> hain.{" "}
-              <span style={s.link} onClick={() => navigate("/pricing")}>Buy credits</span>
+              Export ke liye <b>{creditCost} use</b> chahiye, aapke paas <b>{currentCredits}</b> left hain.{" "}
+              <span style={s.link} onClick={() => navigate("/pricing")}>View plans</span>
             </div>
           )}
 
@@ -432,7 +419,7 @@ export default function MergerPage() {
                     ? "Unlocking Download..."
                     : downloadUnlocked
                       ? "Download Again"
-                      : "Download Final JPG (6 Credits)"}
+                      : "Download Final JPG (1 Use)"}
                 </button>
                 <button onClick={handleReset} style={s.btnSecondary}>Merge Another</button>
               </div>

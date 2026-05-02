@@ -15,6 +15,8 @@ export default function TopBar({ user, credits, onLogout }) {
   const isMobile = useIsMobile(900);
   const { theme, isDark, toggleTheme } = useTheme();
   const firstName = user?.name?.split(" ")[0] || "User";
+  const planLabel = user?.planLabel || "Free Tier";
+  const usageSummary = user?.isUnlimited ? "Unlimited access" : `${credits ?? 0} downloads left`;
   const [showMenu, setShowMenu] = useState(false);
   const t = isDark ? darkTheme : lightTheme;
 
@@ -54,11 +56,13 @@ export default function TopBar({ user, credits, onLogout }) {
         <div
           style={{ ...s.creditPill, ...t.creditPill, ...(isMobile ? s.creditPillMobile : null) }}
           onClick={() => navigate("/pricing")}
-          title="Buy more credits"
+          title="View plans"
         >
           <span>⚡</span>
-          <b style={{ color: "#f97316" }}>{credits ?? 0}</b>
-          {!isMobile && <span style={{ ...s.creditLabel, ...t.creditLabel }}>Credits</span>}
+          <div style={s.planWrap}>
+            <b style={{ color: "#f97316" }}>{planLabel}</b>
+            {!isMobile && <span style={{ ...s.creditLabel, ...t.creditLabel }}>{usageSummary}</span>}
+          </div>
         </div>
 
         <div style={s.avatarWrap}>
@@ -190,6 +194,7 @@ const s = {
     fontSize: 15,
   },
   creditPillMobile: { padding: "8px 11px", fontSize: 13 },
+  planWrap: { display: "flex", flexDirection: "column", gap: 1, minWidth: 0, textAlign: "left" },
   creditLabel: { fontSize: 12 },
   avatarWrap: { position: "relative" },
   avatarBtn: { background: "transparent", border: "none", padding: 0, cursor: "pointer" },

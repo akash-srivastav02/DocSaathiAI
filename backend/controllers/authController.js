@@ -1,6 +1,11 @@
 const jwt   = require('jsonwebtoken');
 const User  = require('../models/User');
 const { OAuth2Client } = require('google-auth-library');
+const {
+  EIGHT_HOURS_MS,
+  scheduleUserAssetCleanup,
+  reconcileUserAssetCleanup,
+} = require('../utils/assetCleanup');
 
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
@@ -38,8 +43,10 @@ const signup = async (req, res) => {
       name,
       email,
       password,
-      credits: 15,
+      credits: 5,
+      planLabel: 'Free Tier',
       lastWeeklyRefill: new Date(),
+      lastSeenAt: new Date(),
     });
     const token = generateToken(user._id);
 
@@ -58,14 +65,16 @@ const login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    const user = await User.findOne({ email });
+    let user = await User.findOne({ email });
     if (!user)
       return res.status(401).json({ message: 'No account found with this email.' });
 
     if (!(await user.matchPassword(password)))
       return res.status(401).json({ message: 'Incorrect password.' });
 
-    // Weekly free refill — give 5 credits if 7 days passed
+    user = await reconcileUserAssetCleanup(user);
+
+    // Weekly free refill — give 5 free uses if 7 days passed
     const now = new Date();
 
     // Backfill old accounts that were created before weekly refill tracking was set.
@@ -116,6 +125,8 @@ const googleAuth = async (req, res) => {
     let user = await User.findOne({ $or: [{ googleId }, { email }] });
 
     if (user) {
+      user = await reconcileUserAssetCleanup(user);
+
       // Existing user — link Google ID if not already linked
       if (!user.googleId) {
         user.googleId = googleId;
@@ -139,14 +150,16 @@ const googleAuth = async (req, res) => {
       }
 
     } else {
-      // New user via Google — give 15 free credits
+      // New user via Google — give 5 free uses
       user = await User.create({
         name,
         email,
         googleId,
         avatar:           picture,
-        credits:          15,
+        credits:          5,
+        planLabel:        'Free Tier',
         lastWeeklyRefill: new Date(),
+        lastSeenAt:       new Date(),
       });
     }
 
@@ -171,4 +184,32 @@ const getMe = async (req, res) => {
   }
 };
 
-module.exports = { signup, login, googleAuth, getMe };
+const logout = async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found.' });
+    }
+
+    const now = new Date();
+    const cleanupAfter = new Date(now.getTime() + EIGHT_HOURS_MS);
+
+    user.lastSeenAt = now;
+    user.lastLogoutAt = now;
+    user.cleanupAfter = cleanupAfter;
+    await user.save();
+
+    scheduleUserAssetCleanup(user._id, cleanupAfter);
+
+    res.json({
+      success: true,
+      message: 'Logged out. Processed files will be cleaned up after 8 hours of inactivity.',
+      cleanupAfter,
+    });
+  } catch (err) {
+    console.error('[Auth] logout error:', err.message);
+    res.status(500).json({ message: 'Logout failed.' });
+  }
+};
+
+module.exports = { signup, login, googleAuth, getMe, logout };
