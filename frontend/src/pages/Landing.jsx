@@ -70,6 +70,7 @@ export default function Landing() {
   const isMobile = useIsMobile(820);
   const [query, setQuery] = useState("");
   const [motionTick, setMotionTick] = useState(0);
+  const [scrollY, setScrollY] = useState(0);
 
   useEffect(() => {
     let rafId = 0;
@@ -82,24 +83,32 @@ export default function Landing() {
     return () => window.cancelAnimationFrame(rafId);
   }, []);
 
+  useEffect(() => {
+    const onScroll = () => setScrollY(window.scrollY || 0);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
   const stageMotion = useMemo(() => {
     const wave = Math.sin(motionTick * 1.1);
     const waveTwo = Math.cos(motionTick * 0.9);
+    const depth = Math.min(scrollY * 0.06, isMobile ? 18 : 34);
     return {
       main: {
-        transform: `rotate(${isMobile ? -1.2 : -2 + wave * 0.9}deg) translateY(${wave * 5}px)`,
+        transform: `rotate(${isMobile ? -1.2 : -2 + wave * 0.9}deg) translate3d(0, ${wave * 5 + depth * 0.18}px, 0)`,
       },
       one: {
-        transform: `rotate(${isMobile ? -4 : -7 + waveTwo * 1.8}deg) translate(${waveTwo * 5}px, ${wave * 3}px)`,
+        transform: `rotate(${isMobile ? -4 : -7 + waveTwo * 1.8}deg) translate3d(${waveTwo * 5}px, ${wave * 3 + depth * 0.1}px, 0)`,
       },
       two: {
-        transform: `rotate(${isMobile ? 5 : 8 - wave * 1.6}deg) translate(${wave * 4}px, ${waveTwo * 4}px)`,
+        transform: `rotate(${isMobile ? 5 : 8 - wave * 1.6}deg) translate3d(${wave * 4}px, ${waveTwo * 4 + depth * 0.2}px, 0)`,
       },
       three: {
-        transform: `rotate(${isMobile ? 4 : 7 + wave * 1.4}deg) translate(${waveTwo * -4}px, ${wave * -3}px)`,
+        transform: `rotate(${isMobile ? 4 : 7 + wave * 1.4}deg) translate3d(${waveTwo * -4}px, ${wave * -3 + depth * 0.12}px, 0)`,
       },
     };
-  }, [isMobile, motionTick]);
+  }, [isMobile, motionTick, scrollY]);
 
   const copy = language === "hi"
     ? {
@@ -320,7 +329,7 @@ export default function Landing() {
           </div>
 
           <div style={{ ...s.heroSide, ...(isMobile ? s.heroSideMobile : null) }}>
-            <div style={{ ...s.stageCard, ...(isDark ? s.cardDark : s.cardLight) }}>
+            <div style={s.stageCard}>
               <div style={s.stageBadge}>3D Workflow</div>
               <div style={s.stageFrame}>
                 <div style={{ ...s.stagePanel, ...s.stagePanelMain, ...stageMotion.main, ...(isDark ? s.stagePanelDark : s.stagePanelLight) }}>
@@ -715,12 +724,12 @@ const s = {
     width: "100%",
   },
   stageCard: {
-    borderRadius: 22,
-    padding: 18,
+    padding: 6,
     display: "grid",
     gap: 12,
-    overflow: "hidden",
+    overflow: "visible",
     minHeight: 320,
+    background: "transparent",
   },
   stageBadge: {
     width: "fit-content",
@@ -735,20 +744,22 @@ const s = {
   stageFrame: {
     position: "relative",
     minHeight: 250,
+    overflow: "visible",
   },
   stagePanel: {
     position: "absolute",
     borderRadius: 20,
     transition: "transform .18s linear",
     willChange: "transform",
+    backdropFilter: "blur(16px)",
   },
   stagePanelDark: {
-    background: "linear-gradient(180deg, rgba(18,24,40,0.96), rgba(11,17,31,0.86))",
+    background: "linear-gradient(180deg, rgba(18,24,40,0.72), rgba(11,17,31,0.52))",
     border: "1px solid rgba(96,165,250,0.16)",
     boxShadow: "0 24px 44px rgba(2,6,23,0.28)",
   },
   stagePanelLight: {
-    background: "linear-gradient(180deg, rgba(255,255,255,0.98), rgba(245,240,233,0.92))",
+    background: "linear-gradient(180deg, rgba(255,255,255,0.66), rgba(245,240,233,0.46))",
     border: "1px solid rgba(133,99,66,0.14)",
     boxShadow: "0 20px 40px rgba(148,163,184,0.16)",
   },
