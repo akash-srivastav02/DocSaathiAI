@@ -72,30 +72,37 @@ export default function Landing() {
 
   const copy = language === "hi"
     ? {
-        topTools: "Sabhi Tools",
-        login: "Login / Sign Up",
-        light: "Light Mode",
-        dark: "Dark Mode",
-        badge: "Free browser document tools",
+        topTools: "सभी टूल्स",
+        login: "लॉगिन / साइन अप",
+        light: "लाइट मोड",
+        dark: "डार्क मोड",
+        badge: "फ्री ब्राउज़र डॉक्यूमेंट टूल्स",
         titleA: "Resize, convert",
         titleB: "and fix documents",
         titleC: "without switching tabs",
-        sub: "FormFixer ek clean tool hub hai jahan users exam photo resize, signature fix, PDF compress, merge aur conversion kar sakte hain.",
-        trust: "Agar aap Form Fixer, exam photo resize, signature resize ya upload-ready PDF tools search kar rahe hain, to aap sahi jagah par hain.",
-        start: "Start Exploring",
-        explore: "Explore Tools",
-        search: "Search resize, compress, convert, exam pages, or exact KB tools",
-        quick: "Quick access",
-        quickText: "Dead space ki jagah high-intent entry points rakho.",
-        quickTitle: "Popular starting points",
-        popular: "Popular tools",
-        popularSub: "Sabse zyada use hone wale tools se start karo.",
-        examSection: "Popular exams",
-        examSub: "Exact photo and signature pages with ready specs.",
-        officialSub: "Official tool hub",
-        openTool: "Open tool ->",
-        openPage: "Open page ->",
-        openHub: "Open Tool Hub",
+        sub: "FormFixer एक ऐसा टूल हब है जहाँ एग्जाम फोटो रीसाइज़, सिग्नेचर फिक्स, PDF कंप्रेस, मर्ज और कन्वर्ज़न जैसे ज़रूरी काम एक ही जगह होते हैं।",
+        trust: "अगर आप Form Fixer, एग्जाम फोटो रीसाइज़, सिग्नेचर रीसाइज़ या अपलोड-रेडी PDF टूल्स खोज रहे हैं, तो आप सही जगह पर हैं।",
+        start: "एक्सप्लोर शुरू करें",
+        explore: "टूल्स देखें",
+        search: "रीसाइज़, कंप्रेस, कन्वर्ट, एग्जाम पेज या exact KB tools खोजें",
+        quick: "क्विक एक्सेस",
+        quickText: "यहीं से सबसे ज़्यादा खोजे जाने वाले काम तुरंत शुरू किए जा सकते हैं।",
+        quickTitle: "लोकप्रिय शुरुआत",
+        popular: "लोकप्रिय टूल्स",
+        popularSub: "सबसे ज़्यादा इस्तेमाल होने वाले टूल्स से शुरुआत करें।",
+        examSection: "लोकप्रिय परीक्षाएँ",
+        examSub: "फोटो और सिग्नेचर की सटीक स्पेक्स वाले रेडी पेज।",
+        officialSub: "ऑफिशियल टूल हब",
+        openTool: "टूल खोलें →",
+        openPage: "पेज खोलें →",
+        openHub: "टूल हब खोलें",
+        whyTitle: "FormFixer क्यों अलग है",
+        why1: "ब्राउज़र में तेज़ प्रोसेसिंग",
+        why1Text: "छोटे-छोटे कामों के लिए अलग-अलग साइट बदलने की ज़रूरत नहीं।",
+        why2: "एग्जाम-रेडी प्रीसेट्स",
+        why2Text: "KB, dimensions और upload workflow को ध्यान में रखकर बनाया गया।",
+        why3: "प्राइवेसी-फर्स्ट",
+        why3Text: "Preview workflow और lightweight processing इसे ज़्यादा practical बनाते हैं।",
       }
     : {
         topTools: "View All Tools",
@@ -119,9 +126,16 @@ export default function Landing() {
         examSection: "Popular exams",
         examSub: "Exact photo and signature pages with ready specs.",
         officialSub: "Official tool hub",
-        openTool: "Open tool ->",
-        openPage: "Open page ->",
+        openTool: "Open tool →",
+        openPage: "Open page →",
         openHub: "Open Tool Hub",
+        whyTitle: "Why FormFixer feels better",
+        why1: "Fast browser workflow",
+        why1Text: "No need to keep switching across different small utility sites.",
+        why2: "Exam-ready presets",
+        why2Text: "Built around KB limits, dimensions, and real upload workflows.",
+        why3: "Privacy-first feel",
+        why3Text: "Preview-first workflow and lightweight processing make it more practical.",
       };
 
   const searchResults = useMemo(() => {
@@ -286,6 +300,46 @@ export default function Landing() {
                   </button>
                 ))}
               </div>
+            </div>
+            <div style={{ ...s.stageCard, ...(isDark ? s.cardDark : s.cardLight) }}>
+              <div style={s.stageBadge}>3D Workflow</div>
+              <div style={s.stageFrame}>
+                <div style={{ ...s.stagePanel, ...s.stagePanelMain }}>
+                  <span style={s.stageFlow}>Search → Fix → Preview → Download</span>
+                </div>
+                <div style={{ ...s.stagePanel, ...s.stagePanelOne }}>
+                  <span style={s.stageMiniTag}>Photo</span>
+                  <strong style={s.stageMiniTitle}>Exam preset</strong>
+                </div>
+                <div style={{ ...s.stagePanel, ...s.stagePanelTwo }}>
+                  <span style={s.stageMiniTag}>PDF</span>
+                  <strong style={s.stageMiniTitle}>Compress & merge</strong>
+                </div>
+                <div style={{ ...s.stagePanel, ...s.stagePanelThree }}>
+                  <span style={s.stageMiniTag}>Sign</span>
+                  <strong style={s.stageMiniTitle}>Clean signature</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section style={s.section}>
+          <div style={s.sectionHead}>
+            <h2 style={s.sectionTitle}>{copy.whyTitle}</h2>
+          </div>
+          <div style={s.infoGrid}>
+            <div style={{ ...s.infoCard, ...(isDark ? s.cardDark : s.cardLight) }}>
+              <h3 style={s.infoTitle}>{copy.why1}</h3>
+              <p style={s.infoText}>{copy.why1Text}</p>
+            </div>
+            <div style={{ ...s.infoCard, ...(isDark ? s.cardDark : s.cardLight) }}>
+              <h3 style={s.infoTitle}>{copy.why2}</h3>
+              <p style={s.infoText}>{copy.why2Text}</p>
+            </div>
+            <div style={{ ...s.infoCard, ...(isDark ? s.cardDark : s.cardLight) }}>
+              <h3 style={s.infoTitle}>{copy.why3}</h3>
+              <p style={s.infoText}>{copy.why3Text}</p>
             </div>
           </div>
         </section>
@@ -689,6 +743,87 @@ const s = {
     borderColor: "rgba(133,99,66,0.12)",
     color: "#162033",
   },
+  stageCard: {
+    borderRadius: 22,
+    padding: 18,
+    display: "grid",
+    gap: 12,
+    overflow: "hidden",
+  },
+  stageBadge: {
+    width: "fit-content",
+    borderRadius: 999,
+    padding: "5px 10px",
+    fontSize: 11,
+    fontWeight: 800,
+    background: "rgba(59,130,246,0.12)",
+    color: "#60a5fa",
+    textTransform: "uppercase",
+  },
+  stageFrame: {
+    position: "relative",
+    minHeight: 235,
+  },
+  stagePanel: {
+    position: "absolute",
+    borderRadius: 20,
+    background: "linear-gradient(180deg, rgba(18,24,40,0.96), rgba(11,17,31,0.86))",
+    border: "1px solid rgba(96,165,250,0.16)",
+    boxShadow: "0 24px 44px rgba(2,6,23,0.28)",
+  },
+  stagePanelMain: {
+    inset: "30px 8px 10px 8px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    transform: "rotate(-2deg)",
+  },
+  stagePanelOne: {
+    top: 2,
+    left: 4,
+    width: 128,
+    padding: 14,
+    transform: "rotate(-7deg)",
+  },
+  stagePanelTwo: {
+    bottom: 0,
+    left: 26,
+    width: 150,
+    padding: 14,
+    transform: "rotate(8deg)",
+  },
+  stagePanelThree: {
+    top: 40,
+    right: 0,
+    width: 142,
+    padding: 14,
+    transform: "rotate(7deg)",
+  },
+  stageFlow: {
+    color: "#f8fafc",
+    fontSize: 28,
+    lineHeight: 1.08,
+    fontWeight: 900,
+    letterSpacing: -0.8,
+    textAlign: "center",
+  },
+  stageMiniTag: {
+    display: "inline-flex",
+    padding: "4px 8px",
+    borderRadius: 999,
+    background: "rgba(59,130,246,0.16)",
+    color: "#93c5fd",
+    fontSize: 11,
+    fontWeight: 800,
+    marginBottom: 8,
+  },
+  stageMiniTitle: {
+    display: "block",
+    color: "#f8fafc",
+    fontSize: 15,
+    lineHeight: 1.3,
+    fontWeight: 800,
+  },
   section: {
     display: "grid",
     gap: 16,
@@ -715,6 +850,30 @@ const s = {
     display: "grid",
     gridTemplateColumns: "repeat(auto-fit, minmax(230px, 1fr))",
     gap: 14,
+  },
+  infoGrid: {
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+    gap: 14,
+  },
+  infoCard: {
+    borderRadius: 18,
+    padding: 18,
+    display: "grid",
+    gap: 8,
+  },
+  infoTitle: {
+    margin: 0,
+    color: "var(--ff-text)",
+    fontSize: 20,
+    lineHeight: 1.2,
+    fontWeight: 900,
+  },
+  infoText: {
+    margin: 0,
+    color: "#94a3b8",
+    fontSize: 14,
+    lineHeight: 1.65,
   },
   card: {
     borderRadius: 18,

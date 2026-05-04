@@ -50,7 +50,13 @@ function Section({ section, navigate, compact = false }) {
           <h2 style={s.sectionTitle}>{section.title}</h2>
           {section.subtitle && <p style={s.sectionSub}>{section.subtitle}</p>}
         </div>
-        {section.viewAllLabel && <span style={s.viewAll}>{section.viewAllLabel}</span>}
+        {section.viewAllLabel && section.viewAllRoute ? (
+          <button type="button" style={s.viewAllBtn} onClick={() => navigate(section.viewAllRoute)}>
+            {section.viewAllLabel}
+          </button>
+        ) : section.viewAllLabel ? (
+          <span style={s.viewAll}>{section.viewAllLabel}</span>
+        ) : null}
       </div>
 
       {section.items?.length ? (
@@ -81,11 +87,12 @@ export default function Dashboard() {
   const { language } = useLanguage();
   const currentCredits = user ? credits ?? user?.credits ?? 0 : 0;
   const headerUser = user || { name: "Guest", planLabel: "Free Tier", isUnlimited: false };
+
   const copy = language === "hi"
     ? {
-        badge: "कंप्लीट डॉक्यूमेंट टूलकिट",
+        badge: "पूर्ण डॉक्यूमेंट टूलकिट",
         title: "FormFixer टूल हब में आपका स्वागत है",
-        text: "एग्जाम फोटो रिसाइज़, PDF compression, image conversion, signature fixes और upload-ready browser tools एक ही जगह।",
+        text: "एग्जाम फोटो रीसाइज़, PDF कंप्रेशन, इमेज कन्वर्ज़न, सिग्नेचर फिक्स और अपलोड-रेडी ब्राउज़र टूल्स अब एक ही जगह।",
         mappedTools: "मैप्ड टूल्स",
       }
     : {
@@ -94,6 +101,7 @@ export default function Dashboard() {
         text: "Your all-in-one document toolkit for exam photo resize, PDF compression, image conversion, signature fixes, and upload-ready browser tools.",
         mappedTools: "Mapped tools",
       };
+
   const allToolCount = useMemo(
     () => TOOL_CATEGORIES.reduce((sum, category) => sum + category.items.length, 0),
     []
@@ -117,19 +125,19 @@ export default function Dashboard() {
           user={headerUser}
           credits={currentCredits}
           showPlanSummary={false}
+          hasSidebar={Boolean(user)}
           onLogout={user ? () => { logout(); navigate("/"); } : undefined}
         />
 
         <div style={{ ...s.content, ...(isMobile ? s.contentMobile : null), ...s.contentWithFixedTopbar }}>
           <section style={s.heroBand}>
+            <div style={s.heroGlow} />
             <div style={s.heroCopy}>
               <span style={s.heroBadge}>{copy.badge}</span>
               <h1 style={{ ...s.heroTitle, ...(isMobile ? s.heroTitleMobile : null) }}>
                 {copy.title}
               </h1>
-              <p style={s.heroText}>
-                {copy.text}
-              </p>
+              <p style={s.heroText}>{copy.text}</p>
             </div>
             <div style={s.heroStats}>
               <div style={s.statTile}>
@@ -167,6 +175,7 @@ const s = {
   contentMobile: { padding: "18px 14px 44px", gap: 24 },
   contentWithFixedTopbar: { paddingTop: 104 },
   heroBand: {
+    position: "relative",
     display: "flex",
     alignItems: "stretch",
     justifyContent: "space-between",
@@ -177,8 +186,18 @@ const s = {
     background: "linear-gradient(135deg, #2563eb, #7c3aed 58%, #db2777)",
     color: "#fff",
     boxShadow: "0 26px 60px rgba(37, 99, 235, 0.24)",
+    overflow: "hidden",
   },
-  heroCopy: { display: "flex", flexDirection: "column", gap: 10, maxWidth: 720 },
+  heroGlow: {
+    position: "absolute",
+    inset: "auto -40px -60px auto",
+    width: 220,
+    height: 220,
+    borderRadius: "50%",
+    background: "radial-gradient(circle, rgba(255,255,255,0.18), transparent 70%)",
+    pointerEvents: "none",
+  },
+  heroCopy: { display: "flex", flexDirection: "column", gap: 10, maxWidth: 720, position: "relative", zIndex: 1 },
   heroBadge: {
     width: "fit-content",
     padding: "6px 10px",
@@ -191,7 +210,7 @@ const s = {
   heroTitle: { margin: 0, fontSize: 46, lineHeight: 1.05, fontWeight: 900, letterSpacing: -1.6 },
   heroTitleMobile: { fontSize: 32, lineHeight: 1.08, letterSpacing: -0.8 },
   heroText: { margin: 0, fontSize: 18, lineHeight: 1.7, color: "rgba(255,255,255,0.9)" },
-  heroStats: { display: "grid", gap: 12, minWidth: 180, alignContent: "start" },
+  heroStats: { display: "grid", gap: 12, minWidth: 180, alignContent: "start", position: "relative", zIndex: 1 },
   statTile: {
     padding: "18px 16px",
     borderRadius: 18,
@@ -207,6 +226,7 @@ const s = {
   sectionTitle: { margin: 0, color: "var(--ff-text)", fontSize: 34, lineHeight: 1.06, fontWeight: 900, letterSpacing: -0.8 },
   sectionSub: { margin: "6px 0 0", color: "var(--ff-text-soft)", fontSize: 15, lineHeight: 1.7 },
   viewAll: { color: "var(--ff-blue)", fontSize: 14, fontWeight: 800 },
+  viewAllBtn: { border: "none", background: "transparent", color: "var(--ff-blue)", fontSize: 14, fontWeight: 800, cursor: "pointer", padding: 0 },
   cardGrid: { display: "grid", gridTemplateColumns: "repeat(4, minmax(0, 1fr))", gap: 14 },
   cardGridCompact: { gridTemplateColumns: "1fr 1fr" },
   toolCard: {

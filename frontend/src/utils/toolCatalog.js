@@ -73,6 +73,7 @@ export const HOME_SECTIONS = [
     title: "Quick Access",
     subtitle: "Start with the most-used tools.",
     viewAllLabel: "All Tools",
+    viewAllRoute: "/all-tools",
     items: TOOL_CATEGORIES[0].items.concat(
       { id: "print-aadhaar-quick", label: "Print Aadhaar", icon: "PA", desc: "Front and back", live: false, accent: "#6366f1" },
       { id: "resume-quick", label: "Resume Builder", icon: "RB", desc: "ATS-friendly", live: false, accent: "#ec4899" }

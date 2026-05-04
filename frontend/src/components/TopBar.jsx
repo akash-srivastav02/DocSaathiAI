@@ -21,17 +21,19 @@ const COPY = {
     contact: "Contact",
     logout: "Logout",
     guestLabel: "Browse tools",
+    language: "Language",
   },
   hi: {
-    welcome: "Swagat",
-    freeTier: "Free Tier",
-    unlimited: "Unlimited access",
-    downloadsLeft: (count) => `${count} downloads baki`,
-    allTools: "Sabhi Tools",
-    pricing: "Plans",
-    contact: "Sampark",
-    logout: "Logout",
-    guestLabel: "Tools browse karo",
+    welcome: "स्वागत",
+    freeTier: "फ्री टियर",
+    unlimited: "अनलिमिटेड एक्सेस",
+    downloadsLeft: (count) => `${count} डाउनलोड बाकी`,
+    allTools: "सभी टूल्स",
+    pricing: "प्लान्स",
+    contact: "संपर्क",
+    logout: "लॉगआउट",
+    guestLabel: "टूल्स देखें",
+    language: "भाषा",
   },
 };
 
@@ -119,12 +121,12 @@ export default function TopBar({
             }}
             onClick={() => setLanguage("hi")}
           >
-            HI
+            हिन्दी
           </button>
         </div>
 
         <button type="button" style={{ ...s.themeBtn, ...t.themeBtn }} onClick={toggleTheme} aria-label="Toggle theme">
-          {theme === "dark" ? "☼" : "☾"}
+          {theme === "dark" ? "☀" : "☾"}
         </button>
 
         {showPlanSummary && !isGuest ? (
@@ -164,6 +166,13 @@ export default function TopBar({
                     {item.label}
                   </button>
                 ))}
+                <button
+                  type="button"
+                  style={{ ...s.menuLink, ...t.menuLink }}
+                  onClick={() => setLanguage(language === "en" ? "hi" : "en")}
+                >
+                  {copy.language}: {language === "en" ? "English" : "हिन्दी"}
+                </button>
                 {onLogout ? (
                   <button type="button" style={{ ...s.menuLogout, ...t.menuLogout }} onClick={onLogout}>
                     {copy.logout}
@@ -191,14 +200,8 @@ const s = {
     gap: 14,
     padding: "14px 22px",
   },
-  topbarNoSidebar: {
-    left: 0,
-  },
-  topbarMobile: {
-    left: 0,
-    right: 0,
-    padding: "10px 14px 10px 62px",
-  },
+  topbarNoSidebar: { left: 0 },
+  topbarMobile: { left: 0, right: 0, padding: "10px 14px 10px 62px" },
   brandButton: {
     display: "flex",
     alignItems: "center",
@@ -210,10 +213,7 @@ const s = {
     cursor: "pointer",
     textAlign: "left",
   },
-  brandButtonMobile: {
-    flex: 1,
-    minWidth: 0,
-  },
+  brandButtonMobile: { flex: 1, minWidth: 0 },
   brandIconWrap: {
     width: 40,
     height: 40,
@@ -224,110 +224,23 @@ const s = {
     overflow: "hidden",
     flexShrink: 0,
   },
-  brandIcon: {
-    width: 27,
-    height: 27,
-    objectFit: "contain",
-    display: "block",
-  },
-  brandCopy: {
-    minWidth: 0,
-    display: "flex",
-    flexDirection: "column",
-    gap: 2,
-  },
-  brandTitle: {
-    margin: 0,
-    fontSize: 19,
-    fontWeight: 900,
-    lineHeight: 1.1,
-    letterSpacing: -0.3,
-  },
-  brandSub: {
-    margin: 0,
-    fontSize: 14,
-    fontWeight: 600,
-    lineHeight: 1.3,
-    whiteSpace: "nowrap",
-    overflow: "hidden",
-    textOverflow: "ellipsis",
-  },
-  actions: {
-    display: "flex",
-    alignItems: "center",
-    gap: 10,
-  },
-  actionsMobile: {
-    gap: 8,
-  },
-  langSwitch: {
-    display: "inline-flex",
-    alignItems: "center",
-    gap: 4,
-    padding: 4,
-    borderRadius: 999,
-    border: "1px solid transparent",
-  },
-  langOption: {
-    minWidth: 38,
-    border: "none",
-    borderRadius: 999,
-    padding: "7px 10px",
-    cursor: "pointer",
-    fontSize: 12,
-    fontWeight: 900,
-    transition: "background .16s ease, color .16s ease, box-shadow .16s ease",
-  },
-  langOptionActive: {
-    boxShadow: "0 10px 22px rgba(249, 115, 22, 0.24)",
-  },
-  themeBtn: {
-    width: 38,
-    height: 38,
-    borderRadius: 12,
-    border: "1px solid transparent",
-    background: "transparent",
-    cursor: "pointer",
-    fontWeight: 900,
-    fontSize: 15,
-  },
-  planPill: {
-    display: "flex",
-    alignItems: "center",
-    gap: 8,
-    borderRadius: 999,
-    padding: "8px 14px",
-    border: "1px solid transparent",
-    cursor: "pointer",
-  },
-  planBolt: {
-    fontSize: 15,
-    lineHeight: 1,
-  },
-  planTextWrap: {
-    display: "flex",
-    flexDirection: "column",
-    gap: 1,
-    textAlign: "left",
-  },
-  planName: {
-    color: "#f97316",
-    fontSize: 14,
-    lineHeight: 1.1,
-  },
-  planSub: {
-    fontSize: 12,
-    lineHeight: 1.2,
-  },
-  avatarWrap: {
-    position: "relative",
-  },
-  avatarBtn: {
-    border: "none",
-    background: "transparent",
-    padding: 0,
-    cursor: "pointer",
-  },
+  brandIcon: { width: 27, height: 27, objectFit: "contain", display: "block" },
+  brandCopy: { minWidth: 0, display: "flex", flexDirection: "column", gap: 2 },
+  brandTitle: { margin: 0, fontSize: 19, fontWeight: 900, lineHeight: 1.1, letterSpacing: -0.3 },
+  brandSub: { margin: 0, fontSize: 14, fontWeight: 600, lineHeight: 1.3, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" },
+  actions: { display: "flex", alignItems: "center", gap: 10 },
+  actionsMobile: { gap: 8 },
+  langSwitch: { display: "inline-flex", alignItems: "center", gap: 4, padding: 4, borderRadius: 999, border: "1px solid transparent" },
+  langOption: { minWidth: 38, border: "none", borderRadius: 999, padding: "7px 10px", cursor: "pointer", fontSize: 12, fontWeight: 900, transition: "background .16s ease, color .16s ease, box-shadow .16s ease" },
+  langOptionActive: { boxShadow: "0 10px 22px rgba(249, 115, 22, 0.24)" },
+  themeBtn: { width: 38, height: 38, borderRadius: 12, border: "1px solid transparent", background: "transparent", cursor: "pointer", fontWeight: 900, fontSize: 15 },
+  planPill: { display: "flex", alignItems: "center", gap: 8, borderRadius: 999, padding: "8px 14px", border: "1px solid transparent", cursor: "pointer" },
+  planBolt: { fontSize: 15, lineHeight: 1 },
+  planTextWrap: { display: "flex", flexDirection: "column", gap: 1, textAlign: "left" },
+  planName: { color: "#f97316", fontSize: 14, lineHeight: 1.1 },
+  planSub: { fontSize: 12, lineHeight: 1.2 },
+  avatarWrap: { position: "relative" },
+  avatarBtn: { border: "none", background: "transparent", padding: 0, cursor: "pointer" },
   avatar: {
     width: 38,
     height: 38,
@@ -340,199 +253,55 @@ const s = {
     fontWeight: 900,
     background: "linear-gradient(135deg,#f97316,#7c3aed)",
   },
-  menu: {
-    position: "absolute",
-    top: "calc(100% + 10px)",
-    right: 0,
-    width: 210,
-    borderRadius: 14,
-    padding: 10,
-    zIndex: 60,
-  },
-  menuMobile: {
-    width: 220,
-  },
-  menuHead: {
-    padding: "6px 6px 10px",
-    marginBottom: 8,
-  },
-  menuBrand: {
-    margin: 0,
-    fontSize: 13,
-    fontWeight: 900,
-  },
-  menuName: {
-    margin: "4px 0 0",
-    fontSize: 12,
-  },
-  menuLinks: {
-    display: "grid",
-    gap: 6,
-  },
-  menuLink: {
-    width: "100%",
-    textAlign: "left",
-    border: "none",
-    background: "transparent",
-    borderRadius: 10,
-    padding: "10px 12px",
-    fontSize: 14,
-    fontWeight: 700,
-    cursor: "pointer",
-  },
+  menu: { position: "absolute", top: "calc(100% + 10px)", right: 0, width: 220, borderRadius: 14, padding: 10, zIndex: 60 },
+  menuMobile: { width: 220 },
+  menuHead: { padding: "6px 6px 10px", marginBottom: 8 },
+  menuBrand: { margin: 0, fontSize: 13, fontWeight: 900 },
+  menuName: { margin: "4px 0 0", fontSize: 12 },
+  menuLinks: { display: "grid", gap: 6 },
+  menuLink: { width: "100%", textAlign: "left", border: "none", background: "transparent", borderRadius: 10, padding: "10px 12px", fontSize: 14, fontWeight: 700, cursor: "pointer" },
   menuLinkActive: {},
-  menuLogout: {
-    width: "100%",
-    textAlign: "left",
-    borderRadius: 10,
-    padding: "10px 12px",
-    fontSize: 14,
-    fontWeight: 700,
-    cursor: "pointer",
-    marginTop: 4,
-  },
+  menuLogout: { width: "100%", textAlign: "left", borderRadius: 10, padding: "10px 12px", fontSize: 14, fontWeight: 700, cursor: "pointer", marginTop: 4 },
 };
 
 const darkTheme = {
-  topbar: {
-    background: "linear-gradient(180deg, rgba(10,15,30,0.98), rgba(13,20,33,0.94))",
-    borderBottom: "1px solid rgba(79,97,130,0.18)",
-    backdropFilter: "blur(20px)",
-    boxShadow: "0 18px 42px rgba(2, 6, 23, 0.18)",
-  },
-  brandIconWrap: {
-    background: "#f9731620",
-    border: "1px solid #f9731633",
-  },
-  brandTitle: {
-    color: "#f1f5f9",
-  },
-  brandSub: {
-    color: "#94a3b8",
-  },
-  langSwitch: {
-    background: "#111827",
-    borderColor: "#334155",
-  },
-  langOptionActive: {
-    background: "linear-gradient(135deg,#f97316,#ea580c)",
-    color: "#ffffff",
-  },
-  langOptionInactive: {
-    background: "transparent",
-    color: "#94a3b8",
-  },
-  themeBtn: {
-    color: "#e2e8f0",
-    background: "#111827",
-    borderColor: "#334155",
-  },
-  planPill: {
-    background: "#f9731614",
-    borderColor: "#f9731630",
-  },
-  planSub: {
-    color: "#94a3b8",
-  },
-  avatar: {
-    boxShadow: "0 10px 28px rgba(124, 58, 237, 0.24)",
-  },
-  menu: {
-    background: "#0d1421",
-    border: "1px solid #263246",
-    boxShadow: "0 18px 40px rgba(0,0,0,0.35)",
-  },
-  menuHead: {
-    borderBottom: "1px solid #1e293b",
-  },
-  menuBrand: {
-    color: "#f1f5f9",
-  },
-  menuName: {
-    color: "#94a3b8",
-  },
-  menuLink: {
-    color: "#cbd5e1",
-  },
-  menuLinkActive: {
-    background: "#f9731618",
-    color: "#f97316",
-  },
-  menuLogout: {
-    border: "1px solid #374151",
-    background: "#1e293b",
-    color: "#e2e8f0",
-  },
+  topbar: { background: "linear-gradient(180deg, rgba(10,15,30,0.98), rgba(13,20,33,0.94))", borderBottom: "1px solid rgba(79,97,130,0.18)", backdropFilter: "blur(20px)", boxShadow: "0 18px 42px rgba(2, 6, 23, 0.18)" },
+  brandIconWrap: { background: "#f9731620", border: "1px solid #f9731633" },
+  brandTitle: { color: "#f1f5f9" },
+  brandSub: { color: "#94a3b8" },
+  langSwitch: { background: "#111827", borderColor: "#334155" },
+  langOptionActive: { background: "linear-gradient(135deg,#f97316,#ea580c)", color: "#ffffff" },
+  langOptionInactive: { background: "transparent", color: "#94a3b8" },
+  themeBtn: { color: "#e2e8f0", background: "#111827", borderColor: "#334155" },
+  planPill: { background: "#f9731614", borderColor: "#f9731630" },
+  planSub: { color: "#94a3b8" },
+  avatar: { boxShadow: "0 10px 28px rgba(124, 58, 237, 0.24)" },
+  menu: { background: "#0d1421", border: "1px solid #263246", boxShadow: "0 18px 40px rgba(0,0,0,0.35)" },
+  menuHead: { borderBottom: "1px solid #1e293b" },
+  menuBrand: { color: "#f1f5f9" },
+  menuName: { color: "#94a3b8" },
+  menuLink: { color: "#cbd5e1" },
+  menuLinkActive: { background: "#f9731618", color: "#f97316" },
+  menuLogout: { border: "1px solid #374151", background: "#1e293b", color: "#e2e8f0" },
 };
 
 const lightTheme = {
-  topbar: {
-    background: "linear-gradient(180deg, rgba(255,250,242,0.98), rgba(255,253,248,0.94))",
-    borderBottom: "1px solid rgba(133, 99, 66, 0.14)",
-    backdropFilter: "blur(20px)",
-    boxShadow: "0 16px 36px rgba(148, 163, 184, 0.12)",
-  },
-  brandIconWrap: {
-    background: "rgba(216, 90, 6, 0.08)",
-    border: "1px solid rgba(216, 90, 6, 0.18)",
-  },
-  brandTitle: {
-    color: "#162033",
-  },
-  brandSub: {
-    color: "#6b7789",
-  },
-  langSwitch: {
-    background: "#ffffff",
-    borderColor: "rgba(133, 99, 66, 0.15)",
-  },
-  langOptionActive: {
-    background: "linear-gradient(135deg,#f97316,#ea580c)",
-    color: "#ffffff",
-  },
-  langOptionInactive: {
-    background: "transparent",
-    color: "#6b7789",
-  },
-  themeBtn: {
-    color: "#162033",
-    background: "#fff",
-    borderColor: "rgba(133, 99, 66, 0.15)",
-  },
-  planPill: {
-    background: "rgba(216, 90, 6, 0.08)",
-    borderColor: "rgba(216, 90, 6, 0.18)",
-  },
-  planSub: {
-    color: "#64748b",
-  },
-  avatar: {
-    boxShadow: "0 10px 28px rgba(216, 90, 6, 0.16)",
-  },
-  menu: {
-    background: "#fffdf8",
-    border: "1px solid rgba(133, 99, 66, 0.16)",
-    boxShadow: "0 18px 40px rgba(148, 163, 184, 0.22)",
-  },
-  menuHead: {
-    borderBottom: "1px solid rgba(133, 99, 66, 0.12)",
-  },
-  menuBrand: {
-    color: "#162033",
-  },
-  menuName: {
-    color: "#6b7789",
-  },
-  menuLink: {
-    color: "#334155",
-  },
-  menuLinkActive: {
-    background: "rgba(216, 90, 6, 0.08)",
-    color: "#d85a06",
-  },
-  menuLogout: {
-    border: "1px solid rgba(133, 99, 66, 0.16)",
-    background: "#f5efe6",
-    color: "#233148",
-  },
+  topbar: { background: "linear-gradient(180deg, rgba(255,250,242,0.98), rgba(255,253,248,0.94))", borderBottom: "1px solid rgba(133, 99, 66, 0.14)", backdropFilter: "blur(20px)", boxShadow: "0 16px 36px rgba(148, 163, 184, 0.12)" },
+  brandIconWrap: { background: "rgba(216, 90, 6, 0.08)", border: "1px solid rgba(216, 90, 6, 0.18)" },
+  brandTitle: { color: "#162033" },
+  brandSub: { color: "#6b7789" },
+  langSwitch: { background: "#ffffff", borderColor: "rgba(133, 99, 66, 0.15)" },
+  langOptionActive: { background: "linear-gradient(135deg,#f97316,#ea580c)", color: "#ffffff" },
+  langOptionInactive: { background: "transparent", color: "#6b7789" },
+  themeBtn: { color: "#162033", background: "#fff", borderColor: "rgba(133, 99, 66, 0.15)" },
+  planPill: { background: "rgba(216, 90, 6, 0.08)", borderColor: "rgba(216, 90, 6, 0.18)" },
+  planSub: { color: "#64748b" },
+  avatar: { boxShadow: "0 10px 28px rgba(216, 90, 6, 0.16)" },
+  menu: { background: "#fffdf8", border: "1px solid rgba(133, 99, 66, 0.16)", boxShadow: "0 18px 40px rgba(148, 163, 184, 0.22)" },
+  menuHead: { borderBottom: "1px solid rgba(133, 99, 66, 0.12)" },
+  menuBrand: { color: "#162033" },
+  menuName: { color: "#64748b" },
+  menuLink: { color: "#1f2a3d" },
+  menuLinkActive: { background: "rgba(216, 90, 6, 0.08)", color: "#d85a06" },
+  menuLogout: { border: "1px solid rgba(133, 99, 66, 0.18)", background: "#ffffff", color: "#162033" },
 };
