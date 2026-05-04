@@ -60,6 +60,19 @@ const EXAMS = EXAM_PAGE_DATA.filter((exam) =>
   ["SSC CGL", "SSC CHSL", "SBI PO", "IBPS Clerk", "RRB NTPC", "JEE Main", "NEET UG", "UP Police"].includes(exam.name)
 );
 
+const FOOTER_TOOL_LINKS = [
+  { label: "Exam Photo Resize", route: "/tool/photo" },
+  { label: "Signature Resize", route: "/tool/signature" },
+  { label: "Signature Cleaner", route: "/tool/sigclean" },
+  { label: "Compress PDF", route: "/pdf/compress" },
+  { label: "Merge PDF", route: "/pdf/merge" },
+  { label: "Images to PDF", route: "/pdf/image-to-pdf" },
+  { label: "Image Converter", route: "/tool/imgconvert" },
+  { label: "Custom Image Resizer", route: "/tool/crop" },
+  { label: "Passport Photo Sheet", route: "/tool/passport-sheet" },
+  { label: "Photo + Sign / Date", route: "/merger" },
+];
+
 const normalizeText = (value) => String(value || "").toLowerCase();
 
 export default function Landing() {
@@ -176,6 +189,15 @@ export default function Landing() {
         why2Text: "Built around KB limits, dimensions, and real upload workflows.",
         why3: "Privacy-first feel",
         why3Text: "Preview-first workflow and lightweight processing make it more practical.",
+        footerTools: "Tools",
+        footerSupport: "Support & legal",
+        footerSupportText: "Find help, policies and important redirects in one place.",
+        footerBrowse: "Open",
+        footerSupportLink: "Support",
+        footerPrivacyLink: "Privacy Policy",
+        footerTermsLink: "Terms & Conditions",
+        footerAllToolsLink: "All Tools",
+        footerExamLink: "Exam Pages",
       };
 
   const searchResults = useMemo(() => {
@@ -330,7 +352,6 @@ export default function Landing() {
 
           <div style={{ ...s.heroSide, ...(isMobile ? s.heroSideMobile : null) }}>
             <div style={s.stageCard}>
-              <div style={s.stageBadge}>3D Workflow</div>
               <div style={s.stageFrame}>
                 <div style={{ ...s.stagePanel, ...s.stagePanelMain, ...stageMotion.main, ...(isDark ? s.stagePanelDark : s.stagePanelLight) }}>
                   <span style={s.stageFlow}>Search → Fix → Preview → Download</span>
@@ -405,6 +426,54 @@ export default function Landing() {
             ))}
           </div>
         </section>
+
+        <footer style={{ ...s.footer, ...(isDark ? s.footerDark : s.footerLight) }}>
+          <div style={{ ...s.footerGrid, ...(isMobile ? s.footerGridMobile : null) }}>
+            <div style={s.footerCol}>
+              <h3 style={s.footerBrand}>FormFixer</h3>
+              <p style={s.footerText}>{copy.sub}</p>
+            </div>
+
+            <div style={s.footerCol}>
+              <h4 style={s.footerHeading}>{copy.footerTools}</h4>
+              <div style={s.footerLinksWrap}>
+                {FOOTER_TOOL_LINKS.map((item) => (
+                  <button key={item.route} type="button" style={s.footerLink} onClick={() => navigate(item.route)}>
+                    <span>{item.label}</span>
+                    <span>{copy.footerBrowse}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div style={s.footerCol}>
+              <h4 style={s.footerHeading}>{copy.footerSupport}</h4>
+              <p style={s.footerText}>{copy.footerSupportText}</p>
+              <div style={s.footerLinksWrap}>
+                <button type="button" style={s.footerLink} onClick={() => navigate("/support")}>
+                  <span>{copy.footerSupportLink}</span>
+                  <span>{copy.footerBrowse}</span>
+                </button>
+                <button type="button" style={s.footerLink} onClick={() => navigate("/privacy-policy")}>
+                  <span>{copy.footerPrivacyLink}</span>
+                  <span>{copy.footerBrowse}</span>
+                </button>
+                <button type="button" style={s.footerLink} onClick={() => navigate("/terms-and-conditions")}>
+                  <span>{copy.footerTermsLink}</span>
+                  <span>{copy.footerBrowse}</span>
+                </button>
+                <button type="button" style={s.footerLink} onClick={() => navigate("/all-tools")}>
+                  <span>{copy.footerAllToolsLink}</span>
+                  <span>{copy.footerBrowse}</span>
+                </button>
+                <button type="button" style={s.footerLink} onClick={() => navigate("/exam/ssc-cgl")}>
+                  <span>{copy.footerExamLink}</span>
+                  <span>{copy.footerBrowse}</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </footer>
       </main>
     </div>
   );
@@ -585,7 +654,7 @@ const s = {
   },
   hero: {
     display: "grid",
-    gridTemplateColumns: "minmax(0,1.05fr) minmax(300px,0.95fr)",
+    gridTemplateColumns: "minmax(0,0.96fr) minmax(360px,1.04fr)",
     gap: 22,
     alignItems: "start",
     marginBottom: 38,
@@ -719,6 +788,7 @@ const s = {
     display: "grid",
     gap: 16,
     alignContent: "start",
+    minHeight: 360,
   },
   heroSideMobile: {
     width: "100%",
@@ -728,7 +798,7 @@ const s = {
     display: "grid",
     gap: 12,
     overflow: "visible",
-    minHeight: 320,
+    minHeight: 390,
     background: "transparent",
   },
   stageBadge: {
@@ -743,7 +813,7 @@ const s = {
   },
   stageFrame: {
     position: "relative",
-    minHeight: 250,
+    minHeight: 332,
     overflow: "visible",
   },
   stagePanel: {
@@ -764,36 +834,36 @@ const s = {
     boxShadow: "0 20px 40px rgba(148,163,184,0.16)",
   },
   stagePanelMain: {
-    inset: "30px 8px 10px 8px",
+    inset: "34px 2px 12px 2px",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
     transform: "rotate(-2deg)",
   },
   stagePanelOne: {
-    top: 2,
-    left: 4,
-    width: 128,
-    padding: 14,
+    top: -4,
+    left: 2,
+    width: 154,
+    padding: 16,
     transform: "rotate(-7deg)",
   },
   stagePanelTwo: {
-    bottom: 0,
-    left: 26,
-    width: 150,
-    padding: 14,
+    bottom: 4,
+    left: 40,
+    width: 176,
+    padding: 16,
     transform: "rotate(8deg)",
   },
   stagePanelThree: {
-    top: 40,
+    top: 52,
     right: 0,
-    width: 142,
-    padding: 14,
+    width: 164,
+    padding: 16,
     transform: "rotate(7deg)",
   },
   stageFlow: {
     color: "var(--ff-text)",
-    fontSize: 28,
+    fontSize: 34,
     lineHeight: 1.08,
     fontWeight: 900,
     letterSpacing: -0.8,
@@ -812,7 +882,7 @@ const s = {
   stageMiniTitle: {
     display: "block",
     color: "var(--ff-text)",
-    fontSize: 15,
+    fontSize: 17,
     lineHeight: 1.3,
     fontWeight: 800,
   },
@@ -820,6 +890,72 @@ const s = {
     display: "grid",
     gap: 16,
     marginBottom: 38,
+  },
+  footer: {
+    display: "grid",
+    gap: 20,
+    marginTop: 10,
+    padding: "26px 22px",
+    borderRadius: 26,
+    border: "1px solid rgba(148,163,184,0.16)",
+  },
+  footerDark: {
+    background: "linear-gradient(180deg, rgba(8,15,30,0.92) 0%, rgba(8,15,30,0.76) 100%)",
+  },
+  footerLight: {
+    background: "linear-gradient(180deg, rgba(255,250,244,0.94) 0%, rgba(253,247,239,0.82) 100%)",
+  },
+  footerGrid: {
+    display: "grid",
+    gridTemplateColumns: "1.05fr 1.35fr 1fr",
+    gap: 22,
+    alignItems: "start",
+  },
+  footerGridMobile: {
+    gridTemplateColumns: "1fr",
+  },
+  footerCol: {
+    display: "grid",
+    gap: 12,
+    minWidth: 0,
+  },
+  footerBrand: {
+    margin: 0,
+    fontSize: 30,
+    lineHeight: 1.05,
+    fontWeight: 900,
+  },
+  footerHeading: {
+    margin: 0,
+    fontSize: 18,
+    lineHeight: 1.2,
+    fontWeight: 800,
+    color: "var(--ff-text)",
+  },
+  footerText: {
+    margin: 0,
+    color: "#94a3b8",
+    fontSize: 14,
+    lineHeight: 1.75,
+  },
+  footerLinksWrap: {
+    display: "grid",
+    gap: 10,
+  },
+  footerLink: {
+    borderRadius: 14,
+    border: "1px solid rgba(148,163,184,0.18)",
+    padding: "12px 14px",
+    background: "transparent",
+    color: "var(--ff-text)",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: 12,
+    cursor: "pointer",
+    textAlign: "left",
+    fontSize: 14,
+    fontWeight: 700,
   },
   sectionHead: {
     display: "grid",
