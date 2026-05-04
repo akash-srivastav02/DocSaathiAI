@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { compressPDF, imageToPdf } = require('../controllers/pdfController');
+const { compressPDF, imageToPdf, mergePdf } = require('../controllers/pdfController');
 const { protect } = require('../middleware/authMiddleware');
 const upload = require('../middleware/uploadMiddleware');
 
@@ -12,5 +12,6 @@ router.get('/test', (req, res) => {
 // POST /api/pdf/compress
 router.post('/compress', upload.single('pdf'), compressPDF);
 router.post('/image-to-pdf', upload.array('images', 20), imageToPdf);
+router.post('/merge', upload.array('pdfs', 20), mergePdf);
 
 module.exports = router;

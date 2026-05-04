@@ -13,6 +13,7 @@ const TOOL_CREDIT_COST = {
   crop: 1,
   imgcompress: 1,
   imgtopdf: 1,
+  mergepdf: 1,
   pdfcompress: 1,
   merger: 1,
   sigclean: 1,

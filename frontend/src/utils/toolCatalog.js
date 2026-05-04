@@ -17,7 +17,7 @@ export const TOOL_CATEGORIES = [
     items: [
       { id: "pdf-compress", label: "Compress PDF", route: "/pdf/compress", icon: "CP", desc: "Shrink upload size", live: true, accent: "#14b8a6" },
       { id: "img-to-pdf-card", label: "Images to PDF", route: "/pdf/image-to-pdf", icon: "IP", desc: "Multiple images to one PDF", live: true, accent: "#22c55e" },
-      { id: "merge-pdf", label: "Merge PDF", icon: "MP", desc: "Combine documents", live: false, accent: "#3b82f6" },
+      { id: "merge-pdf", label: "Merge PDF", route: "/pdf/merge", icon: "MP", desc: "Combine documents", live: true, accent: "#3b82f6" },
       { id: "split-pdf", label: "Split PDF", icon: "SP", desc: "Extract pages", live: false, accent: "#ef4444" },
       { id: "pdf-to-jpg", label: "PDF to JPG", icon: "PJ", desc: "Pages to images", live: false, accent: "#6366f1" },
       { id: "pdf-to-word", label: "PDF to Word", icon: "PW", desc: "Editable DOCX", live: false, accent: "#f59e0b" },

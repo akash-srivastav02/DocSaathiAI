@@ -200,7 +200,21 @@ async function convertImagesToPdfBuffer(imageBuffers, options = {}) {
   return Buffer.from(await pdfDoc.save({ useObjectStreams: true, addDefaultPage: false }));
 }
 
+async function mergePdfBuffers(pdfBuffers) {
+  const mergedPdf = await PDFDocument.create();
+
+  for (const inputBuffer of pdfBuffers) {
+    const sourcePdf = await PDFDocument.load(inputBuffer, { ignoreEncryption: true });
+    const pageIndices = sourcePdf.getPageIndices();
+    const copiedPages = await mergedPdf.copyPages(sourcePdf, pageIndices);
+    copiedPages.forEach((page) => mergedPdf.addPage(page));
+  }
+
+  return Buffer.from(await mergedPdf.save({ useObjectStreams: true, addDefaultPage: false }));
+}
+
 module.exports = {
   compressPDFBuffer,
   convertImagesToPdfBuffer,
+  mergePdfBuffers,
 };

@@ -1,4 +1,4 @@
-const { compressPDFBuffer, convertImagesToPdfBuffer } = require('../lib/pdfEngine');
+const { compressPDFBuffer, convertImagesToPdfBuffer, mergePdfBuffers } = require('../lib/pdfEngine');
 
 function bufferToDataUrl(buffer, mimeType = 'application/pdf') {
   return `data:${mimeType};base64,${buffer.toString('base64')}`;
@@ -103,4 +103,40 @@ const imageToPdf = async (req, res) => {
   }
 };
 
-module.exports = { compressPDF, imageToPdf };
+const mergePdf = async (req, res) => {
+  try {
+    const user = req.user || null;
+
+    if (!req.files || req.files.length < 2) {
+      return res.status(400).json({ message: 'Upload at least two PDF files to merge.' });
+    }
+
+    const invalid = req.files.find((file) => file.mimetype !== 'application/pdf');
+    if (invalid) {
+      return res.status(400).json({ message: 'Only PDF files are allowed.' });
+    }
+
+    const mergedBuffer = await mergePdfBuffers(req.files.map((file) => file.buffer));
+    const mergedPdf = await require('pdf-lib').PDFDocument.load(mergedBuffer, { ignoreEncryption: true });
+    const pageCount = mergedPdf.getPageCount();
+
+    return res.json({
+      url: bufferToDataUrl(mergedBuffer),
+      originalCount: req.files.length,
+      pageCount,
+      pdfKB: Math.round(mergedBuffer.length / 1024),
+      hasWatermark: true,
+      creditsLeft: user ? user.credits : null,
+      creditCost: 1,
+      engine: 'formfixer-merge-pdf',
+    });
+  } catch (error) {
+    console.error('[MergePDF] Error:', error.message);
+    return res.status(500).json({
+      message: 'PDF merge failed. One of the files may be encrypted or corrupted.',
+      error: error.message,
+    });
+  }
+};
+
+module.exports = { compressPDF, imageToPdf, mergePdf };

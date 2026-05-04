@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import useLanguage from "../hooks/useLanguage";
 import useStore from "../store/useStore";
 import useIsMobile from "../hooks/useIsMobile";
 import useTheme from "../hooks/useTheme";
@@ -81,6 +82,7 @@ export default function Landing() {
   const navigate = useNavigate();
   const { user } = useStore();
   const { theme, isDark, toggleTheme } = useTheme();
+  const { language, toggleLanguage } = useLanguage();
   const isMobile = useIsMobile(820);
   const [query, setQuery] = useState("");
   const [scrollY, setScrollY] = useState(0);
@@ -281,6 +283,9 @@ export default function Landing() {
           <span style={{ ...s.brandText, ...t.brandText }}>FormFixer</span>
         </div>
         <div style={{ ...s.navActions, ...(isMobile ? s.navActionsMobile : null) }}>
+          <button type="button" style={{ ...s.langBtn, ...t.themeBtn, ...(isMobile ? s.navButtonMobile : null) }} onClick={toggleLanguage}>
+            {language === "hi" ? "हिं / EN" : "EN / हिं"}
+          </button>
           <button type="button" style={{ ...s.themeBtn, ...t.themeBtn, ...(isMobile ? s.navButtonMobile : null) }} onClick={toggleTheme}>
             <span>{theme === "dark" ? "Light Mode" : "Dark Mode"}</span>
             <strong>{theme === "dark" ? "☼" : "☾"}</strong>
@@ -374,6 +379,24 @@ export default function Landing() {
 
           <div style={{ ...s.heroStage, ...(isMobile ? s.heroStageMobile : null), ...heroStageStyle }}>
             <WorkflowStage compact={isMobile} style={stageParallaxVars} />
+            <div style={{ ...s.heroAside, ...t.searchResults, ...(isMobile ? s.heroAsideMobile : null) }} className="ff-glass ff-hover-lift">
+              <div style={s.heroAsideBadge}>Ad-ready utility slot</div>
+              <h3 style={{ ...s.heroAsideTitle, ...t.featureTitle }}>Use this space for discovery first</h3>
+              <p style={{ ...s.heroAsideText, ...t.featureDesc }}>
+                Keep it useful now with high-intent links. If you want, this panel can later host a clean AdSense block without hurting the hero copy.
+              </p>
+              <div style={s.heroAsideList}>
+                <button type="button" style={{ ...s.heroAsideLink, ...t.searchIntentBtn }} onClick={() => navigate("/utility/compress-image-to-20kb")}>
+                  Compress image to 20KB
+                </button>
+                <button type="button" style={{ ...s.heroAsideLink, ...t.searchIntentBtn }} onClick={() => navigate("/pdf/merge")}>
+                  Merge PDF online
+                </button>
+                <button type="button" style={{ ...s.heroAsideLink, ...t.searchIntentBtn }} onClick={() => navigate("/tool/imgconvert")}>
+                  Convert PDF or image to JPG
+                </button>
+              </div>
+            </div>
           </div>
         </section>
 
@@ -575,8 +598,10 @@ const s = {
     justifyContent: "space-between",
     gap: 16,
     padding: "18px 20px",
-    position: "sticky",
+    position: "fixed",
     top: 0,
+    left: 0,
+    right: 0,
     zIndex: 8,
     flexWrap: "wrap",
   },
@@ -590,8 +615,15 @@ const s = {
   navActions: { display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" },
   navActionsMobile: { width: "100%", alignItems: "stretch" },
   navButtonMobile: { flex: "1 1 150px", justifyContent: "center" },
-  main: { maxWidth: 1180, margin: "0 auto", padding: "28px 20px 56px", position: "relative", zIndex: 1 },
-  mainMobile: { padding: "18px 12px 44px" },
+  langBtn: {
+    padding: "10px 14px",
+    borderRadius: 999,
+    cursor: "pointer",
+    fontWeight: 800,
+    border: "1px solid transparent",
+  },
+  main: { maxWidth: 1180, margin: "0 auto", padding: "112px 20px 56px", position: "relative", zIndex: 1 },
+  mainMobile: { padding: "98px 12px 44px" },
   hero: {
     padding: "28px 0 18px",
     display: "grid",
@@ -648,13 +680,50 @@ const s = {
     display: "flex",
     alignItems: "flex-start",
     justifyContent: "center",
+    flexDirection: "column",
+    gap: 16,
   },
   heroStageMobile: {
-    minHeight: 180,
+    minHeight: 280,
     width: "100%",
     overflow: "hidden",
     justifyContent: "flex-start",
     paddingTop: 4,
+  },
+  heroAside: {
+    width: "100%",
+    maxWidth: 420,
+    borderRadius: 20,
+    padding: "18px 18px 16px",
+    display: "grid",
+    gap: 12,
+  },
+  heroAsideMobile: {
+    maxWidth: "100%",
+    padding: "14px",
+    gap: 10,
+  },
+  heroAsideBadge: {
+    width: "fit-content",
+    borderRadius: 999,
+    padding: "5px 10px",
+    background: "rgba(249, 115, 22, 0.12)",
+    color: "#f97316",
+    fontSize: 11,
+    fontWeight: 800,
+    letterSpacing: 0.3,
+    textTransform: "uppercase",
+  },
+  heroAsideTitle: { margin: 0, fontSize: 22, lineHeight: 1.12, fontWeight: 900 },
+  heroAsideText: { margin: 0, fontSize: 14, lineHeight: 1.65 },
+  heroAsideList: { display: "grid", gap: 10 },
+  heroAsideLink: {
+    width: "100%",
+    textAlign: "left",
+    padding: "12px 14px",
+    borderRadius: 14,
+    cursor: "pointer",
+    fontWeight: 700,
   },
   searchShell: { position: "relative", width: "100%", maxWidth: 860, borderRadius: 22, padding: 14 },
   searchShellMobile: { padding: 10, borderRadius: 18 },

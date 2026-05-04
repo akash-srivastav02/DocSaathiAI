@@ -662,7 +662,7 @@ export default function ToolPage() {
           </div>
         )}
 
-        <div style={{ ...s.content, ...(isMobile ? s.contentMobile : null), ...(user && isMobile ? s.contentWithFixedTopbar : null) }}>
+        <div style={{ ...s.content, ...(isMobile ? s.contentMobile : null), ...(user ? s.contentWithFixedTopbar : null) }}>
           <div style={s.toolHeader}>
             <button type="button" style={s.backBtn} onClick={() => navigate(user ? "/dashboard" : "/all-tools")}>Back</button>
             <div>
@@ -935,7 +935,7 @@ const s = {
   guestLoginBtn: { background: "#f97316", color: "#fff", border: "none", borderRadius: 999, padding: "10px 16px", fontWeight: 700, cursor: "pointer" },
   content: { maxWidth: 1180, margin: "0 auto", padding: "18px 28px 0" },
   contentMobile: { padding: "16px 14px 0" },
-  contentWithFixedTopbar: { paddingTop: 92 },
+  contentWithFixedTopbar: { paddingTop: 104 },
   toolHeader: { display: "flex", alignItems: "center", gap: 16, marginBottom: 18, flexWrap: "wrap" },
   backBtn: { background: "var(--ff-panel)", border: "1px solid var(--ff-border)", color: "var(--ff-text-soft)", borderRadius: 10, padding: "10px 14px", cursor: "pointer", fontSize: 13, fontWeight: 700 },
   toolTitle: { color: "var(--ff-text)", fontSize: 28, fontWeight: 900, margin: 0, lineHeight: 1.08 },

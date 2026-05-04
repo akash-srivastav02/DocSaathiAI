@@ -78,6 +78,7 @@ export default function Dashboard() {
   const navigate = useNavigate();
   const isMobile = useIsMobile(900);
   const currentCredits = user ? credits ?? user?.credits ?? 0 : 0;
+  const headerUser = user || { name: "Guest", planLabel: "Free Tier", isUnlimited: false };
   const allToolCount = useMemo(
     () => TOOL_CATEGORIES.reduce((sum, category) => sum + category.items.length, 0),
     []
@@ -97,16 +98,14 @@ export default function Dashboard() {
       ) : null}
 
       <div style={s.main}>
-        {user ? (
-          <TopBar
-            user={user}
-            credits={currentCredits}
-            showPlanSummary={false}
-            onLogout={() => { logout(); navigate("/"); }}
-          />
-        ) : null}
+        <TopBar
+          user={headerUser}
+          credits={currentCredits}
+          showPlanSummary={false}
+          onLogout={user ? () => { logout(); navigate("/"); } : undefined}
+        />
 
-        <div style={{ ...s.content, ...(isMobile ? s.contentMobile : null), ...(user && isMobile ? s.contentWithFixedTopbar : null) }}>
+        <div style={{ ...s.content, ...(isMobile ? s.contentMobile : null), ...s.contentWithFixedTopbar }}>
           <section style={s.heroBand}>
             <div style={s.heroCopy}>
               <span style={s.heroBadge}>Complete Document Toolkit</span>
@@ -152,7 +151,7 @@ const s = {
     gap: 30,
   },
   contentMobile: { padding: "18px 14px 44px", gap: 24 },
-  contentWithFixedTopbar: { paddingTop: 92 },
+  contentWithFixedTopbar: { paddingTop: 104 },
   heroBand: {
     display: "flex",
     alignItems: "stretch",

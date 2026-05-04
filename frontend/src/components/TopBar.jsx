@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import useIsMobile from "../hooks/useIsMobile";
+import useLanguage from "../hooks/useLanguage";
 import useTheme from "../hooks/useTheme";
 
 const ACCOUNT_LINKS = [
@@ -14,6 +15,7 @@ export default function TopBar({ user, credits, onLogout, showPlanSummary = true
   const location = useLocation();
   const isMobile = useIsMobile(900);
   const { theme, isDark, toggleTheme } = useTheme();
+  const { language, toggleLanguage } = useLanguage();
   const firstName = user?.name?.split(" ")[0] || "User";
   const planLabel = user?.planLabel || "Free Tier";
   const usageSummary = user?.isUnlimited ? "Unlimited access" : `${credits ?? 0} downloads left`;
@@ -49,6 +51,12 @@ export default function TopBar({ user, credits, onLogout, showPlanSummary = true
       </button>
 
       <div style={{ ...s.right, ...(isMobile ? s.rightMobile : null) }}>
+        <button type="button" style={{ ...s.langBtn, ...t.langBtn }} onClick={toggleLanguage} aria-label="Toggle language">
+          <span style={s.langCode}>EN</span>
+          <span style={{ ...s.langSlider, ...(language === "hi" ? s.langSliderHindi : null) }} />
+          <span style={s.langCode}>हिं</span>
+        </button>
+
         <button type="button" style={{ ...s.themeBtn, ...t.themeBtn }} onClick={toggleTheme} aria-label="Toggle theme">
           {theme === "dark" ? "☼" : "☾"}
         </button>
@@ -84,6 +92,11 @@ export default function TopBar({ user, credits, onLogout, showPlanSummary = true
                 <p style={{ ...s.accountName, ...t.accountName }}>{firstName}</p>
               </div>
               <div style={s.accountLinks}>
+                {isMobile ? (
+                  <button type="button" style={{ ...s.accountLink, ...t.accountLink }} onClick={toggleLanguage}>
+                    Language: {language === "hi" ? "Hindi" : "English"}
+                  </button>
+                ) : null}
                 {ACCOUNT_LINKS.map((item) => (
                   <button
                     key={item.path}
@@ -119,15 +132,15 @@ const s = {
     alignItems: "center",
     justifyContent: "space-between",
     padding: "14px 28px",
-    position: "sticky",
+    position: "fixed",
     top: 0,
-    zIndex: 10,
+    left: 292,
+    right: 0,
+    zIndex: 46,
     gap: 12,
   },
   topbarMobile: {
     padding: "10px 14px 10px 62px",
-    position: "fixed",
-    top: 0,
     left: 0,
     right: 0,
     zIndex: 46,
@@ -146,6 +159,34 @@ const s = {
   greeting: { fontSize: 17, margin: 0, lineHeight: 1.4 },
   right: { display: "flex", alignItems: "center", gap: 12 },
   rightMobile: { gap: 8 },
+  langBtn: {
+    position: "relative",
+    display: "inline-flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: 8,
+    borderRadius: 999,
+    padding: "8px 10px",
+    border: "1px solid transparent",
+    background: "transparent",
+    cursor: "pointer",
+    fontWeight: 800,
+    fontSize: 12,
+    minWidth: 80,
+    overflow: "hidden",
+  },
+  langCode: { position: "relative", zIndex: 1 },
+  langSlider: {
+    position: "absolute",
+    top: 4,
+    left: 5,
+    width: 31,
+    height: "calc(100% - 8px)",
+    borderRadius: 999,
+    background: "linear-gradient(135deg,#f97316,#ea580c)",
+    transition: "transform .18s ease",
+  },
+  langSliderHindi: { transform: "translateX(30px)" },
   mobileIntro: { minWidth: 0, display: "flex", flexDirection: "column", gap: 1 },
   mobileIntroLabel: {
     fontSize: 18,
@@ -262,6 +303,7 @@ const darkTheme = {
   mobileIntroName: { color: "#94a3b8" },
   greeting: { color: "#94a3b8" },
   greetingStrong: { color: "#f1f5f9" },
+  langBtn: { color: "#e2e8f0", background: "#111827", borderColor: "#334155" },
   themeBtn: { color: "#e2e8f0", background: "#111827", borderColor: "#334155" },
   creditPill: { background: "#f9731614", border: "1px solid #f9731630" },
   creditLabel: { color: "#94a3b8" },
@@ -286,6 +328,7 @@ const lightTheme = {
   mobileIntroName: { color: "#6b7789" },
   greeting: { color: "#6b7789" },
   greetingStrong: { color: "#162033" },
+  langBtn: { color: "#162033", background: "#fff", borderColor: "rgba(133, 99, 66, 0.15)" },
   themeBtn: { color: "#162033", background: "#fff", borderColor: "rgba(133, 99, 66, 0.15)" },
   creditPill: { background: "rgba(216, 90, 6, 0.08)", border: "1px solid rgba(216, 90, 6, 0.18)" },
   creditLabel: { color: "#64748b" },

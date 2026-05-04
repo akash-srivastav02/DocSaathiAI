@@ -303,7 +303,7 @@ export default function MergerPage() {
           </div>
         )}
 
-        <div style={{ ...s.content, ...(isMobile ? s.contentMobile : {}) }}>
+        <div style={{ ...s.content, ...(isMobile ? s.contentMobile : {}), ...(user ? s.contentWithFixedTopbar : {}) }}>
           <div style={{ ...s.header, ...(isMobile ? s.headerMobile : {}) }}>
             <div style={{ ...s.headerActions, ...(isMobile ? s.headerActionsMobile : {}) }}>
               <button style={s.backBtn} onClick={() => navigate(user ? "/dashboard" : "/")}>Back</button>
@@ -440,6 +440,7 @@ const s = {
   guestLoginBtn: { background: "#f97316", color: "#fff", border: "none", borderRadius: 999, padding: "10px 16px", fontWeight: 700, cursor: "pointer", flexShrink: 0 },
   content: { padding: "18px 24px", display: "flex", flexDirection: "column", gap: 16, maxWidth: 880 },
   contentMobile: { padding: "16px", gap: 14 },
+  contentWithFixedTopbar: { paddingTop: 104 },
   link: { color: "#f97316", cursor: "pointer", fontWeight: 700 },
   header: { display: "flex", alignItems: "center", gap: 16 },
   headerMobile: { flexDirection: "column", alignItems: "stretch", gap: 12 },

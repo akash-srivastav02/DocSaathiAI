@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const historySchema = new mongoose.Schema({
   user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-  toolType: { type: String, enum: ['photo', 'signature', 'sigclean', 'imgconvert', 'crop', 'imgcompress', 'imgtopdf', 'merger', 'pdfcompress', 'passportsheet', 'pdfeditor', 'resume'] },
+  toolType: { type: String, enum: ['photo', 'signature', 'sigclean', 'imgconvert', 'crop', 'imgcompress', 'imgtopdf', 'mergepdf', 'merger', 'pdfcompress', 'passportsheet', 'pdfeditor', 'resume'] },
   examName: String,
   originalUrl: String,
   processedUrl: String,

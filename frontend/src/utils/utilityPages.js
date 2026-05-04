@@ -59,6 +59,15 @@ const converterPages = [
     bestFor: "JFIF and older JPEG-format images",
   },
   {
+    slug: "merge-pdf-online",
+    title: "Merge PDF",
+    summary: "Combine multiple PDF files into one clean merged PDF for uploads, sharing, and print workflows.",
+    route: "/pdf/merge",
+    category: "Converter",
+    kind: "converter",
+    bestFor: "Certificates, marksheets, scanned PDFs and combined uploads",
+  },
+  {
     slug: "image-to-pdf-online",
     title: "Image to PDF",
     summary: "Convert multiple images into one clean PDF without switching between different sites.",
