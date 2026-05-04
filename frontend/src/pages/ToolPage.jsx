@@ -7,6 +7,7 @@ import AuthModal from "../components/AuthModal";
 import Sidebar from "../components/Sidebar";
 import TopBar from "../components/TopBar";
 import useIsMobile from "../hooks/useIsMobile";
+import useLanguage from "../hooks/useLanguage";
 
 const FEATURES = {
   photo: {
@@ -403,11 +404,140 @@ export default function ToolPage() {
   const { toolId } = useParams();
   const navigate = useNavigate();
   const isMobile = useIsMobile(900);
+  const { language } = useLanguage();
   const [searchParams] = useSearchParams();
   const { user, credits, updateCredits, logout } = useStore();
   const currentCredits = user ? (credits ?? user?.credits ?? 0) : 0;
 
-  const tool = FEATURES[toolId];
+  const copy = language === "hi"
+    ? {
+        loginToDownload: "Download ke liye login karo",
+        previewSubtitle: "Preview pehle available hai. Final download ke liye quick login chahiye.",
+        guestBar: "Pehle preview use karo. Final clean download tabhi login karo jab chahiye ho.",
+        login: "Login / Sign Up",
+        back: "Back",
+        planUse: "plan use on final export",
+        comingSoon: "jaldi aa raha hai",
+        soonText: "Catalog ready hai. Is tool ka processor next build step hai.",
+        uploadArea: "Upload Area",
+        browse: "Browse File",
+        liveCamera: "Live Camera",
+        configuration: "Configuration",
+        selectExam: "Select Exam",
+        chooseExam: "-- Choose Exam --",
+        loadingExamSpecs: "Exam specs load ho rahe hain...",
+        guidance: "Photo Guidance",
+        guide1: "Front-facing aur clearly visible source photo ya signature use karo.",
+        guide2: "Better output ke liye good lighting aur plain background prefer karo.",
+        guide3: "Low-resolution ya heavily cropped social-media images avoid karo.",
+        generate: "Generate Preview",
+        generating: "Generating Preview...",
+        unlock: "Unlocking Download...",
+        again: "Download Again",
+        finalFile: "Download Final File",
+        processAnother: "Process Another",
+        uploadFirst: "Please upload an image first.",
+        chooseFirst: "Please choose your exam first.",
+        processingFailed: "Processing failed.",
+        unlockFailed: "Could not unlock download.",
+        liveCameraTitle: "Live Camera",
+        camDenied: "Camera permission denied. Browser settings me camera allow karke retry karo.",
+        capture: "Capture",
+        capturing: "Capturing...",
+        cancel: "Cancel",
+        close: "Close",
+        firstPdf: "PDF ka first page JPG me convert hoga",
+        supportedWithPdf: "JPG, PNG, WEBP, HEIC, PDF supported",
+        supportedImages: "JPG, PNG, WEBP supported",
+        targetSize: "Please enter target size first.",
+      }
+    : {
+        loginToDownload: "Login to Download",
+        previewSubtitle: "Preview is available first. Final download needs quick login.",
+        guestBar: "Use preview first. Login only when you want the final clean download.",
+        login: "Login / Sign Up",
+        back: "Back",
+        planUse: "plan use on final export",
+        comingSoon: "is coming soon",
+        soonText: "The catalog is ready. The processor for this tool is the next build step.",
+        uploadArea: "Upload Area",
+        browse: "Browse File",
+        liveCamera: "Live Camera",
+        configuration: "Configuration",
+        selectExam: "Select Exam",
+        chooseExam: "-- Choose Exam --",
+        loadingExamSpecs: "Loading exam specs...",
+        guidance: "Photo Guidance",
+        guide1: "Use a front-facing, clearly visible source photo or signature.",
+        guide2: "Prefer good lighting and plain background for better output quality.",
+        guide3: "Avoid low-resolution or heavily cropped social-media images.",
+        generate: "Generate Preview",
+        generating: "Generating Preview...",
+        unlock: "Unlocking Download...",
+        again: "Download Again",
+        finalFile: "Download Final File",
+        processAnother: "Process Another",
+        uploadFirst: "Please upload an image first.",
+        chooseFirst: "Please choose your exam first.",
+        processingFailed: "Processing failed.",
+        unlockFailed: "Could not unlock download.",
+        liveCameraTitle: "Live Camera",
+        camDenied: "Camera permission denied. Allow camera in browser settings, then retry.",
+        capture: "Capture",
+        capturing: "Capturing...",
+        cancel: "Cancel",
+        close: "Close",
+        firstPdf: "First PDF page will be converted to JPG",
+        supportedWithPdf: "JPG, PNG, WEBP, HEIC, PDF supported",
+        supportedImages: "JPG, PNG, WEBP supported",
+        targetSize: "Please enter target size first.",
+      };
+
+  const toolBase = FEATURES[toolId];
+  const tool = useMemo(() => {
+    if (!toolBase) return null;
+    const localized = {
+      photo: {
+        label: language === "hi" ? "Exam Photo" : "Exam Photo",
+        desc: language === "hi" ? "Resize, compress aur exam-ready photo output prepare karo." : "Resize, compress, and prepare exam-ready photo output.",
+        uploadLabel: language === "hi" ? "Passport-style source photo upload karo" : "Upload passport-style source photo",
+      },
+      signature: {
+        label: language === "hi" ? "Exam Signature" : "Exam Signature",
+        desc: language === "hi" ? "Signature ko exact exam requirements ke hisaab se resize aur fit karo." : "Resize and fit signature to exact exam requirements.",
+        uploadLabel: language === "hi" ? "Signature image upload karo" : "Upload signature image",
+      },
+      sigclean: {
+        label: language === "hi" ? "Signature Cleaner" : "Signature Cleaner",
+        desc: language === "hi" ? "Signatures ko auto clean, trim aur blacken karke clearer uploads pao." : "Auto clean, trim and blacken signatures for clearer uploads.",
+        uploadLabel: language === "hi" ? "Clean karne ke liye signature upload karo" : "Upload signature to clean",
+      },
+      imgcompress: {
+        label: language === "hi" ? "Image Compressor" : "Image Compressor",
+        desc: language === "hi" ? "Image ko exact KB ya MB target par compress karo." : "Compress image to exact KB or MB target.",
+        uploadLabel: language === "hi" ? "Compress karne ke liye image upload karo" : "Upload image to compress",
+      },
+      imgconvert: {
+        label: language === "hi" ? "Universal Image Converter" : "Universal Image Converter",
+        desc: language === "hi" ? "Images ya PDF ke first page ko clean JPG/JPEG output me convert karo." : "Convert images or the first page of a PDF into clean JPG/JPEG output.",
+        uploadLabel: language === "hi" ? "JPG me convert karne ke liye image ya PDF upload karo" : "Upload image or PDF to convert into JPG",
+      },
+      crop: {
+        label: language === "hi" ? "Custom Image Resizer" : "Custom Image Resizer",
+        desc: language === "hi" ? "Manual crop aur resize ke saath zoom, positioning aur custom output controls use karo." : "Manual crop and resize with zoom, positioning and custom output controls.",
+        uploadLabel: language === "hi" ? "Crop karne ke liye image upload karo" : "Upload image to crop",
+      },
+      pdfeditor: {
+        label: language === "hi" ? "PDF Editor" : "PDF Editor",
+        desc: language === "hi" ? "PDF text editing tools jaldi aa rahe hain." : "Upcoming PDF text editing tools.",
+      },
+      resume: {
+        label: language === "hi" ? "Resume Builder" : "Resume Builder",
+        desc: language === "hi" ? "ATS-friendly resume builder jaldi aa raha hai." : "Upcoming ATS-friendly resume builder.",
+      },
+    }[toolId] || {};
+    return { ...toolBase, ...localized };
+  }, [language, toolBase, toolId]);
   const isCropTool = toolId === "crop";
   const isImageCompressTool = toolId === "imgcompress";
   const isSignatureCleanerTool = toolId === "sigclean";
@@ -511,8 +641,8 @@ export default function ToolPage() {
     setFieldError("");
     setError("");
 
-    if (!file) return setFieldError("Please upload an image first.");
-    if (needsExam && !selectedExam) return setFieldError("Please choose your exam first.");
+    if (!file) return setFieldError(copy.uploadFirst);
+    if (needsExam && !selectedExam) return setFieldError(copy.chooseFirst);
 
     setProcessing(true);
     try {
@@ -536,7 +666,7 @@ export default function ToolPage() {
       }
 
       if (isImageCompressTool) {
-        if (!targetKB) return setFieldError("Please enter target size first.");
+        if (!targetKB) return setFieldError(copy.targetSize);
         const compressed = await renderCompressedImage({
           src: preview,
           targetKB,
@@ -581,7 +711,7 @@ export default function ToolPage() {
       setResult({ ...data, kind: "remote" });
       setDone(true);
     } catch (err) {
-      setError(err.response?.data?.message || "Processing failed.");
+      setError(err.response?.data?.message || copy.processingFailed);
     } finally {
       setProcessing(false);
     }
@@ -616,7 +746,7 @@ export default function ToolPage() {
     try {
       await handleDownloadAfterAuth();
     } catch (err) {
-      setError(err.response?.data?.message || "Could not unlock download.");
+      setError(err.response?.data?.message || copy.unlockFailed);
     } finally {
       setDownloading(false);
     }
@@ -644,8 +774,8 @@ export default function ToolPage() {
             setShowAuthModal(false);
             await handleDownloadAfterAuth();
           }}
-          title={`Login to Download ${tool.label}`}
-          subtitle="Preview is available first. Final download needs quick login."
+          title={`${copy.loginToDownload} ${tool.label}`}
+          subtitle={copy.previewSubtitle}
         />
       )}
 
@@ -657,14 +787,14 @@ export default function ToolPage() {
           <TopBar user={user} credits={currentCredits} onLogout={() => { logout(); navigate("/"); }} />
         ) : (
           <div style={{ ...s.guestBar, ...(isMobile ? s.guestBarMobile : null) }}>
-            <span>Use preview first. Login only when you want the final clean download.</span>
-            <button style={s.guestLoginBtn} onClick={() => setShowAuthModal(true)}>Login / Sign Up</button>
+            <span>{copy.guestBar}</span>
+            <button style={s.guestLoginBtn} onClick={() => setShowAuthModal(true)}>{copy.login}</button>
           </div>
         )}
 
         <div style={{ ...s.content, ...(isMobile ? s.contentMobile : null), ...(user ? s.contentWithFixedTopbar : null) }}>
           <div style={s.toolHeader}>
-            <button type="button" style={s.backBtn} onClick={() => navigate(user ? "/dashboard" : "/all-tools")}>Back</button>
+            <button type="button" style={s.backBtn} onClick={() => navigate(user ? "/dashboard" : "/all-tools")}>{copy.back}</button>
             <div>
               <h1 style={s.toolTitle}>{tool.label}</h1>
               <p style={s.toolDesc}>{tool.desc} · {tool.credit} plan use on final export</p>
@@ -680,7 +810,7 @@ export default function ToolPage() {
             <>
               <div style={{ ...s.workspace, ...(isMobile ? s.workspaceMobile : null) }}>
                 <div style={s.uploadPanel}>
-                  <div style={s.panelLabel}>Upload Area</div>
+                  <div style={s.panelLabel}>{copy.uploadArea}</div>
                   <div
                       style={{
                         ...s.uploadZone,
@@ -699,7 +829,7 @@ export default function ToolPage() {
                           PDF
                         </div>
                         <p style={s.uploadText}>{file.name}</p>
-                        <p style={s.uploadSub}>First PDF page will be converted to JPG</p>
+                        <p style={s.uploadSub}>{copy.firstPdf}</p>
                       </>
                      ) : (
                        <>
@@ -707,7 +837,7 @@ export default function ToolPage() {
                           {tool.icon}
                         </div>
                         <p style={s.uploadText}>{tool.uploadLabel}</p>
-                        <p style={s.uploadSub}>{isImageConverterTool ? "JPG, PNG, WEBP, HEIC, PDF supported" : "JPG, PNG, WEBP supported"}</p>
+                        <p style={s.uploadSub}>{isImageConverterTool ? copy.supportedWithPdf : copy.supportedImages}</p>
                       </>
                     )}
                   </div>
@@ -720,8 +850,8 @@ export default function ToolPage() {
                     disabled={done}
                   />
                   <div style={s.uploadActions}>
-                    <button type="button" style={s.btnSecondary} onClick={() => !done && document.getElementById("toolFileInput")?.click()} disabled={done}>Browse File</button>
-                    <button type="button" style={s.btnSecondary} onClick={() => !done && setShowCamera(true)} disabled={done}>Live Camera</button>
+                    <button type="button" style={s.btnSecondary} onClick={() => !done && document.getElementById("toolFileInput")?.click()} disabled={done}>{copy.browse}</button>
+                    <button type="button" style={s.btnSecondary} onClick={() => !done && setShowCamera(true)} disabled={done}>{copy.liveCamera}</button>
                   </div>
 
                   {isCropTool && preview && !done && (
@@ -743,19 +873,19 @@ export default function ToolPage() {
                 </div>
 
                 <div style={s.configPanel}>
-                  <div style={s.panelLabel}>Configuration</div>
+                  <div style={s.panelLabel}>{copy.configuration}</div>
 
                   {needsExam && (
                     <div style={s.configCard}>
-                      <div style={s.configTitle}>Select Exam</div>
+                      <div style={s.configTitle}>{copy.selectExam}</div>
                       <select value={selectedExam} onChange={(e) => setSelectedExam(e.target.value)} style={s.select}>
-                        <option value="">-- Choose Exam --</option>
+                        <option value="">{copy.chooseExam}</option>
                         {examList.map((exam) => (
                           <option key={exam} value={exam}>{exam}</option>
                         ))}
                       </select>
                       {specsLoading ? (
-                        <p style={s.helperText}>Loading exam specs...</p>
+                        <p style={s.helperText}>{copy.loadingExamSpecs}</p>
                       ) : liveSpec ? (
                         <div style={s.specGrid}>
                           <div style={s.specBox}><span style={s.specKey}>Dimensions</span><strong style={s.specVal}>{liveSpec.w} × {liveSpec.h}px</strong></div>
@@ -769,11 +899,11 @@ export default function ToolPage() {
 
                     {!isCropTool && !isImageCompressTool && !isSignatureCleanerTool && !isImageConverterTool && (
                       <div style={s.configCard}>
-                        <div style={s.configTitle}>Photo Guidance</div>
+                        <div style={s.configTitle}>{copy.guidance}</div>
                         <ul style={s.guideList}>
-                        <li>Use a front-facing, clearly visible source photo or signature.</li>
-                        <li>Prefer good lighting and plain background for better output quality.</li>
-                        <li>Avoid low-resolution or heavily cropped social-media images.</li>
+                        <li>{copy.guide1}</li>
+                        <li>{copy.guide2}</li>
+                        <li>{copy.guide3}</li>
                       </ul>
                       </div>
                     )}
@@ -871,7 +1001,7 @@ export default function ToolPage() {
 
                   {!done && (
                     <button type="button" style={s.btnPrimary} onClick={handleProcess} disabled={processing}>
-                      {processing ? "Generating Preview..." : "Generate Preview"}
+                      {processing ? copy.generating : copy.generate}
                     </button>
                   )}
                 </div>
@@ -915,7 +1045,7 @@ export default function ToolPage() {
                     <button type="button" style={s.btnPrimary} onClick={handleDownload} disabled={downloading}>
                       {downloading ? "Unlocking Download..." : downloadUnlocked ? "Download Again" : `Download Final File (${tool.credit} use)`}
                     </button>
-                    <button type="button" style={s.btnSecondary} onClick={handleReset}>Process Another</button>
+                    <button type="button" style={s.btnSecondary} onClick={handleReset}>{copy.processAnother}</button>
                   </div>
                 </div>
               )}

@@ -4,6 +4,7 @@ import useStore from "../store/useStore";
 import Sidebar from "../components/Sidebar";
 import TopBar from "../components/TopBar";
 import useIsMobile from "../hooks/useIsMobile";
+import useLanguage from "../hooks/useLanguage";
 
 const PLANS = [
   {
@@ -122,9 +123,6 @@ const COMPARISON = [
   },
 ];
 
-  const singleFixPlan = PLANS.find((plan) => plan.id === "single");
-const paidPlans = PLANS.filter((plan) => plan.id !== "single");
-
 async function openRazorpay({ order, plan, user, onSuccess, onFailure }) {
   if (!window.Razorpay) {
     await new Promise((resolve, reject) => {
@@ -211,13 +209,13 @@ function PlanCard({ plan, onBuy, loading, compact }) {
 
       {plan.note && <p style={{ ...s.fupNote, ...(compact ? s.fupNoteMobile : null) }}>{plan.note}</p>}
 
-      <button
-        onClick={() => onBuy(plan)}
-        disabled={loading}
-        style={{ ...s.buyBtn, ...(compact ? s.buyBtnMobile : null), background: plan.color, opacity: loading ? 0.6 : 1 }}
-      >
-        {loading ? "Opening..." : `Buy ${plan.name}`}
-      </button>
+        <button
+          onClick={() => onBuy(plan)}
+          disabled={loading}
+          style={{ ...s.buyBtn, ...(compact ? s.buyBtnMobile : null), background: plan.color, opacity: loading ? 0.6 : 1 }}
+        >
+          {loading ? plan.loadingLabel : plan.buyLabel}
+        </button>
     </div>
   );
 }
@@ -225,11 +223,129 @@ function PlanCard({ plan, onBuy, loading, compact }) {
 export default function Pricing() {
   const navigate = useNavigate();
   const isMobile = useIsMobile(900);
+  const { language } = useLanguage();
   const { user, credits, updateCredits, logout } = useStore();
   const currentCredits = credits ?? user?.credits ?? 0;
   const [loadingPlan, setLoadingPlan] = useState(null);
   const [payError, setPayError] = useState("");
   const [paySuccess, setPaySuccess] = useState("");
+
+  const copy = language === "hi"
+    ? {
+        pageTitle: "Apna Workspace Plan Chuno",
+        pageSub: "Free se start karo, phir tabhi upgrade karo jab exam season me zyada downloads aur smoother workflow chahiye ho.",
+        freeTitle: "Free Tier - 5 exports + har 7 din me 5 aur",
+        freeSub: "Pehle tools try karo. Zyada output volume chahiye ho tabhi upgrade karo.",
+        singleTitle: `Single Pass - Rs.${PLANS.find((plan) => plan.id === "single").price} me 1 final export`,
+        singleSub: "Ek urgent file ke liye best jab full monthly tier ki zarurat na ho.",
+        oneTime: "ONE-TIME",
+        singleInfo: "Preview ke baad ek final download ke liye use hota hai.",
+        successPrefix: "Payment successful!",
+        unlimitedActivated: "Unlimited access activate ho gaya",
+        exportsAdded: "exports add hue",
+        enjoy: "Ab enjoy karo",
+        verifyFailed: "Payment receive hua, par verification fail ho gaya. Payment ID ke saath support se contact karo.",
+        couldNotStart: "Payment start nahi ho paya. Dobara try karo.",
+        goDashboard: "Dashboard par jao",
+        warning: "Warning",
+        payModes: "Razorpay · UPI · Cards · Net Banking · Paytm · PhonePe · GPay",
+        tableTitle: "FormFixer kyu better lagta hai",
+        tableSub: "Tools magical nahi hain, par poora experience faster, clearer aur real exam workflow ke around built hai.",
+        feature: "Feature",
+        otherSites: "Other Sites",
+        us: "FormFixer",
+        cta: "Free try ke liye enough hai. Starter regular use ke liye best hai, Pro busy months ke liye strong hai, aur Unlimited heavy daily workflow ke liye.",
+      }
+    : {
+        pageTitle: "Choose Your Workspace Plan",
+        pageSub: "Start free, then upgrade only when your exam season needs more downloads, retries, and smoother workflow.",
+        freeTitle: "Free Tier - 5 exports + 5 every 7 days",
+        freeSub: "Try the tools first. Upgrade only when you need more output volume.",
+        singleTitle: `Single Pass - Rs.${PLANS.find((plan) => plan.id === "single").price} for 1 final export`,
+        singleSub: "Best for one urgent file when you do not need a full monthly tier.",
+        oneTime: "ONE-TIME",
+        singleInfo: "Used for one final download after preview.",
+        successPrefix: "Payment successful!",
+        unlimitedActivated: "Unlimited access activated",
+        exportsAdded: "exports added",
+        enjoy: "Enjoy",
+        verifyFailed: "Payment received but verification failed. Contact support with your payment ID.",
+        couldNotStart: "Could not start payment. Try again.",
+        goDashboard: "Go to Dashboard",
+        warning: "Warning",
+        payModes: "Razorpay · UPI · Cards · Net Banking · Paytm · PhonePe · GPay",
+        tableTitle: "Why FormFixer Feels Better",
+        tableSub: "Not because the tools are magical, but because the full experience is faster, clearer, and built around actual exam workflows.",
+        feature: "Feature",
+        otherSites: "Other Sites",
+        us: "FormFixer",
+        cta: "Free is enough to try. Starter works for regular use, Pro fits busy application months, and Unlimited is for heavy daily workflows.",
+      };
+
+  const localizedPlans = PLANS.map((plan) => {
+    const localized = {
+      single: {
+        name: language === "hi" ? "Single Pass" : "Single Pass",
+        period: language === "hi" ? "one-time" : "one-time",
+        tag: language === "hi" ? "Sirf ek urgent file ke liye" : "For one urgent file only",
+        creditsLabel: language === "hi" ? "1 final export" : "1 final export",
+        validity: language === "hi" ? "One-time" : "One-time",
+        perks: language === "hi" ? ["1 Final Export", "No watermark", "Ek urgent one-off use ke liye best"] : ["1 Final Export", "No watermark", "Perfect for urgent one-off use"],
+      },
+      starter: {
+        name: language === "hi" ? "Starter Tier" : "Starter Tier",
+        badge: language === "hi" ? "Limited-Time Launch" : "Limited-Time Launch",
+        tag: language === "hi" ? "Light regular use ke liye best" : "Best for light regular use",
+        validity: language === "hi" ? "30 Days" : "30 Days",
+        perks: language === "hi" ? ["40 Final Exports", "Valid 30 Days", "All core tools", "Regular form work ke liye best"] : ["40 Final Exports", "Valid 30 Days", "All core tools", "Best for regular form work"],
+      },
+      pro: {
+        name: language === "hi" ? "Pro Tier" : "Pro Tier",
+        badge: language === "hi" ? "Repeat Use ke liye best" : "Best for Repeat Use",
+        tag: language === "hi" ? "Heavy application months ke liye" : "Built for heavy application months",
+        validity: language === "hi" ? "30 Days" : "30 Days",
+        perks: language === "hi" ? ["150 Final Exports", "Valid 30 Days", "All tool categories", "Active users ke liye best"] : ["150 Final Exports", "Valid 30 Days", "All tool categories", "Best for active users"],
+      },
+      max: {
+        name: language === "hi" ? "Unlimited Tier" : "Unlimited Tier",
+        badge: language === "hi" ? "Power Users ke liye" : "For Power Users",
+        tag: language === "hi" ? "Heavy daily work ke liye best" : "Best for daily high-volume work",
+        validity: language === "hi" ? "30 Days" : "30 Days",
+        perks: language === "hi" ? ["Unlimited exports*", "Valid 30 Days", "All features", "Heavy daily use ke liye best"] : ["Unlimited exports*", "Valid 30 Days", "All features", "Best for heavy daily use"],
+        note: language === "hi" ? "* Fair usage policy: max 80 operations/day" : "* Fair usage policy: max 80 operations/day",
+      },
+    }[plan.id];
+
+    return {
+      ...plan,
+      ...localized,
+      buyLabel: language === "hi" ? `${localized.name} kharido` : `Buy ${localized.name}`,
+      loadingLabel: language === "hi" ? "Opening..." : "Opening...",
+    };
+  });
+
+  const comparisonRows = language === "hi"
+    ? COMPARISON.map((row) => ({
+        ...row,
+        feature: ({
+          "Exam-ready presets": "Exam-ready presets",
+          "Multiple tasks in one place": "Ek jagah multiple tasks",
+          "Clean mobile experience": "Clean mobile experience",
+          "Preview before payment": "Payment se pehle preview",
+          "Urgent one-time use": "Urgent one-time use",
+          "Output guidance": "Output guidance",
+          "Application tracking": "Cleaner workflow",
+          "Search intent coverage": "Search intent coverage",
+          "Value for repeat users": "Repeat users ke liye value",
+          "Application season support": "Busy application support",
+        }[row.feature] || row.feature),
+        sites: row.sites,
+        us: row.us,
+      }))
+    : COMPARISON;
+
+  const singleFixPlan = localizedPlans.find((plan) => plan.id === "single");
+  const paidPlans = localizedPlans.filter((plan) => plan.id !== "single");
 
   const handleBuy = async (plan) => {
     setPayError("");
@@ -254,14 +370,14 @@ export default function Pricing() {
 
             updateCredits(result.credits);
             setPaySuccess(
-              `Payment successful! ${
+              `${copy.successPrefix} ${
                 result.creditsAdded === "Unlimited"
-                  ? "Unlimited access activated"
-                  : `${result.creditsAdded} exports added`
-                }. Enjoy ${plan.name}!`
+                  ? copy.unlimitedActivated
+                  : `${result.creditsAdded} ${copy.exportsAdded}`
+                }. ${copy.enjoy} ${plan.name}!`
             );
           } catch {
-            setPayError("Payment received but verification failed. Contact support with your payment ID.");
+            setPayError(copy.verifyFailed);
           }
         },
         onFailure: (message) => {
@@ -269,7 +385,7 @@ export default function Pricing() {
         },
       });
     } catch (err) {
-      setPayError(err.response?.data?.message || "Could not start payment. Try again.");
+      setPayError(err.response?.data?.message || copy.couldNotStart);
     } finally {
       setLoadingPlan(null);
     }
@@ -282,15 +398,15 @@ export default function Pricing() {
         <TopBar user={user} credits={currentCredits} onLogout={() => { logout(); navigate("/"); }} />
           <div style={{ ...s.content, ...(isMobile ? s.contentMobile : null), ...s.contentWithFixedTopbar }}>
           <div style={s.pageHdr}>
-            <h1 style={{ ...s.pageTitle, ...(isMobile ? s.pageTitleMobile : null) }}>Choose Your Workspace Plan</h1>
-              <p style={{ ...s.pageSub, ...(isMobile ? s.pageSubMobile : null) }}>Start free, then upgrade only when your exam season needs more downloads, retries, and smoother workflow.</p>
+            <h1 style={{ ...s.pageTitle, ...(isMobile ? s.pageTitleMobile : null) }}>{copy.pageTitle}</h1>
+              <p style={{ ...s.pageSub, ...(isMobile ? s.pageSubMobile : null) }}>{copy.pageSub}</p>
           </div>
 
           <div style={{ ...s.freeBanner, ...(isMobile ? s.bannerMobile : null) }}>
             <span style={s.bannerIcon}>FR</span>
             <div style={{ flex: 1 }}>
-              <p style={{ ...s.freeTitle, ...(isMobile ? s.bannerTitleMobile : null) }}>Free Tier - 5 exports + 5 every 7 days</p>
-              <p style={{ ...s.freeSub, ...(isMobile ? s.bannerSubMobile : null) }}>Try the tools first. Upgrade only when you need more output volume.</p>
+              <p style={{ ...s.freeTitle, ...(isMobile ? s.bannerTitleMobile : null) }}>{copy.freeTitle}</p>
+              <p style={{ ...s.freeSub, ...(isMobile ? s.bannerSubMobile : null) }}>{copy.freeSub}</p>
             </div>
             <span style={s.freeBadge}>FREE</span>
           </div>
@@ -298,23 +414,23 @@ export default function Pricing() {
           <div style={{ ...s.singleBanner, ...(isMobile ? s.bannerMobile : null) }}>
             <span style={s.bannerIcon}>{singleFixPlan.icon}</span>
             <div style={{ flex: 1, minWidth: 220 }}>
-              <p style={{ ...s.singleTitle, ...(isMobile ? s.bannerTitleMobile : null) }}>Single Pass - Rs.{singleFixPlan.price} for 1 final export</p>
-              <p style={{ ...s.singleSub, ...(isMobile ? s.bannerSubMobile : null) }}>Best for one urgent file when you do not need a full monthly tier.</p>
+              <p style={{ ...s.singleTitle, ...(isMobile ? s.bannerTitleMobile : null) }}>{copy.singleTitle}</p>
+              <p style={{ ...s.singleSub, ...(isMobile ? s.bannerSubMobile : null) }}>{copy.singleSub}</p>
             </div>
             <div style={{ ...s.singleActionWrap, ...(isMobile ? s.singleActionWrapMobile : null) }}>
-              <span style={s.singleBadge}>ONE-TIME</span>
-              <span style={s.singleInfo}>Used for one final download after preview.</span>
+              <span style={s.singleBadge}>{copy.oneTime}</span>
+              <span style={s.singleInfo}>{copy.singleInfo}</span>
             </div>
           </div>
 
           {paySuccess && (
             <div style={s.successAlert}>
               {paySuccess}
-              <button onClick={() => navigate("/dashboard")} style={s.alertBtn}>Go to Dashboard</button>
+              <button onClick={() => navigate("/dashboard")} style={s.alertBtn}>{copy.goDashboard}</button>
             </div>
           )}
 
-          {payError && <div style={s.errorAlert}>Warning: {payError}</div>}
+          {payError && <div style={s.errorAlert}>{copy.warning}: {payError}</div>}
 
           <div style={{ ...s.grid, ...(isMobile ? s.gridMobile : null) }}>
             {paidPlans.map((plan) => (
@@ -331,15 +447,15 @@ export default function Pricing() {
           <p style={{ ...s.payNote, ...(isMobile ? s.payNoteMobile : null) }}>Razorpay · UPI · Cards · Net Banking · Paytm · PhonePe · GPay</p>
 
           <div>
-            <h2 style={{ ...s.tableTitle, ...(isMobile ? s.tableTitleMobile : null) }}>Why FormFixer Feels Better</h2>
-            <p style={{ ...s.tableSub, ...(isMobile ? s.tableSubMobile : null) }}>Not because the tools are magical, but because the full experience is faster, clearer, and built around actual exam workflows.</p>
+            <h2 style={{ ...s.tableTitle, ...(isMobile ? s.tableTitleMobile : null) }}>{copy.tableTitle}</h2>
+            <p style={{ ...s.tableSub, ...(isMobile ? s.tableSubMobile : null) }}>{copy.tableSub}</p>
             <div style={{ ...s.table, ...(isMobile ? s.tableMobile : null) }}>
               <div style={s.tableHead}>
-                <div style={{ ...s.cell, flex: 1.55, color: "#64748b", fontWeight: 700, fontSize: 11, textTransform: "uppercase" }}>Feature</div>
-                <div style={{ ...s.cell, color: "#f59e0b", fontWeight: 700, fontSize: 11 }}>Other Sites</div>
-                <div style={{ ...s.cell, color: "#22c55e", fontWeight: 700, fontSize: 11 }}>FormFixer</div>
+                <div style={{ ...s.cell, flex: 1.55, color: "#64748b", fontWeight: 700, fontSize: 11, textTransform: "uppercase" }}>{copy.feature}</div>
+                <div style={{ ...s.cell, color: "#f59e0b", fontWeight: 700, fontSize: 11 }}>{copy.otherSites}</div>
+                <div style={{ ...s.cell, color: "#22c55e", fontWeight: 700, fontSize: 11 }}>{copy.us}</div>
               </div>
-              {COMPARISON.map((row, index) => (
+              {comparisonRows.map((row, index) => (
                 <div
                   key={row.feature}
                   style={{
@@ -357,7 +473,7 @@ export default function Pricing() {
 
           <div style={{ ...s.cta, ...(isMobile ? s.ctaMobile : null) }}>
                 <p style={{ color: "var(--ff-text-soft)", fontSize: isMobile ? 15 : 14, lineHeight: 1.6, margin: 0 }}>
-                  Free is enough to try. Starter works for regular use, Exam Sprint fits busy application months, and Pro is for heavy daily workflows.
+                  {copy.cta}
                 </p>
           </div>
         </div>

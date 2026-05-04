@@ -4,6 +4,7 @@ import useStore from "../store/useStore";
 import Sidebar from "../components/Sidebar";
 import TopBar from "../components/TopBar";
 import useIsMobile from "../hooks/useIsMobile";
+import useLanguage from "../hooks/useLanguage";
 
 const FAQS = [
   {
@@ -149,7 +150,39 @@ export default function Support() {
   const { user, credits, logout } = useStore();
   const navigate = useNavigate();
   const isMobile = useIsMobile(900);
+  const { language } = useLanguage();
   const currentCredits = credits ?? user?.credits ?? 0;
+  const copy = language === "hi"
+    ? {
+        pageTitle: "Help & Support",
+        pageSub: "Exam photos, signatures, PDFs, plans aur downloads ke liye answers.",
+        dashboard: "Dashboard",
+        quickTitle: "Direct reply chahiye?",
+        quickText: "Issue ke saath exam name, target size aur portal error ka screenshot bhejo.",
+        email: "Email Support",
+        policyTitle: "Policies & Trust",
+        policySub: "Privacy, payments aur platform usage ke important legal pages.",
+        common: "common questions",
+        stillStuck: "Abhi bhi issue hai?",
+        stillText: "Sabse fast tareeka hai exact portal requirement aur issue ka detail email karna.",
+        emailUs: "Email Us",
+        back: "Back to Dashboard",
+      }
+    : {
+        pageTitle: "Help & Support",
+        pageSub: "Answers for exam photos, signatures, PDFs, plans, and downloads.",
+        dashboard: "Dashboard",
+        quickTitle: "Need a direct reply?",
+        quickText: "Send your issue with the exam name, target size and a screenshot if the portal shows an error.",
+        email: "Email Support",
+        policyTitle: "Policies & Trust",
+        policySub: "Important legal pages for privacy, payments, and platform usage.",
+        common: "common questions",
+        stillStuck: "Still stuck?",
+        stillText: "The fastest path is to email the exact portal requirement and what went wrong.",
+        emailUs: "Email Us",
+        back: "Back to Dashboard",
+      };
 
   return (
     <div style={s.root}>
@@ -159,13 +192,11 @@ export default function Support() {
         <div style={{ ...s.content, ...(isMobile ? s.contentMobile : null), ...s.contentWithFixedTopbar }}>
           <div style={{ ...s.pageHdr, ...(isMobile ? s.pageHdrMobile : null) }}>
             <div>
-              <h1 style={{ ...s.pageTitle, ...(isMobile ? s.pageTitleMobile : null) }}>Help & Support</h1>
-              <p style={{ ...s.pageSub, ...(isMobile ? s.pageSubMobile : null) }}>
-                Answers for exam photos, signatures, PDFs, plans, and downloads.
-              </p>
+              <h1 style={{ ...s.pageTitle, ...(isMobile ? s.pageTitleMobile : null) }}>{copy.pageTitle}</h1>
+              <p style={{ ...s.pageSub, ...(isMobile ? s.pageSubMobile : null) }}>{copy.pageSub}</p>
             </div>
             <button type="button" style={s.dashboardBtn} onClick={() => navigate("/dashboard")}>
-              Dashboard
+              {copy.dashboard}
             </button>
           </div>
 
@@ -183,10 +214,10 @@ export default function Support() {
 
           <div style={{ ...s.quickCard, ...(isMobile ? s.quickCardMobile : null) }}>
             <div>
-              <p style={s.quickTitle}>Need a direct reply?</p>
-              <p style={s.quickText}>Send your issue with the exam name, target size and a screenshot if the portal shows an error.</p>
+              <p style={s.quickTitle}>{copy.quickTitle}</p>
+              <p style={s.quickText}>{copy.quickText}</p>
             </div>
-            <a href="mailto:supportformfixer@gmail.com" style={s.mailBtn}>Email Support</a>
+            <a href="mailto:supportformfixer@gmail.com" style={s.mailBtn}>{copy.email}</a>
           </div>
 
           <div>
@@ -194,8 +225,8 @@ export default function Support() {
               <div style={s.secHeadLeft}>
                 <span style={{ ...s.secIcon, background: "rgba(139,92,246,0.12)", color: "#8b5cf6" }}>LG</span>
                 <div>
-                  <h2 style={s.secTitle}>Policies & Trust</h2>
-                  <p style={s.secSub}>Important legal pages for privacy, payments, and platform usage.</p>
+                  <h2 style={s.secTitle}>{copy.policyTitle}</h2>
+                  <p style={s.secSub}>{copy.policySub}</p>
                 </div>
               </div>
             </div>
@@ -224,7 +255,7 @@ export default function Support() {
                   <span style={{ ...s.secIcon, background: `${section.color}18`, color: section.color }}>{section.icon}</span>
                   <div>
                     <h2 style={s.secTitle}>{section.category}</h2>
-                    <p style={s.secSub}>{section.items.length} common questions</p>
+                    <p style={s.secSub}>{section.items.length} {copy.common}</p>
                   </div>
                 </div>
               </div>
@@ -238,12 +269,12 @@ export default function Support() {
 
           <div style={{ ...s.bottomCard, ...(isMobile ? s.bottomCardMobile : null) }}>
             <div>
-              <h3 style={s.bottomTitle}>Still stuck?</h3>
-              <p style={s.bottomText}>The fastest path is to email the exact portal requirement and what went wrong.</p>
+              <h3 style={s.bottomTitle}>{copy.stillStuck}</h3>
+              <p style={s.bottomText}>{copy.stillText}</p>
             </div>
             <div style={s.bottomActions}>
-              <a href="mailto:supportformfixer@gmail.com" style={s.mailBtn}>Email Us</a>
-              <button type="button" style={s.backBtn} onClick={() => navigate("/dashboard")}>Back to Dashboard</button>
+              <a href="mailto:supportformfixer@gmail.com" style={s.mailBtn}>{copy.emailUs}</a>
+              <button type="button" style={s.backBtn} onClick={() => navigate("/dashboard")}>{copy.back}</button>
             </div>
           </div>
         </div>

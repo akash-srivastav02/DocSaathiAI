@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import useStore from "../store/useStore";
 import Sidebar from "../components/Sidebar";
 import TopBar from "../components/TopBar";
+import useLanguage from "../hooks/useLanguage";
 import useIsMobile from "../hooks/useIsMobile";
 import { HOME_SECTIONS, TOOL_CATEGORIES } from "../utils/toolCatalog";
 
@@ -77,8 +78,22 @@ export default function Dashboard() {
   const { user, credits, logout } = useStore();
   const navigate = useNavigate();
   const isMobile = useIsMobile(900);
+  const { language } = useLanguage();
   const currentCredits = user ? credits ?? user?.credits ?? 0 : 0;
   const headerUser = user || { name: "Guest", planLabel: "Free Tier", isUnlimited: false };
+  const copy = language === "hi"
+    ? {
+        badge: "कंप्लीट डॉक्यूमेंट टूलकिट",
+        title: "FormFixer टूल हब में आपका स्वागत है",
+        text: "एग्जाम फोटो रिसाइज़, PDF compression, image conversion, signature fixes और upload-ready browser tools एक ही जगह।",
+        mappedTools: "मैप्ड टूल्स",
+      }
+    : {
+        badge: "Complete Document Toolkit",
+        title: "Welcome to FormFixer Tool Hub",
+        text: "Your all-in-one document toolkit for exam photo resize, PDF compression, image conversion, signature fixes, and upload-ready browser tools.",
+        mappedTools: "Mapped tools",
+      };
   const allToolCount = useMemo(
     () => TOOL_CATEGORIES.reduce((sum, category) => sum + category.items.length, 0),
     []
@@ -108,19 +123,18 @@ export default function Dashboard() {
         <div style={{ ...s.content, ...(isMobile ? s.contentMobile : null), ...s.contentWithFixedTopbar }}>
           <section style={s.heroBand}>
             <div style={s.heroCopy}>
-              <span style={s.heroBadge}>Complete Document Toolkit</span>
+              <span style={s.heroBadge}>{copy.badge}</span>
               <h1 style={{ ...s.heroTitle, ...(isMobile ? s.heroTitleMobile : null) }}>
-                Welcome to FormFixer Tool Hub
+                {copy.title}
               </h1>
               <p style={s.heroText}>
-                Your all-in-one document toolkit for exam photo resize, PDF compression,
-                image conversion, signature fixes, and upload-ready browser tools.
+                {copy.text}
               </p>
             </div>
             <div style={s.heroStats}>
               <div style={s.statTile}>
                 <strong style={s.statNum}>{allToolCount}+</strong>
-                <span style={s.statLabel}>Mapped tools</span>
+                <span style={s.statLabel}>{copy.mappedTools}</span>
               </div>
             </div>
           </section>

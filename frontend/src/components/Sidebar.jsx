@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import useIsMobile from "../hooks/useIsMobile";
+import useLanguage from "../hooks/useLanguage";
 import { TOOL_CATEGORIES } from "../utils/toolCatalog";
 
 const NAV_ITEMS = [
@@ -27,13 +28,61 @@ export default function Sidebar({
   const navigate = useNavigate();
   const location = useLocation();
   const isMobile = useIsMobile(960);
+  const { language } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
   const [openGroups, setOpenGroups] = useState(() =>
     Object.fromEntries(TOOL_CATEGORIES.map((group, index) => [group.id, index < 3]))
   );
 
+  const copy = language === "hi"
+    ? {
+        dashboard: "डैशबोर्ड",
+        pricing: "प्लान्स",
+        contact: "संपर्क",
+        documentToolkit: "डॉक्यूमेंट टूलकिट",
+        quickAccess: "क्विक एक्सेस",
+        examTools: "एग्जाम टूल्स",
+        viewTiers: "प्लान देखें",
+        unlimited: "अनलिमिटेड एक्सेस चालू",
+        downloadsLeft: (count) => `${count} डाउनलोड बचे हैं`,
+        logout: "लॉगआउट",
+      }
+    : {
+        dashboard: "Dashboard",
+        pricing: "Pricing",
+        contact: "Contact",
+        documentToolkit: "Document toolkit",
+        quickAccess: "Quick Access",
+        examTools: "Exam Tools",
+        viewTiers: "View Tiers",
+        unlimited: "Unlimited access active",
+        downloadsLeft: (count) => `${count} downloads left`,
+        logout: "Logout",
+      };
+
+  const translatedNavItems = NAV_ITEMS.map((item) => ({
+    ...item,
+    label:
+      item.label === "Dashboard" ? copy.dashboard :
+      item.label === "Pricing" ? copy.pricing :
+      copy.contact,
+  }));
+
+  const translatedExamTools = EXAM_TOOL_LINKS.map((tool) => ({
+    ...tool,
+    label:
+      language === "hi"
+        ? (
+            tool.label === "Exam Photo" ? "एग्जाम फोटो" :
+            tool.label === "Exam Signature" ? "एग्जाम सिग्नेचर" :
+            tool.label === "Photo + Sign / Date" ? "फोटो + साइन / डेट" :
+            "कस्टम इमेज रिसाइज़र"
+          )
+        : tool.label,
+  }));
+
   const activeLabel =
-    activeNav || NAV_ITEMS.find((item) => location.pathname.startsWith(item.path))?.label || "Dashboard";
+    activeNav || translatedNavItems.find((item) => location.pathname.startsWith(item.path))?.label || copy.dashboard;
 
   const quickAccess = useMemo(() => TOOL_CATEGORIES[0]?.items || [], []);
 
@@ -65,13 +114,13 @@ export default function Sidebar({
             </div>
             <div>
               <div style={s.brandTitle}>FormFixer</div>
-              <div style={s.brandSub}>Document toolkit</div>
+              <div style={s.brandSub}>{copy.documentToolkit}</div>
             </div>
           </button>
         )}
 
         <nav style={s.nav}>
-          {NAV_ITEMS.map((item) => (
+          {translatedNavItems.map((item) => (
             <button
               key={item.path}
               type="button"
@@ -90,14 +139,14 @@ export default function Sidebar({
         {showPlanCard ? (
           <div style={s.creditCard}>
             <div style={s.creditNum}>{planLabel}</div>
-            <div style={s.creditLabel}>{isUnlimited ? "Unlimited access active" : `${credits ?? 0} downloads left`}</div>
+            <div style={s.creditLabel}>{isUnlimited ? copy.unlimited : copy.downloadsLeft(credits ?? 0)}</div>
             <button type="button" style={s.buyBtn} onClick={() => navigate("/pricing")}>
-              View Tiers
+              {copy.viewTiers}
             </button>
           </div>
         ) : null}
 
-        <div style={s.sectionLabel}>Quick Access</div>
+        <div style={s.sectionLabel}>{copy.quickAccess}</div>
         <div style={s.quickAccess}>
           {quickAccess.map((item) => (
             <button
@@ -112,9 +161,9 @@ export default function Sidebar({
           ))}
         </div>
 
-        <div style={s.sectionLabel}>Exam Tools</div>
+        <div style={s.sectionLabel}>{copy.examTools}</div>
         <div style={s.quickAccess}>
-          {EXAM_TOOL_LINKS.map((tool) => (
+          {translatedExamTools.map((tool) => (
             <button
               key={tool.path}
               type="button"
@@ -166,7 +215,7 @@ export default function Sidebar({
 
         {onLogout ? (
           <button type="button" style={s.logoutBtn} onClick={onLogout}>
-            Logout
+            {copy.logout}
           </button>
         ) : null}
       </aside>
