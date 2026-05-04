@@ -265,42 +265,85 @@ export default function Landing() {
           </div>
           <div style={s.brandCopy}>
             <p style={s.brandTitle}>FormFixer</p>
-            <p style={s.brandSub}>{copy.officialSub}</p>
+            {!isMobile ? <p style={s.brandSub}>{copy.officialSub}</p> : null}
           </div>
         </button>
 
-        <div style={{ ...s.headerActions, ...(isMobile ? s.headerActionsMobile : null) }}>
-          <div style={{ ...s.langSwitch, ...(isDark ? s.langSwitchDark : s.langSwitchLight) }}>
-            <button
-              type="button"
-              style={{ ...s.langBtn, ...(language === "en" ? s.langBtnActive : s.langBtnIdle) }}
-              onClick={() => setLanguage("en")}
-            >
-              EN
+        {isMobile ? (
+          <div style={s.headerActionsMobileWrap}>
+            <div style={s.headerUtilityRow}>
+              <div style={{ ...s.langSwitch, ...(isDark ? s.langSwitchDark : s.langSwitchLight) }}>
+                <button
+                  type="button"
+                  style={{ ...s.langBtn, ...(language === "en" ? s.langBtnActive : s.langBtnIdle) }}
+                  onClick={() => setLanguage("en")}
+                >
+                  EN
+                </button>
+                <button
+                  type="button"
+                  style={{ ...s.langBtn, ...(language === "hi" ? s.langBtnActive : s.langBtnIdle) }}
+                  onClick={() => setLanguage("hi")}
+                >
+                  HI
+                </button>
+              </div>
+
+              <button
+                type="button"
+                style={{ ...s.ghostBtn, ...s.ghostBtnMobile, ...(isDark ? s.ghostBtnDark : s.ghostBtnLight) }}
+                onClick={toggleTheme}
+              >
+                {theme === "dark" ? "☀" : "☾"}
+              </button>
+            </div>
+
+            <div style={s.headerCtaRow}>
+              {!user ? (
+                <button type="button" style={{ ...s.ghostBtnAccent, ...s.headerLoginBtn }} onClick={() => navigate("/auth")}>
+                  {copy.login}
+                </button>
+              ) : null}
+
+              <button type="button" style={{ ...s.primaryBtn, ...s.headerPrimaryBtn }} onClick={() => navigate(user ? "/dashboard" : "/all-tools")}>
+                {user ? copy.openHub : copy.topTools}
+              </button>
+            </div>
+          </div>
+        ) : (
+          <div style={s.headerActions}>
+            <div style={{ ...s.langSwitch, ...(isDark ? s.langSwitchDark : s.langSwitchLight) }}>
+              <button
+                type="button"
+                style={{ ...s.langBtn, ...(language === "en" ? s.langBtnActive : s.langBtnIdle) }}
+                onClick={() => setLanguage("en")}
+              >
+                EN
+              </button>
+              <button
+                type="button"
+                style={{ ...s.langBtn, ...(language === "hi" ? s.langBtnActive : s.langBtnIdle) }}
+                onClick={() => setLanguage("hi")}
+              >
+                HI
+              </button>
+            </div>
+
+            <button type="button" style={{ ...s.ghostBtn, ...(isDark ? s.ghostBtnDark : s.ghostBtnLight) }} onClick={toggleTheme}>
+              {theme === "dark" ? copy.light : copy.dark}
             </button>
-            <button
-              type="button"
-              style={{ ...s.langBtn, ...(language === "hi" ? s.langBtnActive : s.langBtnIdle) }}
-              onClick={() => setLanguage("hi")}
-            >
-              HI
+
+            {!user ? (
+              <button type="button" style={s.ghostBtnAccent} onClick={() => navigate("/auth")}>
+                {copy.login}
+              </button>
+            ) : null}
+
+            <button type="button" style={s.primaryBtn} onClick={() => navigate(user ? "/dashboard" : "/all-tools")}>
+              {user ? copy.openHub : copy.topTools}
             </button>
           </div>
-
-          <button type="button" style={{ ...s.ghostBtn, ...(isDark ? s.ghostBtnDark : s.ghostBtnLight) }} onClick={toggleTheme}>
-            {theme === "dark" ? copy.light : copy.dark}
-          </button>
-
-          {!user ? (
-            <button type="button" style={s.ghostBtnAccent} onClick={() => navigate("/auth")}>
-              {copy.login}
-            </button>
-          ) : null}
-
-          <button type="button" style={s.primaryBtn} onClick={() => navigate(user ? "/dashboard" : "/all-tools")}>
-            {user ? copy.openHub : copy.topTools}
-          </button>
-        </div>
+        )}
       </header>
 
       <main style={{ ...s.main, ...(isMobile ? s.mainMobile : null) }}>
@@ -461,6 +504,9 @@ export default function Landing() {
                 <button type="button" style={s.footerLink} onClick={() => navigate("/all-tools")}>
                   <span>{copy.footerAllToolsLink}</span>
                 </button>
+                <button type="button" style={s.footerLink} onClick={() => navigate("/blog")}>
+                  <span>{copy.footerBlogLink || "Blog"}</span>
+                </button>
                 <button type="button" style={s.footerLink} onClick={() => navigate("/exam/ssc-cgl")}>
                   <span>{copy.footerExamLink}</span>
                 </button>
@@ -514,9 +560,10 @@ const s = {
     boxShadow: "0 16px 34px rgba(148,163,184,0.12)",
   },
   headerMobile: {
-    padding: "12px",
+    padding: "10px 12px 12px",
     alignItems: "stretch",
     flexDirection: "column",
+    gap: 10,
   },
   brand: {
     display: "flex",
@@ -569,8 +616,35 @@ const s = {
     gap: 10,
     flexWrap: "wrap",
   },
-  headerActionsMobile: {
+  headerActionsMobileWrap: {
     width: "100%",
+    display: "grid",
+    gap: 8,
+  },
+  headerUtilityRow: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: 8,
+  },
+  headerCtaRow: {
+    display: "flex",
+    alignItems: "center",
+    gap: 8,
+  },
+  headerLoginBtn: {
+    flex: 1,
+    justifyContent: "center",
+    minWidth: 0,
+  },
+  headerPrimaryBtn: {
+    flex: 1.25,
+    justifyContent: "center",
+    minWidth: 0,
+  },
+  ghostBtnMobile: {
+    minWidth: 42,
+    padding: "11px 12px",
   },
   langSwitch: {
     display: "inline-flex",

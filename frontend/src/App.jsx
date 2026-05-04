@@ -16,6 +16,8 @@ import MergerPage      from "./pages/MergerPage";
 import Pricing         from "./pages/Pricing";
 import PrivacyPage     from "./pages/PrivacyPage";
 import TermsPage       from "./pages/TermsPage";
+import BlogIndexPage   from "./pages/BlogIndexPage";
+import BlogPostPage    from "./pages/BlogPostPage";
 import useStore        from "./store/useStore";
 import useTheme        from "./hooks/useTheme";
 
@@ -67,6 +69,8 @@ function ThemedRoutes() {
         {/* Public */}
         <Route path="/" element={<Landing />} />
         <Route path="/auth" element={<Auth />} />
+        <Route path="/blog" element={<BlogIndexPage />} />
+        <Route path="/blog/:blogSlug" element={<BlogPostPage />} />
         <Route path="/exam/:examSlug" element={<ExamPage />} />
         <Route path="/utility/:utilitySlug" element={<UtilityPage />} />
 
@@ -78,12 +82,12 @@ function ThemedRoutes() {
         <Route path="/pdf/split" element={<SplitPdfPage />} />
         <Route path="/pdf/image-to-pdf" element={<ImageToPdfPage />} />
         <Route path="/merger"       element={<MergerPage />} />
+        <Route path="/support" element={<Support />} />
         <Route path="/privacy-policy" element={<PrivacyPage />} />
         <Route path="/terms-and-conditions" element={<TermsPage />} />
 
         {/* Protected */}
         <Route path="/dashboard"    element={<Protected><Dashboard mode="dashboard" /></Protected>} />
-        <Route path="/support"      element={<Protected><Support /></Protected>} />
         <Route path="/pricing"      element={<Protected><Pricing /></Protected>} />
 
         {/* Fallback */}
