@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Seo from "../components/Seo";
 import useLanguage from "../hooks/useLanguage";
@@ -69,6 +69,37 @@ export default function Landing() {
   const { language, setLanguage } = useLanguage();
   const isMobile = useIsMobile(820);
   const [query, setQuery] = useState("");
+  const [motionTick, setMotionTick] = useState(0);
+
+  useEffect(() => {
+    let rafId = 0;
+    const start = performance.now();
+    const animate = (now) => {
+      setMotionTick((now - start) / 1000);
+      rafId = window.requestAnimationFrame(animate);
+    };
+    rafId = window.requestAnimationFrame(animate);
+    return () => window.cancelAnimationFrame(rafId);
+  }, []);
+
+  const stageMotion = useMemo(() => {
+    const wave = Math.sin(motionTick * 1.1);
+    const waveTwo = Math.cos(motionTick * 0.9);
+    return {
+      main: {
+        transform: `rotate(${isMobile ? -1.2 : -2 + wave * 0.9}deg) translateY(${wave * 5}px)`,
+      },
+      one: {
+        transform: `rotate(${isMobile ? -4 : -7 + waveTwo * 1.8}deg) translate(${waveTwo * 5}px, ${wave * 3}px)`,
+      },
+      two: {
+        transform: `rotate(${isMobile ? 5 : 8 - wave * 1.6}deg) translate(${wave * 4}px, ${waveTwo * 4}px)`,
+      },
+      three: {
+        transform: `rotate(${isMobile ? 4 : 7 + wave * 1.4}deg) translate(${waveTwo * -4}px, ${wave * -3}px)`,
+      },
+    };
+  }, [isMobile, motionTick]);
 
   const copy = language === "hi"
     ? {
@@ -289,33 +320,21 @@ export default function Landing() {
           </div>
 
           <div style={{ ...s.heroSide, ...(isMobile ? s.heroSideMobile : null) }}>
-            <div style={{ ...s.quickCard, ...(isDark ? s.cardDark : s.cardLight) }}>
-              <div style={s.quickTag}>{copy.quick}</div>
-              <h3 style={s.quickTitle}>{copy.quickTitle}</h3>
-              <p style={s.quickText}>{copy.quickText}</p>
-              <div style={s.quickLinks}>
-                {QUICK_LINKS.map((item) => (
-                  <button key={item.route} type="button" style={{ ...s.quickLink, ...(isDark ? s.quickLinkDark : s.quickLinkLight) }} onClick={() => navigate(item.route)}>
-                    {item.label[language]}
-                  </button>
-                ))}
-              </div>
-            </div>
             <div style={{ ...s.stageCard, ...(isDark ? s.cardDark : s.cardLight) }}>
               <div style={s.stageBadge}>3D Workflow</div>
               <div style={s.stageFrame}>
-                <div style={{ ...s.stagePanel, ...s.stagePanelMain }}>
+                <div style={{ ...s.stagePanel, ...s.stagePanelMain, ...stageMotion.main, ...(isDark ? s.stagePanelDark : s.stagePanelLight) }}>
                   <span style={s.stageFlow}>Search → Fix → Preview → Download</span>
                 </div>
-                <div style={{ ...s.stagePanel, ...s.stagePanelOne }}>
+                <div style={{ ...s.stagePanel, ...s.stagePanelOne, ...stageMotion.one, ...(isDark ? s.stagePanelDark : s.stagePanelLight) }}>
                   <span style={s.stageMiniTag}>Photo</span>
                   <strong style={s.stageMiniTitle}>Exam preset</strong>
                 </div>
-                <div style={{ ...s.stagePanel, ...s.stagePanelTwo }}>
+                <div style={{ ...s.stagePanel, ...s.stagePanelTwo, ...stageMotion.two, ...(isDark ? s.stagePanelDark : s.stagePanelLight) }}>
                   <span style={s.stageMiniTag}>PDF</span>
                   <strong style={s.stageMiniTitle}>Compress & merge</strong>
                 </div>
-                <div style={{ ...s.stagePanel, ...s.stagePanelThree }}>
+                <div style={{ ...s.stagePanel, ...s.stagePanelThree, ...stageMotion.three, ...(isDark ? s.stagePanelDark : s.stagePanelLight) }}>
                   <span style={s.stageMiniTag}>Sign</span>
                   <strong style={s.stageMiniTitle}>Clean signature</strong>
                 </div>
@@ -688,60 +707,12 @@ const s = {
   },
   heroSide: {
     minWidth: 0,
+    display: "grid",
+    gap: 16,
+    alignContent: "start",
   },
   heroSideMobile: {
     width: "100%",
-  },
-  quickCard: {
-    borderRadius: 22,
-    padding: "18px",
-    display: "grid",
-    gap: 12,
-  },
-  quickTag: {
-    width: "fit-content",
-    borderRadius: 999,
-    padding: "5px 10px",
-    fontSize: 11,
-    fontWeight: 800,
-    background: "rgba(249,115,22,0.12)",
-    color: "#f97316",
-    textTransform: "uppercase",
-  },
-  quickTitle: {
-    margin: 0,
-    fontSize: 28,
-    lineHeight: 1.1,
-    fontWeight: 900,
-  },
-  quickText: {
-    margin: 0,
-    fontSize: 14,
-    lineHeight: 1.65,
-    color: "#94a3b8",
-  },
-  quickLinks: {
-    display: "grid",
-    gap: 10,
-  },
-  quickLink: {
-    width: "100%",
-    textAlign: "left",
-    borderRadius: 14,
-    padding: "14px 14px",
-    fontWeight: 800,
-    cursor: "pointer",
-    border: "1px solid transparent",
-  },
-  quickLinkDark: {
-    background: "rgba(15,23,42,0.72)",
-    borderColor: "rgba(79,97,130,0.18)",
-    color: "#e6edf8",
-  },
-  quickLinkLight: {
-    background: "rgba(255,251,246,0.86)",
-    borderColor: "rgba(133,99,66,0.12)",
-    color: "#162033",
   },
   stageCard: {
     borderRadius: 22,
@@ -749,6 +720,7 @@ const s = {
     display: "grid",
     gap: 12,
     overflow: "hidden",
+    minHeight: 320,
   },
   stageBadge: {
     width: "fit-content",
@@ -762,14 +734,23 @@ const s = {
   },
   stageFrame: {
     position: "relative",
-    minHeight: 235,
+    minHeight: 250,
   },
   stagePanel: {
     position: "absolute",
     borderRadius: 20,
+    transition: "transform .18s linear",
+    willChange: "transform",
+  },
+  stagePanelDark: {
     background: "linear-gradient(180deg, rgba(18,24,40,0.96), rgba(11,17,31,0.86))",
     border: "1px solid rgba(96,165,250,0.16)",
     boxShadow: "0 24px 44px rgba(2,6,23,0.28)",
+  },
+  stagePanelLight: {
+    background: "linear-gradient(180deg, rgba(255,255,255,0.98), rgba(245,240,233,0.92))",
+    border: "1px solid rgba(133,99,66,0.14)",
+    boxShadow: "0 20px 40px rgba(148,163,184,0.16)",
   },
   stagePanelMain: {
     inset: "30px 8px 10px 8px",
@@ -800,7 +781,7 @@ const s = {
     transform: "rotate(7deg)",
   },
   stageFlow: {
-    color: "#f8fafc",
+    color: "var(--ff-text)",
     fontSize: 28,
     lineHeight: 1.08,
     fontWeight: 900,
@@ -819,7 +800,7 @@ const s = {
   },
   stageMiniTitle: {
     display: "block",
-    color: "#f8fafc",
+    color: "var(--ff-text)",
     fontSize: 15,
     lineHeight: 1.3,
     fontWeight: 800,
