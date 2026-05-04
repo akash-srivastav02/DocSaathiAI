@@ -1,4 +1,4 @@
-const { compressPDFBuffer, convertImagesToPdfBuffer, mergePdfBuffers } = require('../lib/pdfEngine');
+const { compressPDFBuffer, convertImagesToPdfBuffer, mergePdfBuffers, splitPdfBuffer } = require('../lib/pdfEngine');
 
 function bufferToDataUrl(buffer, mimeType = 'application/pdf') {
   return `data:${mimeType};base64,${buffer.toString('base64')}`;
@@ -139,4 +139,39 @@ const mergePdf = async (req, res) => {
   }
 };
 
-module.exports = { compressPDF, imageToPdf, mergePdf };
+const splitPdf = async (req, res) => {
+  try {
+    const user = req.user || null;
+
+    if (!req.file) {
+      return res.status(400).json({ message: 'Upload one PDF file to split.' });
+    }
+
+    if (req.file.mimetype !== 'application/pdf') {
+      return res.status(400).json({ message: 'Only PDF files are allowed.' });
+    }
+
+    const selection = req.body.pageSelection;
+    const split = await splitPdfBuffer(req.file.buffer, selection);
+
+    return res.json({
+      url: bufferToDataUrl(split.buffer),
+      originalPages: split.pageCount,
+      extractedPages: split.selectedCount,
+      selectedPages: split.selectedIndices.map((index) => index + 1),
+      pdfKB: Math.round(split.buffer.length / 1024),
+      hasWatermark: true,
+      creditsLeft: user ? user.credits : null,
+      creditCost: 1,
+      engine: 'formfixer-split-pdf',
+    });
+  } catch (error) {
+    console.error('[SplitPDF] Error:', error.message);
+    return res.status(500).json({
+      message: error.message || 'PDF split failed.',
+      error: error.message,
+    });
+  }
+};
+
+module.exports = { compressPDF, imageToPdf, mergePdf, splitPdf };

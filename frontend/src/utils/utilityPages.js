@@ -68,6 +68,15 @@ const converterPages = [
     bestFor: "Certificates, marksheets, scanned PDFs and combined uploads",
   },
   {
+    slug: "split-pdf-online",
+    title: "Split PDF",
+    summary: "Extract exact pages from one PDF using page numbers or ranges for uploads, print, and form work.",
+    route: "/pdf/split",
+    category: "Converter",
+    kind: "converter",
+    bestFor: "Extracting selected pages from certificates, forms, and scanned PDFs",
+  },
+  {
     slug: "image-to-pdf-online",
     title: "Image to PDF",
     summary: "Convert multiple images into one clean PDF without switching between different sites.",

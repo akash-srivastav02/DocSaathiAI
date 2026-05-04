@@ -10,6 +10,7 @@ import PDFCompressPage from "./pages/PDFCompressPage";
 import ImageToPdfPage  from "./pages/ImageToPdfPage";
 import PassportSheetPage from "./pages/PassportSheetPage";
 import MergePdfPage    from "./pages/MergePdfPage";
+import SplitPdfPage    from "./pages/SplitPdfPage";
 import Support         from "./pages/Support";
 import MergerPage      from "./pages/MergerPage";
 import Pricing         from "./pages/Pricing";
@@ -74,6 +75,7 @@ function ThemedRoutes() {
         <Route path="/tool/:toolId" element={<ToolPage />} />
         <Route path="/pdf/compress" element={<PDFCompressPage />} />
         <Route path="/pdf/merge" element={<MergePdfPage />} />
+        <Route path="/pdf/split" element={<SplitPdfPage />} />
         <Route path="/pdf/image-to-pdf" element={<ImageToPdfPage />} />
         <Route path="/merger"       element={<MergerPage />} />
         <Route path="/privacy-policy" element={<PrivacyPage />} />

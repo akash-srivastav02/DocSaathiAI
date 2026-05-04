@@ -213,8 +213,71 @@ async function mergePdfBuffers(pdfBuffers) {
   return Buffer.from(await mergedPdf.save({ useObjectStreams: true, addDefaultPage: false }));
 }
 
+function parsePageSelection(selection, pageCount) {
+  const raw = String(selection || "").trim();
+  if (!raw) {
+    throw new Error("Enter page numbers or ranges to extract.");
+  }
+
+  const pages = new Set();
+  const chunks = raw.split(",").map((item) => item.trim()).filter(Boolean);
+
+  for (const chunk of chunks) {
+    if (chunk.includes("-")) {
+      const [startRaw, endRaw] = chunk.split("-").map((item) => item.trim());
+      const start = Number.parseInt(startRaw, 10);
+      const end = Number.parseInt(endRaw, 10);
+
+      if (!Number.isInteger(start) || !Number.isInteger(end) || start < 1 || end < 1 || start > end) {
+        throw new Error(`Invalid page range: ${chunk}`);
+      }
+      if (end > pageCount) {
+        throw new Error(`Page range ${chunk} exceeds total page count (${pageCount}).`);
+      }
+
+      for (let page = start; page <= end; page += 1) {
+        pages.add(page - 1);
+      }
+      continue;
+    }
+
+    const page = Number.parseInt(chunk, 10);
+    if (!Number.isInteger(page) || page < 1) {
+      throw new Error(`Invalid page number: ${chunk}`);
+    }
+    if (page > pageCount) {
+      throw new Error(`Page ${page} exceeds total page count (${pageCount}).`);
+    }
+    pages.add(page - 1);
+  }
+
+  return Array.from(pages).sort((a, b) => a - b);
+}
+
+async function splitPdfBuffer(buffer, selection) {
+  const sourcePdf = await PDFDocument.load(buffer, { ignoreEncryption: true });
+  const pageCount = sourcePdf.getPageCount();
+  const selectedIndices = parsePageSelection(selection, pageCount);
+
+  if (!selectedIndices.length) {
+    throw new Error("Select at least one page to extract.");
+  }
+
+  const splitPdf = await PDFDocument.create();
+  const copiedPages = await splitPdf.copyPages(sourcePdf, selectedIndices);
+  copiedPages.forEach((page) => splitPdf.addPage(page));
+
+  return {
+    buffer: Buffer.from(await splitPdf.save({ useObjectStreams: true, addDefaultPage: false })),
+    pageCount,
+    selectedCount: selectedIndices.length,
+    selectedIndices,
+  };
+}
+
 module.exports = {
   compressPDFBuffer,
   convertImagesToPdfBuffer,
   mergePdfBuffers,
+  splitPdfBuffer,
 };
