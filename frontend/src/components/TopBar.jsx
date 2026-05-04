@@ -5,10 +5,24 @@ import useLanguage from "../hooks/useLanguage";
 import useTheme from "../hooks/useTheme";
 
 const ACCOUNT_LINKS = [
-  { key: "allTools", path: "/dashboard" },
+  { key: "allTools", path: "/all-tools" },
   { key: "pricing", path: "/pricing" },
   { key: "contact", path: "/support" },
 ];
+
+const normalizePlanLabel = (user, fallback) => {
+  const raw = String(user?.planLabel || user?.planName || "").trim();
+  if (!raw) return fallback;
+  if (user?.isUnlimited || /unlimited/i.test(raw)) return "Unlimited Tier";
+  if (/pro tier/i.test(raw)) return "Pro Tier";
+  if (/starter tier/i.test(raw)) return "Starter Tier";
+  if (/single pass/i.test(raw)) return "Single Pass";
+  const remaining = Number(user?.credits ?? 0);
+  if (remaining >= 100) return "Pro Tier";
+  if (remaining >= 40) return "Starter Tier";
+  if (remaining > 0 && remaining <= 1) return "Single Pass";
+  return fallback;
+};
 
 const COPY = {
   en: {
@@ -55,7 +69,7 @@ export default function TopBar({
 
   const isGuest = !user || !user.name;
   const firstName = !isGuest ? user.name.split(" ")[0] : copy.guestLabel;
-  const planLabel = user?.planLabel || copy.freeTier;
+  const planLabel = normalizePlanLabel(user, copy.freeTier);
   const usageSummary = user?.isUnlimited ? copy.unlimited : copy.downloadsLeft(credits ?? 0);
 
   const accountLinks = useMemo(

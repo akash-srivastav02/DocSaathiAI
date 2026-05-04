@@ -22,7 +22,7 @@ const getRazorpayClient = () => {
 const PLANS = {
   single:  { amount: 900,  credits: 1,   label: 'Single Pass',      validDays: null },
   starter: { amount: 2900, credits: 40,  label: 'Starter Tier',     validDays: 30 },
-  pro:     { amount: 7900, credits: 150, label: 'Pro Tier',         validDays: 30 },
+  pro:     { amount: 7900, credits: 100, label: 'Pro Tier',         validDays: 30 },
   max:     { amount: 14900, credits: -1, label: 'Unlimited Tier',   validDays: 30 },
 };
 

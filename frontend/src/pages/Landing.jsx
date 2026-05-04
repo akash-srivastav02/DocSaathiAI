@@ -440,7 +440,6 @@ export default function Landing() {
                 {FOOTER_TOOL_LINKS.map((item) => (
                   <button key={item.route} type="button" style={s.footerLink} onClick={() => navigate(item.route)}>
                     <span>{item.label}</span>
-                    <span>{copy.footerBrowse}</span>
                   </button>
                 ))}
               </div>
@@ -452,26 +451,25 @@ export default function Landing() {
               <div style={s.footerLinksWrap}>
                 <button type="button" style={s.footerLink} onClick={() => navigate("/support")}>
                   <span>{copy.footerSupportLink}</span>
-                  <span>{copy.footerBrowse}</span>
                 </button>
                 <button type="button" style={s.footerLink} onClick={() => navigate("/privacy-policy")}>
                   <span>{copy.footerPrivacyLink}</span>
-                  <span>{copy.footerBrowse}</span>
                 </button>
                 <button type="button" style={s.footerLink} onClick={() => navigate("/terms-and-conditions")}>
                   <span>{copy.footerTermsLink}</span>
-                  <span>{copy.footerBrowse}</span>
                 </button>
                 <button type="button" style={s.footerLink} onClick={() => navigate("/all-tools")}>
                   <span>{copy.footerAllToolsLink}</span>
-                  <span>{copy.footerBrowse}</span>
                 </button>
                 <button type="button" style={s.footerLink} onClick={() => navigate("/exam/ssc-cgl")}>
                   <span>{copy.footerExamLink}</span>
-                  <span>{copy.footerBrowse}</span>
                 </button>
               </div>
             </div>
+          </div>
+          <div style={s.footerBottom}>
+            <span>© 2026 FormFixer</span>
+            <span>formfixer.in</span>
           </div>
         </footer>
       </main>
@@ -893,22 +891,21 @@ const s = {
   },
   footer: {
     display: "grid",
-    gap: 20,
-    marginTop: 10,
-    padding: "26px 22px",
-    borderRadius: 26,
-    border: "1px solid rgba(148,163,184,0.16)",
+    gap: 16,
+    marginTop: 18,
+    padding: "20px 0 0 0",
+    borderTop: "1px solid rgba(148,163,184,0.14)",
   },
   footerDark: {
-    background: "linear-gradient(180deg, rgba(8,15,30,0.92) 0%, rgba(8,15,30,0.76) 100%)",
+    background: "transparent",
   },
   footerLight: {
-    background: "linear-gradient(180deg, rgba(255,250,244,0.94) 0%, rgba(253,247,239,0.82) 100%)",
+    background: "transparent",
   },
   footerGrid: {
     display: "grid",
-    gridTemplateColumns: "1.05fr 1.35fr 1fr",
-    gap: 22,
+    gridTemplateColumns: "1fr 1.3fr 0.95fr",
+    gap: 28,
     alignItems: "start",
   },
   footerGridMobile: {
@@ -916,46 +913,57 @@ const s = {
   },
   footerCol: {
     display: "grid",
-    gap: 12,
+    gap: 10,
     minWidth: 0,
   },
   footerBrand: {
     margin: 0,
-    fontSize: 30,
+    fontSize: 24,
     lineHeight: 1.05,
     fontWeight: 900,
   },
   footerHeading: {
     margin: 0,
-    fontSize: 18,
+    fontSize: 15,
     lineHeight: 1.2,
     fontWeight: 800,
     color: "var(--ff-text)",
+    textTransform: "uppercase",
+    letterSpacing: 0.7,
   },
   footerText: {
     margin: 0,
     color: "#94a3b8",
-    fontSize: 14,
-    lineHeight: 1.75,
+    fontSize: 13,
+    lineHeight: 1.7,
   },
   footerLinksWrap: {
     display: "grid",
-    gap: 10,
+    gap: 4,
   },
   footerLink: {
-    borderRadius: 14,
-    border: "1px solid rgba(148,163,184,0.18)",
-    padding: "12px 14px",
+    borderRadius: 10,
+    border: "none",
+    padding: "7px 0",
     background: "transparent",
     color: "var(--ff-text)",
+    display: "block",
+    cursor: "pointer",
+    textAlign: "left",
+    fontSize: 13,
+    fontWeight: 700,
+    opacity: 0.92,
+  },
+  footerBottom: {
+    borderTop: "1px solid rgba(148,163,184,0.1)",
+    padding: "12px 0 6px 0",
     display: "flex",
     alignItems: "center",
     justifyContent: "space-between",
     gap: 12,
-    cursor: "pointer",
-    textAlign: "left",
-    fontSize: 14,
-    fontWeight: 700,
+    fontSize: 12,
+    color: "#94a3b8",
+    flexWrap: "wrap",
   },
   sectionHead: {
     display: "grid",

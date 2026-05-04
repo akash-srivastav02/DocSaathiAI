@@ -17,6 +17,20 @@ const EXAM_TOOL_LINKS = [
   { label: "Custom Image Resizer", path: "/tool/crop", icon: "RS" },
 ];
 
+const normalizePlanLabel = (planLabel, isUnlimited, credits) => {
+  const raw = String(planLabel || "").trim();
+  if (!raw) return "Free Tier";
+  if (isUnlimited || /unlimited/i.test(raw)) return "Unlimited Tier";
+  if (/pro tier/i.test(raw)) return "Pro Tier";
+  if (/starter tier/i.test(raw)) return "Starter Tier";
+  if (/single pass/i.test(raw)) return "Single Pass";
+  const remaining = Number(credits ?? 0);
+  if (remaining >= 100) return "Pro Tier";
+  if (remaining >= 40) return "Starter Tier";
+  if (remaining > 0 && remaining <= 1) return "Single Pass";
+  return "Active Plan";
+};
+
 export default function Sidebar({
   credits,
   onLogout,
@@ -83,6 +97,7 @@ export default function Sidebar({
 
   const activeLabel =
     activeNav || translatedNavItems.find((item) => location.pathname.startsWith(item.path))?.label || copy.dashboard;
+  const displayPlanLabel = normalizePlanLabel(planLabel, isUnlimited, credits);
 
   const quickAccess = useMemo(() => TOOL_CATEGORIES[0]?.items || [], []);
 
@@ -138,7 +153,7 @@ export default function Sidebar({
 
         {showPlanCard ? (
           <div style={s.creditCard}>
-            <div style={s.creditNum}>{planLabel}</div>
+            <div style={s.creditNum}>{displayPlanLabel}</div>
             <div style={s.creditLabel}>{isUnlimited ? copy.unlimited : copy.downloadsLeft(credits ?? 0)}</div>
             <button type="button" style={s.buyBtn} onClick={() => navigate("/pricing")}>
               {copy.viewTiers}

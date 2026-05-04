@@ -80,11 +80,12 @@ function Section({ section, navigate, compact = false }) {
   );
 }
 
-export default function Dashboard() {
+export default function Dashboard({ mode = "dashboard" }) {
   const { user, credits, logout } = useStore();
   const navigate = useNavigate();
   const isMobile = useIsMobile(900);
   const { language } = useLanguage();
+  const isHubMode = mode === "hub";
   const currentCredits = user ? credits ?? user?.credits ?? 0 : 0;
   const headerUser = user || { name: "Guest", planLabel: "Free Tier", isUnlimited: false };
 
@@ -96,9 +97,11 @@ export default function Dashboard() {
         mappedTools: "मैप्ड टूल्स",
       }
     : {
-        badge: "Complete Document Toolkit",
-        title: "Welcome to FormFixer Tool Hub",
-        text: "Your all-in-one document toolkit for exam photo resize, PDF compression, image conversion, signature fixes, and upload-ready browser tools.",
+        badge: isHubMode ? "All Tools Hub" : "Complete Document Toolkit",
+        title: isHubMode ? "Browse All FormFixer Tools" : "Welcome to FormFixer Tool Hub",
+        text: isHubMode
+          ? "Explore every PDF, image, exam, and upload-ready tool from one organized hub."
+          : "Your all-in-one document toolkit for exam photo resize, PDF compression, image conversion, signature fixes, and upload-ready browser tools.",
         mappedTools: "Mapped tools",
       };
 
@@ -106,6 +109,14 @@ export default function Dashboard() {
     () => TOOL_CATEGORIES.reduce((sum, category) => sum + category.items.length, 0),
     []
   );
+  const sections = isHubMode
+    ? TOOL_CATEGORIES.map((category) => ({
+        id: category.id,
+        title: category.title,
+        subtitle: "",
+        items: category.items,
+      }))
+    : HOME_SECTIONS;
 
   return (
     <div style={s.root}>
@@ -147,7 +158,7 @@ export default function Dashboard() {
             </div>
           </section>
 
-          {HOME_SECTIONS.map((section) => (
+          {sections.map((section) => (
             <Section key={section.id} section={section} navigate={navigate} compact={isMobile} />
           ))}
         </div>

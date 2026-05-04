@@ -70,7 +70,7 @@ function ThemedRoutes() {
         <Route path="/utility/:utilitySlug" element={<UtilityPage />} />
 
         <Route path="/tool/passport-sheet" element={<PassportSheetPage />} />
-        <Route path="/all-tools" element={<Dashboard />} />
+        <Route path="/all-tools" element={<Dashboard mode="hub" />} />
         <Route path="/tool/:toolId" element={<ToolPage />} />
         <Route path="/pdf/compress" element={<PDFCompressPage />} />
         <Route path="/pdf/merge" element={<MergePdfPage />} />
@@ -80,7 +80,7 @@ function ThemedRoutes() {
         <Route path="/terms-and-conditions" element={<TermsPage />} />
 
         {/* Protected */}
-        <Route path="/dashboard"    element={<Protected><Dashboard /></Protected>} />
+        <Route path="/dashboard"    element={<Protected><Dashboard mode="dashboard" /></Protected>} />
         <Route path="/support"      element={<Protected><Support /></Protected>} />
         <Route path="/pricing"      element={<Protected><Pricing /></Protected>} />
 
