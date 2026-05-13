@@ -6,14 +6,9 @@
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://formfixer.in/auth</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
     <loc>https://formfixer.in/all-tools</loc>
     <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
+    <priority>0.95</priority>
   </url>
   <url>
     <loc>https://formfixer.in/blog</loc>
@@ -21,89 +16,71 @@
     <priority>0.9</priority>
   </url>
   <url>
+    <loc>https://formfixer.in/support</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.75</priority>
+  </url>
+
+  <url>
     <loc>https://formfixer.in/tool/photo</loc>
     <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.9</priority>
   </url>
   <url>
     <loc>https://formfixer.in/tool/signature</loc>
     <changefreq>monthly</changefreq>
+    <priority>0.88</priority>
+  </url>
+  <url>
+    <loc>https://formfixer.in/tool/sigclean</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.82</priority>
+  </url>
+  <url>
+    <loc>https://formfixer.in/tool/imgconvert</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.82</priority>
+  </url>
+  <url>
+    <loc>https://formfixer.in/tool/passport-sheet</loc>
+    <changefreq>monthly</changefreq>
     <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://formfixer.in/tool/crop</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://formfixer.in/tool/imgcompress</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://formfixer.in/pdf/compress</loc>
     <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.88</priority>
   </url>
   <url>
-    <loc>https://formfixer.in/exam/ssc-cgl</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <loc>https://formfixer.in/pdf/merge</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.82</priority>
   </url>
   <url>
-    <loc>https://formfixer.in/exam/ssc-chsl</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <loc>https://formfixer.in/pdf/split</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.82</priority>
   </url>
   <url>
-    <loc>https://formfixer.in/exam/sbi-po</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <loc>https://formfixer.in/pdf/image-to-pdf</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.84</priority>
   </url>
   <url>
-    <loc>https://formfixer.in/exam/ibps-clerk</loc>
-    <changefreq>weekly</changefreq>
+    <loc>https://formfixer.in/merger</loc>
+    <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
-  <url>
-    <loc>https://formfixer.in/exam/rrb-ntpc</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://formfixer.in/exam/jee-main</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://formfixer.in/exam/neet-ug</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://formfixer.in/exam/upsc-cds</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
+
   <url>
     <loc>https://formfixer.in/utility/compress-image-to-20kb</loc>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://formfixer.in/utility/compress-image-to-10kb</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://formfixer.in/utility/compress-image-to-30kb</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.9</priority>
   </url>
   <url>
     <loc>https://formfixer.in/utility/compress-image-to-50kb</loc>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.84</priority>
   </url>
   <url>
     <loc>https://formfixer.in/utility/compress-image-to-100kb</loc>
@@ -118,96 +95,93 @@
   <url>
     <loc>https://formfixer.in/utility/compress-pdf-to-100kb</loc>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.82</priority>
   </url>
   <url>
     <loc>https://formfixer.in/utility/compress-pdf-to-200kb</loc>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://formfixer.in/utility/compress-pdf-to-300kb</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://formfixer.in/utility/compress-pdf-to-500kb</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.9</priority>
   </url>
   <url>
     <loc>https://formfixer.in/utility/image-to-pdf-online</loc>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.84</priority>
   </url>
   <url>
-    <loc>https://formfixer.in/utility/jpg-to-pdf-online</loc>
+    <loc>https://formfixer.in/utility/png-to-jpg-online</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://formfixer.in/utility/png-to-pdf-online</loc>
+    <loc>https://formfixer.in/utility/merge-pdf-online</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://formfixer.in/utility/webp-to-pdf-online</loc>
+    <loc>https://formfixer.in/utility/split-pdf-online</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
+
   <url>
-    <loc>https://formfixer.in/merger</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+    <loc>https://formfixer.in/exam/ssc-cgl</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.88</priority>
   </url>
+  <url>
+    <loc>https://formfixer.in/exam/ssc-chsl</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.84</priority>
+  </url>
+  <url>
+    <loc>https://formfixer.in/exam/upsc-cds</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.84</priority>
+  </url>
+  <url>
+    <loc>https://formfixer.in/exam/jee-main</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.82</priority>
+  </url>
+  <url>
+    <loc>https://formfixer.in/exam/neet-ug</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.82</priority>
+  </url>
+
   <url>
     <loc>https://formfixer.in/blog/compress-image-to-20kb-guide</loc>
     <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.86</priority>
   </url>
   <url>
     <loc>https://formfixer.in/blog/compress-pdf-to-200kb-guide</loc>
     <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.86</priority>
   </url>
   <url>
     <loc>https://formfixer.in/blog/merge-pdf-online-guide</loc>
     <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.82</priority>
   </url>
   <url>
     <loc>https://formfixer.in/blog/split-pdf-online-guide</loc>
     <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.82</priority>
   </url>
   <url>
     <loc>https://formfixer.in/blog/convert-png-webp-heic-to-jpg-guide</loc>
     <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.82</priority>
   </url>
   <url>
     <loc>https://formfixer.in/blog/ssc-cgl-photo-signature-size-guide</loc>
     <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.82</priority>
   </url>
   <url>
     <loc>https://formfixer.in/blog/upsc-cds-photo-signature-guide</loc>
     <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://formfixer.in/blog/passport-photo-sheet-print-guide</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://formfixer.in/blog/signature-cleaner-guide</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://formfixer.in/blog/images-to-pdf-guide</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.82</priority>
   </url>
 </urlset>

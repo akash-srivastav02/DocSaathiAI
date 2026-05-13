@@ -19,7 +19,7 @@ const setMeta = (attr, key, value) => {
   node.setAttribute("content", value);
 };
 
-export default function Seo({ title, description, canonical, keywords, type = "website", ldJson = [] }) {
+export default function Seo({ title, description, canonical, keywords, type = "website", ldJson = [], robots = "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" }) {
   useEffect(() => {
     if (title) {
       document.title = title;
@@ -38,7 +38,7 @@ export default function Seo({ title, description, canonical, keywords, type = "w
     }
 
     setMeta("property", "og:type", type);
-    setMeta("name", "robots", "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1");
+    setMeta("name", "robots", robots);
 
     if (canonical) {
       const link = ensureTag('link[rel="canonical"]', () => {
@@ -71,7 +71,7 @@ export default function Seo({ title, description, canonical, keywords, type = "w
         if (node) node.remove();
       });
     };
-  }, [canonical, description, keywords, ldJson, title, type]);
+  }, [canonical, description, keywords, ldJson, robots, title, type]);
 
   return null;
 }

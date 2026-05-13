@@ -6,6 +6,7 @@ import TopBar from "../components/TopBar";
 import useLanguage from "../hooks/useLanguage";
 import useIsMobile from "../hooks/useIsMobile";
 import { HOME_SECTIONS, TOOL_CATEGORIES } from "../utils/toolCatalog";
+import Seo from "../components/Seo";
 
 function ToolCard({ item, onOpen, compact = false }) {
   const [hovered, setHovered] = useState(false);
@@ -117,9 +118,31 @@ export default function Dashboard({ mode = "dashboard" }) {
         items: category.items,
       }))
     : HOME_SECTIONS;
+  const siteUrl = "https://formfixer.in";
+  const hubSchema = isHubMode
+    ? [
+        {
+          "@context": "https://schema.org",
+          "@type": "CollectionPage",
+          name: "FormFixer All Tools",
+          url: `${siteUrl}/all-tools`,
+          description: "Browse FormFixer tools for exam photo resize, PDF compression, merge PDF, split PDF, signature cleaning, image conversion, and upload-ready document workflows.",
+        },
+      ]
+    : [];
 
   return (
     <div style={s.root}>
+      {isHubMode ? (
+        <Seo
+          title="All Tools | FormFixer PDF, Image, Signature & Exam Upload Toolkit"
+          description="Browse all FormFixer tools for exam photo resize, signature cleaner, image converter, compress PDF, merge PDF, split PDF, and upload-ready document fixes."
+          canonical={`${siteUrl}/all-tools`}
+          keywords="FormFixer all tools, PDF tools, image tools, signature cleaner, merge pdf, split pdf, exam photo resize"
+          type="website"
+          ldJson={hubSchema}
+        />
+      ) : null}
       {user ? (
         <Sidebar
           credits={currentCredits}

@@ -5,6 +5,8 @@ import Sidebar from "../components/Sidebar";
 import TopBar from "../components/TopBar";
 import useIsMobile from "../hooks/useIsMobile";
 import useLanguage from "../hooks/useLanguage";
+import Seo from "../components/Seo";
+import PublicTopBar from "../components/PublicTopBar";
 
 const FAQS = [
   {
@@ -152,6 +154,7 @@ export default function Support() {
   const isMobile = useIsMobile(900);
   const { language } = useLanguage();
   const currentCredits = credits ?? user?.credits ?? 0;
+  const siteUrl = "https://formfixer.in";
   const copy = language === "hi"
     ? {
         pageTitle: "Help & Support",
@@ -186,18 +189,33 @@ export default function Support() {
 
   return (
     <div style={s.root}>
-      <Sidebar credits={currentCredits} planLabel={user?.planLabel} isUnlimited={user?.isUnlimited} onLogout={() => { logout(); navigate("/"); }} />
+      <Seo
+        title="Support | FormFixer Help, FAQs, Privacy & Terms"
+        description="Get FormFixer help for exam photo resize, signature uploads, PDF compression, payments, plans, downloads, privacy policy, and terms."
+        canonical={`${siteUrl}/support`}
+        keywords="FormFixer support, exam photo help, signature upload help, pdf compression help, privacy policy, terms and conditions"
+        type="website"
+      />
+      {user ? (
+        <Sidebar credits={currentCredits} planLabel={user?.planLabel} isUnlimited={user?.isUnlimited} onLogout={() => { logout(); navigate("/"); }} />
+      ) : null}
       <div style={s.main}>
-        <TopBar user={user} credits={currentCredits} onLogout={() => { logout(); navigate("/"); }} />
+        {user ? (
+          <TopBar user={user} credits={currentCredits} onLogout={() => { logout(); navigate("/"); }} />
+        ) : (
+          <PublicTopBar />
+        )}
         <div style={{ ...s.content, ...(isMobile ? s.contentMobile : null), ...s.contentWithFixedTopbar }}>
           <div style={{ ...s.pageHdr, ...(isMobile ? s.pageHdrMobile : null) }}>
             <div>
               <h1 style={{ ...s.pageTitle, ...(isMobile ? s.pageTitleMobile : null) }}>{copy.pageTitle}</h1>
               <p style={{ ...s.pageSub, ...(isMobile ? s.pageSubMobile : null) }}>{copy.pageSub}</p>
             </div>
-            <button type="button" style={s.dashboardBtn} onClick={() => navigate("/dashboard")}>
-              {copy.dashboard}
-            </button>
+            {user ? (
+              <button type="button" style={s.dashboardBtn} onClick={() => navigate("/dashboard")}>
+                {copy.dashboard}
+              </button>
+            ) : null}
           </div>
 
           <div style={{ ...s.contactGrid, ...(isMobile ? s.contactGridMobile : null) }}>
