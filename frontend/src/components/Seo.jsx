@@ -51,7 +51,8 @@ export default function Seo({ title, description, canonical, keywords, type = "w
     }
 
     const scriptIds = [];
-    ldJson
+    const jsonLdEntries = Array.isArray(ldJson) ? ldJson : [ldJson];
+    jsonLdEntries
       .filter(Boolean)
       .forEach((entry, index) => {
         const id = `ff-seo-jsonld-${index}`;
