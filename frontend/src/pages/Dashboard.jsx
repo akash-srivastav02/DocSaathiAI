@@ -6,79 +6,33 @@ import TopBar from "../components/TopBar";
 import PublicTopBar from "../components/PublicTopBar";
 import useLanguage from "../hooks/useLanguage";
 import useIsMobile from "../hooks/useIsMobile";
-import { HOME_SECTIONS, TOOL_CATEGORIES } from "../utils/toolCatalog";
+import { TOOL_CATEGORIES } from "../utils/toolCatalog";
+import { EXAM_PAGE_DATA } from "../utils/examPages";
 import Seo from "../components/Seo";
 
-function ToolCard({ item, onOpen, compact = false }) {
-  const [hovered, setHovered] = useState(false);
-  const clickable = Boolean(item.route && item.live !== false);
-
+function ToolCard({ item, onOpen }) {
   return (
-    <button
-      type="button"
-      disabled={!clickable}
-      onClick={() => clickable && onOpen(item.route)}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      style={{
-        ...s.toolCard,
-        ...(compact ? s.toolCardCompact : null),
-        ...(clickable ? s.toolCardClickable : s.toolCardDisabled),
-        borderColor: hovered && clickable ? `${item.accent}44` : "var(--ff-border)",
-        boxShadow: hovered && clickable ? `0 20px 42px ${item.accent}14` : "none",
-        transform: hovered && clickable ? "translateY(-4px)" : "translateY(0)",
-      }}
-    >
+    <button type="button" onClick={() => onOpen(item.route)} style={s.toolCard}>
       <div style={s.toolCardTop}>
         <span style={{ ...s.toolIcon, background: `${item.accent}14`, color: item.accent }}>
           {item.icon}
         </span>
-        {!item.live && <span style={s.soonBadge}>Coming Soon</span>}
       </div>
-      <h3 style={{ ...s.toolTitle, ...(compact ? s.toolTitleCompact : null) }}>{item.label}</h3>
-      <p style={{ ...s.toolDesc, ...(compact ? s.toolDescCompact : null) }}>{item.desc}</p>
-      <span style={{ ...s.toolFooter, color: clickable ? item.accent : "var(--ff-text-faint)" }}>
-        {clickable ? "Open tool" : "Listed for upcoming release"}
-      </span>
+      <h3 style={s.toolTitle}>{item.label}</h3>
+      <p style={s.toolDesc}>{item.desc}</p>
+      <span style={{ ...s.toolFooter, color: item.accent }}>Open section</span>
     </button>
   );
 }
 
-function Section({ section, navigate, compact = false }) {
+function ExamCard({ exam, onOpen }) {
   return (
-    <section style={s.section}>
-      <div style={s.sectionHead}>
-        <div>
-          <h2 style={s.sectionTitle}>{section.title}</h2>
-          {section.subtitle && <p style={s.sectionSub}>{section.subtitle}</p>}
-        </div>
-        {section.viewAllLabel && section.viewAllRoute ? (
-          <button type="button" style={s.viewAllBtn} onClick={() => navigate(section.viewAllRoute)}>
-            {section.viewAllLabel}
-          </button>
-        ) : section.viewAllLabel ? (
-          <span style={s.viewAll}>{section.viewAllLabel}</span>
-        ) : null}
-      </div>
-
-      {section.items?.length ? (
-        <div style={{ ...s.cardGrid, ...(compact ? s.cardGridCompact : null) }}>
-          {section.items.map((item) => (
-            <ToolCard key={item.id} item={item} onOpen={navigate} compact={compact} />
-          ))}
-        </div>
-      ) : null}
-
-      {section.pills?.length ? (
-        <div style={s.pillRow}>
-          {section.pills.map((pill) => (
-            <button key={pill.label} type="button" style={s.kbPill} onClick={() => navigate(pill.route)}>
-              {pill.label}
-            </button>
-          ))}
-        </div>
-      ) : null}
-    </section>
+    <button type="button" style={s.examCard} onClick={() => onOpen(`/exam/${exam.slug}`)}>
+      <span style={s.examBadge}>{exam.family}</span>
+      <h3 style={s.examTitle}>{exam.name}</h3>
+      <p style={s.examText}>{exam.summary}</p>
+      <span style={s.examAction}>Open exam page</span>
+    </button>
   );
 }
 
@@ -89,44 +43,58 @@ export default function Dashboard({ mode = "dashboard" }) {
   const { language } = useLanguage();
   const isHubMode = mode === "hub";
   const currentCredits = user ? credits ?? user?.credits ?? 0 : 0;
+  const [examQuery, setExamQuery] = useState("");
 
   const copy = language === "hi"
     ? {
-        badge: "पूर्ण डॉक्यूमेंट टूलकिट",
-        title: "FormFixer टूल हब में आपका स्वागत है",
-        text: "एग्जाम फोटो रीसाइज़, PDF कंप्रेशन, इमेज कन्वर्ज़न, सिग्नेचर फिक्स और अपलोड-रेडी ब्राउज़र टूल्स अब एक ही जगह।",
-        mappedTools: "मैप्ड टूल्स",
+        badge: "एग्जाम टूलकिट",
+        title: "FormFixer Exam Hub",
+        text: "Exam search, exam tool cards aur saare exam guides ek jagah se direct access karo.",
+        mappedTools: "Live sections",
+        searchTitle: "Search Your Exam",
+        searchSub: "Exam ka naam likho aur direct uska card aur guide kholo.",
+        searchPlaceholder: "SSC CGL, UPSC CDS, NEET UG, IBPS Clerk...",
+        toolsTitle: "Exam Section",
+        toolsSub: "Yahan exam photo, exam sign aur related flows ke entry cards hain.",
+        examsTitle: "All Exams",
+        examsSub: "Neeche available saare exams ke cards diye gaye hain.",
+        noExams: "Is search ke liye koi exam match nahin mila.",
       }
     : {
         badge: isHubMode ? "Exam Tools Hub" : "Exam Toolkit",
-        title: isHubMode ? "Browse FormFixer Exam Tools" : "Welcome to FormFixer Exam Hub",
-        text: isHubMode
-          ? "Explore live exam-focused pages, requirement guides, and printable passport sheet tools from one organized hub."
-          : "FormFixer is currently focused on exam-related tools, requirement pages, and practical passport photo sheet output.",
-        mappedTools: "Live exam tools",
+        title: "FormFixer Exam Hub",
+        text: "Search your exam, open exam tool cards, and browse all exam guides from one direct-access page.",
+        mappedTools: "Live sections",
+        searchTitle: "Search Your Exam",
+        searchSub: "Type an exam name and jump directly to the matching requirement page.",
+        searchPlaceholder: "SSC CGL, UPSC CDS, NEET UG, IBPS Clerk...",
+        toolsTitle: "Exam Section",
+        toolsSub: "These cards cover exam photo, exam signature, printable sheet, and requirement-led flows.",
+        examsTitle: "All Exams",
+        examsSub: "Browse every available exam card below.",
+        noExams: "No exam matched this search.",
       };
 
-  const allToolCount = useMemo(
-    () => TOOL_CATEGORIES.reduce((sum, category) => sum + category.items.length, 0),
-    []
-  );
-  const sections = isHubMode
-    ? TOOL_CATEGORIES.map((category) => ({
-        id: category.id,
-        title: category.title,
-        subtitle: "",
-        items: category.items,
-      }))
-    : HOME_SECTIONS;
+  const examTools = TOOL_CATEGORIES[0]?.items || [];
+  const filteredExams = useMemo(() => {
+    const q = examQuery.trim().toLowerCase();
+    if (!q) return EXAM_PAGE_DATA;
+    return EXAM_PAGE_DATA.filter((exam) =>
+      exam.name.toLowerCase().includes(q) ||
+      exam.family.toLowerCase().includes(q) ||
+      exam.summary.toLowerCase().includes(q)
+    );
+  }, [examQuery]);
+
   const siteUrl = "https://formfixer.in";
   const hubSchema = isHubMode
     ? [
         {
           "@context": "https://schema.org",
           "@type": "CollectionPage",
-          name: "FormFixer Exam Tools",
-          url: `${siteUrl}/all-tools`,
-          description: "Browse FormFixer exam tools, printable passport photo sheet utility, and exact requirement pages for SSC, UPSC, NEET, JEE, and more.",
+          name: "FormFixer Exam Hub",
+          url: siteUrl,
+          description: "Search exams, open exam tool cards, and browse all FormFixer exam requirement pages from one direct-access hub.",
         },
       ]
     : [];
@@ -135,14 +103,15 @@ export default function Dashboard({ mode = "dashboard" }) {
     <div style={s.root}>
       {isHubMode ? (
         <Seo
-          title="Exam Tools | FormFixer SSC, UPSC, NEET & JEE Upload Toolkit"
-          description="Browse FormFixer exam tools, photo requirement pages, and printable passport photo sheet workflow for SSC, UPSC, NEET, JEE, and more."
-          canonical={`${siteUrl}/all-tools`}
-          keywords="FormFixer exam tools, SSC CGL photo resize, UPSC CDS photo size, NEET photo resize, JEE Main photo size, passport photo sheet"
+          title="Exam Hub | FormFixer SSC, UPSC, NEET, JEE and Banking Exam Guides"
+          description="Search your exam, open exam tool cards, and browse all FormFixer exam requirement pages from one direct-access hub."
+          canonical={siteUrl}
+          keywords="FormFixer exam hub, exam search, SSC CGL photo size, UPSC CDS photo size, NEET UG photo size, IBPS Clerk photo size"
           type="website"
           ldJson={hubSchema}
         />
       ) : null}
+
       {user ? (
         <Sidebar
           credits={currentCredits}
@@ -172,22 +141,73 @@ export default function Dashboard({ mode = "dashboard" }) {
             <div style={s.heroGlow} />
             <div style={s.heroCopy}>
               <span style={s.heroBadge}>{copy.badge}</span>
-              <h1 style={{ ...s.heroTitle, ...(isMobile ? s.heroTitleMobile : null) }}>
-                {copy.title}
-              </h1>
+              <h1 style={{ ...s.heroTitle, ...(isMobile ? s.heroTitleMobile : null) }}>{copy.title}</h1>
               <p style={s.heroText}>{copy.text}</p>
             </div>
             <div style={s.heroStats}>
               <div style={s.statTile}>
-                <strong style={s.statNum}>{allToolCount}+</strong>
+                <strong style={s.statNum}>{examTools.length + EXAM_PAGE_DATA.length}</strong>
                 <span style={s.statLabel}>{copy.mappedTools}</span>
               </div>
             </div>
           </section>
 
-          {sections.map((section) => (
-            <Section key={section.id} section={section} navigate={navigate} compact={isMobile} />
-          ))}
+          <section style={s.section}>
+            <div style={s.sectionHead}>
+              <div>
+                <h2 style={s.sectionTitle}>{copy.searchTitle}</h2>
+                <p style={s.sectionSub}>{copy.searchSub}</p>
+              </div>
+            </div>
+            <div style={s.searchShell}>
+              <input
+                type="text"
+                value={examQuery}
+                onChange={(e) => setExamQuery(e.target.value)}
+                placeholder={copy.searchPlaceholder}
+                style={s.searchInput}
+              />
+            </div>
+            {examQuery.trim() ? (
+              filteredExams.length ? (
+                <div style={{ ...s.cardGrid, ...(isMobile ? s.cardGridCompact : null) }}>
+                  {filteredExams.slice(0, 8).map((exam) => (
+                    <ExamCard key={exam.slug} exam={exam} onOpen={navigate} />
+                  ))}
+                </div>
+              ) : (
+                <div style={s.emptyState}>{copy.noExams}</div>
+              )
+            ) : null}
+          </section>
+
+          <section style={s.section}>
+            <div style={s.sectionHead}>
+              <div>
+                <h2 style={s.sectionTitle}>{copy.toolsTitle}</h2>
+                <p style={s.sectionSub}>{copy.toolsSub}</p>
+              </div>
+            </div>
+            <div style={{ ...s.cardGrid, ...(isMobile ? s.cardGridCompact : null) }}>
+              {examTools.map((item) => (
+                <ToolCard key={item.id} item={item} onOpen={navigate} />
+              ))}
+            </div>
+          </section>
+
+          <section style={s.section}>
+            <div style={s.sectionHead}>
+              <div>
+                <h2 style={s.sectionTitle}>{copy.examsTitle}</h2>
+                <p style={s.sectionSub}>{copy.examsSub}</p>
+              </div>
+            </div>
+            <div style={{ ...s.cardGrid, ...(isMobile ? s.cardGridCompact : null) }}>
+              {(examQuery.trim() ? filteredExams : EXAM_PAGE_DATA).map((exam) => (
+                <ExamCard key={exam.slug} exam={exam} onOpen={navigate} />
+              ))}
+            </div>
+          </section>
         </div>
       </div>
     </div>
@@ -263,8 +283,31 @@ const s = {
   sectionHead: { display: "flex", alignItems: "end", justifyContent: "space-between", gap: 12, flexWrap: "wrap" },
   sectionTitle: { margin: 0, color: "var(--ff-text)", fontSize: 34, lineHeight: 1.06, fontWeight: 900, letterSpacing: -0.8 },
   sectionSub: { margin: "6px 0 0", color: "var(--ff-text-soft)", fontSize: 15, lineHeight: 1.7 },
-  viewAll: { color: "var(--ff-blue)", fontSize: 14, fontWeight: 800 },
-  viewAllBtn: { border: "none", background: "transparent", color: "var(--ff-blue)", fontSize: 14, fontWeight: 800, cursor: "pointer", padding: 0 },
+  searchShell: {
+    borderRadius: 20,
+    border: "1px solid var(--ff-border)",
+    background: "var(--ff-panel-solid)",
+    padding: 12,
+  },
+  searchInput: {
+    width: "100%",
+    borderRadius: 14,
+    border: "1px solid var(--ff-border)",
+    background: "var(--ff-panel)",
+    color: "var(--ff-text)",
+    padding: "15px 16px",
+    fontSize: 15,
+    outline: "none",
+    boxSizing: "border-box",
+  },
+  emptyState: {
+    borderRadius: 18,
+    border: "1px solid var(--ff-border)",
+    background: "var(--ff-panel-solid)",
+    color: "var(--ff-text-soft)",
+    padding: "16px 18px",
+    fontSize: 14,
+  },
   cardGrid: { display: "grid", gridTemplateColumns: "repeat(4, minmax(0, 1fr))", gap: 14 },
   cardGridCompact: { gridTemplateColumns: "1fr 1fr" },
   toolCard: {
@@ -276,11 +319,8 @@ const s = {
     flexDirection: "column",
     gap: 10,
     textAlign: "left",
-    transition: "transform .18s ease, box-shadow .18s ease, border-color .18s ease",
+    cursor: "pointer",
   },
-  toolCardCompact: { minHeight: 188 },
-  toolCardClickable: { cursor: "pointer" },
-  toolCardDisabled: { cursor: "default", opacity: 0.94 },
   toolCardTop: { display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8 },
   toolIcon: {
     minWidth: 44,
@@ -294,31 +334,31 @@ const s = {
     fontWeight: 900,
     letterSpacing: 0.2,
   },
-  soonBadge: {
-    padding: "4px 8px",
-    borderRadius: 999,
-    background: "color-mix(in srgb, var(--ff-orange) 10%, transparent)",
-    color: "var(--ff-orange)",
-    border: "1px solid color-mix(in srgb, var(--ff-orange) 24%, transparent)",
-    fontSize: 10,
-    fontWeight: 800,
-    whiteSpace: "nowrap",
-  },
   toolTitle: { margin: 0, color: "var(--ff-text)", fontSize: 22, lineHeight: 1.18, fontWeight: 900, letterSpacing: -0.5 },
-  toolTitleCompact: { fontSize: 18 },
   toolDesc: { margin: 0, color: "var(--ff-text-soft)", fontSize: 14, lineHeight: 1.65, minHeight: 46 },
-  toolDescCompact: { fontSize: 13 },
   toolFooter: { marginTop: "auto", fontSize: 13, fontWeight: 800 },
-  pillRow: { display: "flex", gap: 12, flexWrap: "wrap" },
-  kbPill: {
+  examCard: {
     borderRadius: 18,
     border: "1px solid var(--ff-border)",
     background: "var(--ff-panel-solid)",
-    color: "var(--ff-text)",
-    padding: "14px 22px",
-    fontSize: 30,
-    fontWeight: 900,
+    padding: "18px 18px 16px",
+    display: "flex",
+    flexDirection: "column",
+    gap: 10,
+    textAlign: "left",
     cursor: "pointer",
-    letterSpacing: -0.8,
   },
+  examBadge: {
+    width: "fit-content",
+    borderRadius: 999,
+    padding: "5px 10px",
+    background: "color-mix(in srgb, var(--ff-blue) 10%, transparent)",
+    border: "1px solid color-mix(in srgb, var(--ff-blue) 24%, transparent)",
+    color: "var(--ff-blue)",
+    fontSize: 12,
+    fontWeight: 800,
+  },
+  examTitle: { margin: 0, color: "var(--ff-text)", fontSize: 21, lineHeight: 1.2, fontWeight: 900 },
+  examText: { margin: 0, color: "var(--ff-text-soft)", fontSize: 14, lineHeight: 1.65, minHeight: 48 },
+  examAction: { marginTop: "auto", color: "var(--ff-orange)", fontSize: 13, fontWeight: 800 },
 };
