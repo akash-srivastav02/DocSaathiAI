@@ -1,11 +1,8 @@
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import API from "../api/axios";
-import useStore from "../store/useStore";
-import AuthModal from "../components/AuthModal";
-import Sidebar from "../components/Sidebar";
-import TopBar from "../components/TopBar";
 import useIsMobile from "../hooks/useIsMobile";
+import PublicTopBar from "../components/PublicTopBar";
+import { mergePdfFiles } from "../utils/pdfLocal";
 
 function dataUrlToBlob(dataUrl) {
   const [header, body] = dataUrl.split(",");
@@ -57,8 +54,6 @@ function PreviewCard({ fileCount, pageCount }) {
 export default function MergePdfPage() {
   const navigate = useNavigate();
   const isMobile = useIsMobile(900);
-  const { user, credits, updateCredits, logout } = useStore();
-  const currentCredits = user ? (credits ?? user?.credits ?? 0) : 0;
 
   const [files, setFiles] = useState([]);
   const [fileError, setFileError] = useState("");
@@ -66,8 +61,6 @@ export default function MergePdfPage() {
   const [result, setResult] = useState(null);
   const [error, setError] = useState("");
   const [done, setDone] = useState(false);
-  const [showAuthModal, setShowAuthModal] = useState(false);
-  const [downloadUnlocked, setDownloadUnlocked] = useState(false);
   const [downloading, setDownloading] = useState(false);
 
   const totalSizeMB = useMemo(
@@ -80,7 +73,6 @@ export default function MergePdfPage() {
     setResult(null);
     setDone(false);
     setError("");
-    setDownloadUnlocked(false);
     const picked = Array.from(incomingFiles || []);
     if (!picked.length) return;
     const invalid = picked.find((file) => file.type !== "application/pdf");
@@ -112,38 +104,24 @@ export default function MergePdfPage() {
     if (files.length < 2) return setError("Please upload at least two PDF files.");
     setProcessing(true);
     try {
-      const formData = new FormData();
-      files.forEach((file) => formData.append("pdfs", file));
-      const { data } = await API.post("/pdf/merge", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
+      const data = await mergePdfFiles(files);
       setResult(data);
       setDone(true);
-      setDownloadUnlocked(false);
     } catch (err) {
-      setError(err.response?.data?.message || "PDF merge failed.");
+      setError(err.message || "PDF merge failed.");
     } finally {
       setProcessing(false);
     }
   };
 
-  const handleDownloadAfterAuth = async () => {
+  const handleDownload = async () => {
     if (!result?.url) return;
     setError("");
     try {
-      if (!downloadUnlocked) {
-        setDownloading(true);
-        const { data } = await API.post("/process/confirm-download", {
-          toolType: "mergepdf",
-          examName: `Merge PDF (${files.length} files)`,
-          processedUrl: result.url,
-        });
-        if (data.creditsLeft !== undefined) updateCredits(data.creditsLeft);
-        setDownloadUnlocked(true);
-      }
+      setDownloading(true);
       await downloadFileFromUrl(result.url, "formfixer_merged_pdf.pdf");
     } catch (err) {
-      if (err.response?.data?.message) return setError(err.response.data.message);
+      if (err.message) return setError(err.message);
       window.open(result.url, "_blank");
     } finally {
       setDownloading(false);
@@ -156,34 +134,14 @@ export default function MergePdfPage() {
     setError("");
     setFileError("");
     setDone(false);
-    setDownloadUnlocked(false);
   };
 
   return (
     <div style={s.root}>
-      {showAuthModal && (
-        <AuthModal
-          onClose={() => setShowAuthModal(false)}
-          onSuccess={async () => {
-            setShowAuthModal(false);
-            await handleDownloadAfterAuth();
-          }}
-          title="Login to Download Merged PDF"
-          subtitle="Preview is available in guest mode. Final merged PDF download needs quick login."
-        />
-      )}
-      {user && <Sidebar credits={currentCredits} planLabel={user?.planLabel} isUnlimited={user?.isUnlimited} onLogout={() => { logout(); navigate("/"); }} />}
       <div style={s.main}>
-        {user ? (
-          <TopBar user={user} credits={currentCredits} onLogout={() => { logout(); navigate("/"); }} />
-        ) : (
-          <div style={{ ...s.guestBar, ...(isMobile ? s.guestBarMobile : null) }}>
-            <span>Preview in guest mode. Login only when you need the final merged PDF.</span>
-            <button style={s.guestLoginBtn} onClick={() => setShowAuthModal(true)}>Login / Sign Up</button>
-          </div>
-        )}
+        <PublicTopBar />
 
-        <div style={{ ...s.content, ...(isMobile ? s.contentMobile : null), ...(user ? s.contentWithFixedTopbar : null) }}>
+        <div style={{ ...s.content, ...(isMobile ? s.contentMobile : null), ...s.contentWithFixedTopbar }}>
           <div style={s.toolHeader}>
             <button style={s.backBtn} onClick={() => navigate(user ? "/dashboard" : "/all-tools")}>Back</button>
             <div>
@@ -265,13 +223,14 @@ export default function MergePdfPage() {
               </div>
 
               <div style={s.configCard}>
-                <div style={s.configTitle}>Final Output</div>
-                <div style={s.resultPills}>
-                  <span style={s.resultPill}>Input: PDF</span>
-                  <span style={s.resultPill}>Output: Single PDF</span>
-                  <span style={s.resultPill}>Order preserved</span>
-                </div>
+              <div style={s.configTitle}>Final Output</div>
+              <div style={s.resultPills}>
+                <span style={s.resultPill}>Input: PDF</span>
+                <span style={s.resultPill}>Output: Single PDF</span>
+                <span style={s.resultPill}>Order preserved</span>
+                <span style={s.resultPill}>Processed in browser</span>
               </div>
+            </div>
 
               {!done && (
                 <button
@@ -304,17 +263,14 @@ export default function MergePdfPage() {
                   <div style={s.statLabel}>Merged size</div>
                 </div>
               </div>
-              <p style={s.resultMessage}>Preview ready. Final merged PDF will download watermark-free after one plan use.</p>
+              <p style={s.resultMessage}>Preview ready. Final merged PDF downloads directly from your browser with no server processing.</p>
               <div style={s.resultActions}>
                 <button
                   style={s.btnPrimary}
-                  onClick={async () => {
-                    if (!user) return setShowAuthModal(true);
-                    await handleDownloadAfterAuth();
-                  }}
+                  onClick={handleDownload}
                   disabled={downloading}
                 >
-                  {downloading ? "Unlocking Download..." : downloadUnlocked ? "Download Again" : "Download Final PDF (1 Use)"}
+                  {downloading ? "Preparing Download..." : "Download Final PDF"}
                 </button>
                 <button style={s.btnSecondary} onClick={handleReset}>Merge More PDFs</button>
               </div>

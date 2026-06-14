@@ -15,18 +15,22 @@ export default function BlogIndexPage() {
 
   const copy = language === "hi"
     ? {
-        badge: "SEO guides aur tool blogs",
+        badge: "Exam SEO guides aur traffic blogs",
         title: "FormFixer Blog",
-        sub: "High-intent guides for exam photo resize, PDF fixes, file conversion, and upload-ready document workflows.",
+        sub: "High-intent exam guides for SSC, UPSC, NEET, JEE, banking forms, and passport photo preparation. Built to grow search traffic and future ad revenue.",
         latest: "Latest guides",
         readMore: "Read article",
+        featured: "Featured for search intent",
+        adLabel: "Ad space",
       }
     : {
-        badge: "SEO guides and tool blogs",
+        badge: "Exam SEO guides and traffic blogs",
         title: "FormFixer Blog",
-        sub: "High-intent guides for exam photo resize, PDF fixes, file conversion, and upload-ready document workflows.",
+        sub: "High-intent exam guides for SSC, UPSC, NEET, JEE, banking forms, and passport photo preparation. Built to grow search traffic and future ad revenue.",
         latest: "Latest guides",
         readMore: "Read article",
+        featured: "Featured for search intent",
+        adLabel: "Ad space",
       };
 
   const blogSchema = useMemo(
@@ -49,10 +53,10 @@ export default function BlogIndexPage() {
   return (
     <div style={{ ...s.root, ...(isDark ? s.rootDark : s.rootLight) }}>
       <Seo
-        title="FormFixer Blog | SEO Guides for PDF, Image, and Exam Upload Tools"
-        description="Read FormFixer guides for compress image to 20KB, compress PDF to 200KB, merge PDF, split PDF, passport photo sheets, and exam photo workflows."
+        title="FormFixer Blog | Exam SEO Guides for SSC, UPSC, NEET, JEE and Form Uploads"
+        description="Read FormFixer exam guides for SSC, UPSC, NEET, JEE, IBPS and passport photo preparation. Structured for search traffic and future Google Ads monetization."
         canonical={`${SITE_URL}/blog`}
-        keywords="FormFixer blog, compress image to 20kb guide, compress pdf to 200kb guide, merge pdf guide, exam photo resize guide"
+        keywords="FormFixer blog, SSC CGL photo size guide, UPSC CDS photo resize guide, NEET photo size guide, JEE Main photo size guide"
         type="website"
         ldJson={blogSchema}
       />
@@ -62,6 +66,19 @@ export default function BlogIndexPage() {
           <span style={s.badge}>{copy.badge}</span>
           <h1 style={s.title}>{copy.title}</h1>
           <p style={s.sub}>{copy.sub}</p>
+        </section>
+
+        <section style={s.featureRow}>
+          <div style={{ ...s.featureCard, ...(isDark ? s.cardDark : s.cardLight) }}>
+            <p style={s.featureEyebrow}>{copy.featured}</p>
+            <h2 style={s.featureTitle}>Rank for high-intent exam searches</h2>
+            <p style={s.featureText}>Every article links directly to an exam page or passport photo workflow so traffic can move from Google search into the product without signup friction.</p>
+          </div>
+          <div style={{ ...s.adCard, ...(isDark ? s.cardDark : s.cardLight) }}>
+            <span style={s.adTag}>{copy.adLabel}</span>
+            <strong style={s.adTitle}>Responsive blog ad slot</strong>
+            <p style={s.adText}>Use this block later for Google Ads display units after content starts getting indexed and impressions begin to grow.</p>
+          </div>
         </section>
 
         <section style={s.section}>
@@ -134,6 +151,12 @@ const s = {
     lineHeight: 1.7,
   },
   section: { marginTop: 18 },
+  featureRow: {
+    marginTop: 14,
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+    gap: 16,
+  },
   sectionHead: { marginBottom: 18 },
   sectionTitle: { margin: 0, fontSize: 24, fontWeight: 900 },
   grid: {
@@ -156,6 +179,37 @@ const s = {
     background: "rgba(255,255,255,0.88)",
     boxShadow: "0 18px 44px rgba(148,163,184,0.16)",
   },
+  featureCard: {
+    borderRadius: 22,
+    border: "1px solid rgba(148,163,184,0.14)",
+    padding: 22,
+    display: "grid",
+    gap: 10,
+  },
+  featureEyebrow: { margin: 0, color: "#f97316", fontSize: 12, fontWeight: 800, textTransform: "uppercase", letterSpacing: 0.5 },
+  featureTitle: { margin: 0, fontSize: 26, lineHeight: 1.18, fontWeight: 900 },
+  featureText: { margin: 0, color: "#94a3b8", lineHeight: 1.75, fontSize: 15 },
+  adCard: {
+    borderRadius: 22,
+    border: "1px dashed rgba(249,115,22,0.34)",
+    padding: 22,
+    display: "grid",
+    gap: 10,
+    alignContent: "start",
+  },
+  adTag: {
+    width: "fit-content",
+    padding: "6px 10px",
+    borderRadius: 999,
+    background: "rgba(249,115,22,0.12)",
+    color: "#f97316",
+    border: "1px solid rgba(249,115,22,0.18)",
+    fontSize: 11,
+    fontWeight: 800,
+    textTransform: "uppercase",
+  },
+  adTitle: { fontSize: 20, lineHeight: 1.2 },
+  adText: { margin: 0, color: "#94a3b8", lineHeight: 1.7, fontSize: 14 },
   cardTop: {
     display: "flex",
     alignItems: "center",

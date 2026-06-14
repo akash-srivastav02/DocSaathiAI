@@ -4,18 +4,16 @@ const SECTIONS = [
   {
     heading: "Acceptance of these terms",
     paragraphs: [
-      "By creating an account or using FormFixer, you agree to these Terms and Conditions. If you do not agree, you should not use the service.",
-      "FormFixer is a digital utility platform that helps users prepare exam-related photos, signatures, PDFs, and similar upload-ready files.",
+      "By using FormFixer, you agree to these Terms and Conditions. If you do not agree, you should not use the service.",
+      "FormFixer is a direct-access digital platform focused on exam-related preparation pages, printable passport photo sheet output, and related guidance content.",
     ],
   },
   {
     heading: "What FormFixer provides",
     points: [
-      "Exam photo resize and compression presets.",
-      "Signature formatting and KB targeting.",
-      "Photo + sign/date merger tools.",
-      "PDF compression and related document utilities.",
-      "Converter and upload-preparation workflows as available on the platform.",
+      "Exam requirement pages, upload guidance, and form-related content.",
+      "Printable passport photo sheet workflow.",
+      "Direct-access utility experiences and blog content as available on the platform.",
     ],
   },
   {
@@ -30,22 +28,10 @@ const SECTIONS = [
     ],
   },
   {
-    heading: "Credits, plans, and fair use",
-    paragraphs: [
-      "Some tools require credits, and paid plans may provide either a fixed number of credits or an unlimited plan subject to fair-usage limits.",
-    ],
-    points: [
-      "Free credits, refill rules, and paid plan details may change over time.",
-      "Single Fix is intended for one urgent clean download.",
-      "Unlimited plans may be limited by daily fair-use safeguards to prevent abuse.",
-      "Abusive automated usage, reselling without permission, or attempts to bypass plan limits may lead to suspension.",
-    ],
-  },
-  {
     heading: "Payments and refunds",
     paragraphs: [
-      "Payments are processed by Razorpay or another payment partner integrated into the service. Payment success depends on the gateway, bank, or UPI provider as well as FormFixer verification.",
-      "Because FormFixer provides digital services, refund requests are handled case-by-case, especially where there is a clear technical failure or duplicate payment issue.",
+      "If paid features, ads, or transaction workflows are introduced later, they may use third-party payment or ad partners.",
+      "Refund, billing, or partner-specific terms may be updated later if monetized features go live.",
     ],
   },
   {

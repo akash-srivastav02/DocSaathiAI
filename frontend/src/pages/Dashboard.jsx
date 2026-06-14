@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import useStore from "../store/useStore";
 import Sidebar from "../components/Sidebar";
 import TopBar from "../components/TopBar";
+import PublicTopBar from "../components/PublicTopBar";
 import useLanguage from "../hooks/useLanguage";
 import useIsMobile from "../hooks/useIsMobile";
 import { HOME_SECTIONS, TOOL_CATEGORIES } from "../utils/toolCatalog";
@@ -88,7 +89,6 @@ export default function Dashboard({ mode = "dashboard" }) {
   const { language } = useLanguage();
   const isHubMode = mode === "hub";
   const currentCredits = user ? credits ?? user?.credits ?? 0 : 0;
-  const headerUser = user || { name: "Guest", planLabel: "Free Tier", isUnlimited: false };
 
   const copy = language === "hi"
     ? {
@@ -98,12 +98,12 @@ export default function Dashboard({ mode = "dashboard" }) {
         mappedTools: "मैप्ड टूल्स",
       }
     : {
-        badge: isHubMode ? "All Tools Hub" : "Complete Document Toolkit",
-        title: isHubMode ? "Browse All FormFixer Tools" : "Welcome to FormFixer Tool Hub",
+        badge: isHubMode ? "Exam Tools Hub" : "Exam Toolkit",
+        title: isHubMode ? "Browse FormFixer Exam Tools" : "Welcome to FormFixer Exam Hub",
         text: isHubMode
-          ? "Explore every PDF, image, exam, and upload-ready tool from one organized hub."
-          : "Your all-in-one document toolkit for exam photo resize, PDF compression, image conversion, signature fixes, and upload-ready browser tools.",
-        mappedTools: "Mapped tools",
+          ? "Explore live exam-focused pages, requirement guides, and printable passport sheet tools from one organized hub."
+          : "FormFixer is currently focused on exam-related tools, requirement pages, and practical passport photo sheet output.",
+        mappedTools: "Live exam tools",
       };
 
   const allToolCount = useMemo(
@@ -124,9 +124,9 @@ export default function Dashboard({ mode = "dashboard" }) {
         {
           "@context": "https://schema.org",
           "@type": "CollectionPage",
-          name: "FormFixer All Tools",
+          name: "FormFixer Exam Tools",
           url: `${siteUrl}/all-tools`,
-          description: "Browse FormFixer tools for exam photo resize, PDF compression, merge PDF, split PDF, signature cleaning, image conversion, and upload-ready document workflows.",
+          description: "Browse FormFixer exam tools, printable passport photo sheet utility, and exact requirement pages for SSC, UPSC, NEET, JEE, and more.",
         },
       ]
     : [];
@@ -135,10 +135,10 @@ export default function Dashboard({ mode = "dashboard" }) {
     <div style={s.root}>
       {isHubMode ? (
         <Seo
-          title="All Tools | FormFixer PDF, Image, Signature & Exam Upload Toolkit"
-          description="Browse all FormFixer tools for exam photo resize, signature cleaner, image converter, compress PDF, merge PDF, split PDF, and upload-ready document fixes."
+          title="Exam Tools | FormFixer SSC, UPSC, NEET & JEE Upload Toolkit"
+          description="Browse FormFixer exam tools, photo requirement pages, and printable passport photo sheet workflow for SSC, UPSC, NEET, JEE, and more."
           canonical={`${siteUrl}/all-tools`}
-          keywords="FormFixer all tools, PDF tools, image tools, signature cleaner, merge pdf, split pdf, exam photo resize"
+          keywords="FormFixer exam tools, SSC CGL photo resize, UPSC CDS photo size, NEET photo resize, JEE Main photo size, passport photo sheet"
           type="website"
           ldJson={hubSchema}
         />
@@ -155,13 +155,17 @@ export default function Dashboard({ mode = "dashboard" }) {
       ) : null}
 
       <div style={s.main}>
-        <TopBar
-          user={headerUser}
-          credits={currentCredits}
-          showPlanSummary={false}
-          hasSidebar={Boolean(user)}
-          onLogout={user ? () => { logout(); navigate("/"); } : undefined}
-        />
+        {user ? (
+          <TopBar
+            user={user}
+            credits={currentCredits}
+            showPlanSummary={false}
+            hasSidebar
+            onLogout={() => { logout(); navigate("/"); }}
+          />
+        ) : (
+          <PublicTopBar />
+        )}
 
         <div style={{ ...s.content, ...(isMobile ? s.contentMobile : null), ...s.contentWithFixedTopbar }}>
           <section style={s.heroBand}>

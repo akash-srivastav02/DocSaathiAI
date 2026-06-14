@@ -1,21 +1,17 @@
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import AuthModal from "../components/AuthModal";
-import Sidebar from "../components/Sidebar";
-import TopBar from "../components/TopBar";
-import API from "../api/axios";
-import useStore from "../store/useStore";
+import PublicTopBar from "../components/PublicTopBar";
 import useIsMobile from "../hooks/useIsMobile";
 
 const PAGE_PRESETS = {
   a4: { label: "A4 Portrait", width: 1240, height: 1754 },
-  "4x6": { label: "4×6 Print", width: 1200, height: 1800 },
+  "4x6": { label: "4x6 Print", width: 1200, height: 1800 },
 };
 
 const PHOTO_PRESETS = {
-  passport: { label: "Passport 35×45mm", width: 295, height: 378 },
-  stamp: { label: "Stamp 25×30mm", width: 220, height: 268 },
-  square: { label: "Square 1×1", width: 260, height: 260 },
+  passport: { label: "Passport 35x45mm", width: 295, height: 378 },
+  stamp: { label: "Stamp 25x30mm", width: 220, height: 268 },
+  square: { label: "Square 1x1", width: 260, height: 260 },
 };
 
 const COPY_LAYOUTS = {
@@ -51,8 +47,6 @@ function PreviewSheet({ src }) {
 export default function PassportSheetPage() {
   const navigate = useNavigate();
   const isMobile = useIsMobile(900);
-  const { user, credits, updateCredits, logout } = useStore();
-  const currentCredits = user ? (credits ?? user?.credits ?? 0) : 0;
 
   const [file, setFile] = useState(null);
   const [preview, setPreview] = useState(null);
@@ -66,9 +60,6 @@ export default function PassportSheetPage() {
   const [done, setDone] = useState(false);
   const [result, setResult] = useState(null);
   const [error, setError] = useState("");
-  const [showAuthModal, setShowAuthModal] = useState(false);
-  const [downloadUnlocked, setDownloadUnlocked] = useState(false);
-  const [downloading, setDownloading] = useState(false);
 
   const selectedPage = PAGE_PRESETS[pageMode];
   const selectedPhoto = PHOTO_PRESETS[photoPreset];
@@ -86,7 +77,6 @@ export default function PassportSheetPage() {
     setDone(false);
     setResult(null);
     setError("");
-    setDownloadUnlocked(false);
   };
 
   const generateSheet = async () => {
@@ -176,7 +166,6 @@ export default function PassportSheetPage() {
         photoPreset,
       });
       setDone(true);
-      setDownloadUnlocked(false);
     } catch {
       setError("Could not generate the passport photo sheet.");
     } finally {
@@ -184,18 +173,8 @@ export default function PassportSheetPage() {
     }
   };
 
-  const handleDownloadAfterAuth = async () => {
+  const handleDownload = () => {
     if (!result?.url) return;
-    if (!downloadUnlocked) {
-      const { data } = await API.post("/process/confirm-download", {
-        toolType: "passportsheet",
-        examName: `${selectedPhoto.label} · ${selectedLayout.label}`,
-        processedUrl: result.url,
-      });
-      if (data.creditsLeft !== undefined) updateCredits(data.creditsLeft);
-      setDownloadUnlocked(true);
-    }
-
     const link = document.createElement("a");
     link.href = result.url;
     link.download = "formfixer_passport_photo_sheet.jpg";
@@ -204,62 +183,20 @@ export default function PassportSheetPage() {
     document.body.removeChild(link);
   };
 
-  const handleDownload = async () => {
-    if (!user) return setShowAuthModal(true);
-    setDownloading(true);
-    setError("");
-    try {
-      await handleDownloadAfterAuth();
-    } catch (err) {
-      setError(err.response?.data?.message || "Could not unlock download.");
-    } finally {
-      setDownloading(false);
-    }
-  };
-
   const handleReset = () => {
     setDone(false);
     setResult(null);
     setError("");
-    setDownloadUnlocked(false);
   };
 
   return (
     <div style={s.root}>
-      {showAuthModal && (
-        <AuthModal
-          onClose={() => setShowAuthModal(false)}
-          onSuccess={async () => {
-            setShowAuthModal(false);
-            await handleDownloadAfterAuth();
-          }}
-          title="Login to Download Passport Sheet"
-          subtitle="Preview is available first. Final print-ready download needs quick login."
-        />
-      )}
-
-      {user && (
-        <Sidebar
-          credits={currentCredits}
-          planLabel={user?.planLabel}
-          isUnlimited={user?.isUnlimited}
-          onLogout={() => { logout(); navigate("/"); }}
-        />
-      )}
-
       <div style={s.main}>
-        {user ? (
-          <TopBar user={user} credits={currentCredits} onLogout={() => { logout(); navigate("/"); }} />
-        ) : (
-          <div style={{ ...s.guestBar, ...(isMobile ? s.guestBarMobile : null) }}>
-            <span>Preview first. Login only when you need the final print-ready sheet.</span>
-            <button style={s.guestLoginBtn} onClick={() => setShowAuthModal(true)}>Login / Sign Up</button>
-          </div>
-        )}
+        <PublicTopBar />
 
-        <div style={{ ...s.content, ...(isMobile ? s.contentMobile : null), ...(user ? s.contentWithFixedTopbar : null) }}>
+        <div style={{ ...s.content, ...(isMobile ? s.contentMobile : null), ...s.contentWithFixedTopbar }}>
           <div style={s.toolHeader}>
-            <button type="button" style={s.backBtn} onClick={() => navigate(user ? "/dashboard" : "/all-tools")}>Back</button>
+            <button type="button" style={s.backBtn} onClick={() => navigate("/all-tools")}>Back</button>
             <div>
               <h1 style={s.toolTitle}>Passport Photo Sheet Maker</h1>
               <p style={s.toolDesc}>Create 4, 6, 8, or 12 print-ready photo copies on one page for passport, ID, studio, and form-print use.</p>
@@ -385,8 +322,8 @@ export default function PassportSheetPage() {
               </div>
 
               {!done && (
-                <button type="button" style={s.btnPrimary} onClick={generateSheet} disabled={processing}>
-                  {processing ? "Generating Preview..." : "Generate Preview"}
+                <button type="button" style={s.btnPrimary} onClick={generateSheet} disabled={processing || !file}>
+                  {processing ? "Generating Sheet..." : "Generate Sheet"}
                 </button>
               )}
 
@@ -400,15 +337,15 @@ export default function PassportSheetPage() {
                 <span style={s.resultPill}>{selectedLayout.label}</span>
                 <span style={s.resultPill}>{selectedPhoto.label}</span>
                 <span style={s.resultPill}>{selectedPage.label}</span>
-                <span style={s.resultPill}>Watermarked preview</span>
+                <span style={s.resultPill}>Browser-generated</span>
               </div>
 
               <PreviewSheet src={result.url} />
 
-              <p style={s.resultMessage}>Preview ready. Final passport sheet will download watermark-free after one plan use.</p>
+              <p style={s.resultMessage}>Sheet ready. Download starts directly from your browser.</p>
               <div style={s.resultActions}>
-                <button type="button" style={s.btnPrimary} onClick={handleDownload} disabled={downloading}>
-                  {downloading ? "Unlocking Download..." : downloadUnlocked ? "Download Again" : "Download Final Sheet (1 Use)"}
+                <button type="button" style={s.btnPrimary} onClick={handleDownload}>
+                  Download Sheet
                 </button>
                 <button type="button" style={s.btnSecondary} onClick={handleReset}>Create Another Sheet</button>
               </div>
@@ -423,9 +360,6 @@ export default function PassportSheetPage() {
 const s = {
   root: { display: "flex", minHeight: "100vh", background: "transparent", fontFamily: "'Segoe UI', sans-serif" },
   main: { flex: 1, overflowY: "auto", paddingBottom: 56 },
-  guestBar: { display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, padding: "16px 28px 0", color: "var(--ff-text-soft)", fontSize: 13, flexWrap: "wrap" },
-  guestBarMobile: { padding: "84px 14px 0", gap: 10 },
-  guestLoginBtn: { background: "#f97316", color: "#fff", border: "none", borderRadius: 999, padding: "10px 16px", fontWeight: 700, cursor: "pointer" },
   content: { maxWidth: 1180, margin: "0 auto", padding: "18px 28px 0" },
   contentMobile: { padding: "16px 14px 0" },
   contentWithFixedTopbar: { paddingTop: 104 },

@@ -95,6 +95,12 @@ export default function BlogPostPage() {
             </button>
           </div>
 
+          <div style={{ ...s.adCard, ...(isDark ? s.cardDark : s.cardLight) }}>
+            <span style={s.adTag}>Ad-ready block</span>
+            <strong style={s.adTitle}>Future Google Ads placement</strong>
+            <p style={s.adText}>This article layout includes a clean mid-content space that can later be replaced with a responsive Google Ads unit once traffic starts building.</p>
+          </div>
+
           <div style={{ ...s.contentCard, ...(isDark ? s.cardDark : s.cardLight) }}>
             {post.sections.map((section) => (
               <section key={section.heading} style={s.section}>
@@ -194,6 +200,26 @@ const s = {
   },
   cardDark: { background: "rgba(8,16,30,0.84)", boxShadow: "0 18px 44px rgba(2,6,23,0.28)" },
   cardLight: { background: "rgba(255,255,255,0.88)", boxShadow: "0 18px 44px rgba(148,163,184,0.16)" },
+  adCard: {
+    borderRadius: 24,
+    border: "1px dashed rgba(249,115,22,0.34)",
+    padding: 20,
+    display: "grid",
+    gap: 8,
+  },
+  adTag: {
+    width: "fit-content",
+    padding: "6px 10px",
+    borderRadius: 999,
+    background: "rgba(249,115,22,0.12)",
+    border: "1px solid rgba(249,115,22,0.18)",
+    color: "#f97316",
+    fontSize: 11,
+    fontWeight: 800,
+    textTransform: "uppercase",
+  },
+  adTitle: { fontSize: 20, lineHeight: 1.2 },
+  adText: { margin: 0, color: "#94a3b8", lineHeight: 1.72, fontSize: 14 },
   ctaCopy: { display: "grid", gap: 8, maxWidth: 700 },
   ctaTitle: { fontSize: 20, lineHeight: 1.2 },
   ctaText: { margin: 0, color: "#94a3b8", lineHeight: 1.7 },

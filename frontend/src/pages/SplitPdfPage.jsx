@@ -1,11 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import API from "../api/axios";
-import useStore from "../store/useStore";
-import AuthModal from "../components/AuthModal";
-import Sidebar from "../components/Sidebar";
-import TopBar from "../components/TopBar";
 import useIsMobile from "../hooks/useIsMobile";
+import PublicTopBar from "../components/PublicTopBar";
+import { splitPdfFile } from "../utils/pdfLocal";
 
 function dataUrlToBlob(dataUrl) {
   const [header, body] = dataUrl.split(",");
@@ -59,8 +56,6 @@ function PreviewCard({ originalPages, extractedPages, selectedPages }) {
 export default function SplitPdfPage() {
   const navigate = useNavigate();
   const isMobile = useIsMobile(900);
-  const { user, credits, updateCredits, logout } = useStore();
-  const currentCredits = user ? (credits ?? user?.credits ?? 0) : 0;
 
   const [file, setFile] = useState(null);
   const [pageSelection, setPageSelection] = useState("");
@@ -69,8 +64,6 @@ export default function SplitPdfPage() {
   const [result, setResult] = useState(null);
   const [error, setError] = useState("");
   const [done, setDone] = useState(false);
-  const [showAuthModal, setShowAuthModal] = useState(false);
-  const [downloadUnlocked, setDownloadUnlocked] = useState(false);
   const [downloading, setDownloading] = useState(false);
 
   const handleFile = (pickedFile) => {
@@ -78,7 +71,6 @@ export default function SplitPdfPage() {
     setResult(null);
     setDone(false);
     setError("");
-    setDownloadUnlocked(false);
     if (!pickedFile) return;
     if (pickedFile.type !== "application/pdf") {
       setFileError("Only PDF files are allowed.");
@@ -93,39 +85,24 @@ export default function SplitPdfPage() {
     if (!pageSelection.trim()) return setError("Enter page numbers or ranges like 1,3,5-7.");
     setProcessing(true);
     try {
-      const formData = new FormData();
-      formData.append("pdf", file);
-      formData.append("pageSelection", pageSelection.trim());
-      const { data } = await API.post("/pdf/split", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
+      const data = await splitPdfFile(file, pageSelection.trim());
       setResult(data);
       setDone(true);
-      setDownloadUnlocked(false);
     } catch (err) {
-      setError(err.response?.data?.message || "PDF split failed.");
+      setError(err.message || "PDF split failed.");
     } finally {
       setProcessing(false);
     }
   };
 
-  const handleDownloadAfterAuth = async () => {
+  const handleDownload = async () => {
     if (!result?.url) return;
     setError("");
     try {
-      if (!downloadUnlocked) {
-        setDownloading(true);
-        const { data } = await API.post("/process/confirm-download", {
-          toolType: "splitpdf",
-          examName: `Split PDF (${pageSelection.trim()})`,
-          processedUrl: result.url,
-        });
-        if (data.creditsLeft !== undefined) updateCredits(data.creditsLeft);
-        setDownloadUnlocked(true);
-      }
+      setDownloading(true);
       await downloadFileFromUrl(result.url, "formfixer_split_pdf.pdf");
     } catch (err) {
-      if (err.response?.data?.message) return setError(err.response.data.message);
+      if (err.message) return setError(err.message);
       window.open(result.url, "_blank");
     } finally {
       setDownloading(false);
@@ -139,34 +116,14 @@ export default function SplitPdfPage() {
     setError("");
     setFileError("");
     setDone(false);
-    setDownloadUnlocked(false);
   };
 
   return (
     <div style={s.root}>
-      {showAuthModal && (
-        <AuthModal
-          onClose={() => setShowAuthModal(false)}
-          onSuccess={async () => {
-            setShowAuthModal(false);
-            await handleDownloadAfterAuth();
-          }}
-          title="Login to Download Split PDF"
-          subtitle="Preview is available in guest mode. Final split PDF download needs quick login."
-        />
-      )}
-      {user && <Sidebar credits={currentCredits} planLabel={user?.planLabel} isUnlimited={user?.isUnlimited} onLogout={() => { logout(); navigate("/"); }} />}
       <div style={s.main}>
-        {user ? (
-          <TopBar user={user} credits={currentCredits} onLogout={() => { logout(); navigate("/"); }} />
-        ) : (
-          <div style={{ ...s.guestBar, ...(isMobile ? s.guestBarMobile : null) }}>
-            <span>Preview in guest mode. Login only when you need the final extracted PDF.</span>
-            <button style={s.guestLoginBtn} onClick={() => setShowAuthModal(true)}>Login / Sign Up</button>
-          </div>
-        )}
+        <PublicTopBar />
 
-        <div style={{ ...s.content, ...(isMobile ? s.contentMobile : null), ...(user ? s.contentWithFixedTopbar : null) }}>
+        <div style={{ ...s.content, ...(isMobile ? s.contentMobile : null), ...s.contentWithFixedTopbar }}>
           <div style={s.toolHeader}>
             <button style={s.backBtn} onClick={() => navigate(user ? "/dashboard" : "/all-tools")}>Back</button>
             <div>
@@ -235,13 +192,14 @@ export default function SplitPdfPage() {
               </div>
 
               <div style={s.configCard}>
-                <div style={s.configTitle}>Final Output</div>
-                <div style={s.resultPills}>
-                  <span style={s.resultPill}>Input: 1 PDF</span>
-                  <span style={s.resultPill}>Output: Extracted PDF</span>
-                  <span style={s.resultPill}>Page order preserved</span>
-                </div>
+              <div style={s.configTitle}>Final Output</div>
+              <div style={s.resultPills}>
+                <span style={s.resultPill}>Input: 1 PDF</span>
+                <span style={s.resultPill}>Output: Extracted PDF</span>
+                <span style={s.resultPill}>Page order preserved</span>
+                <span style={s.resultPill}>Processed in browser</span>
               </div>
+            </div>
 
               {!done && (
                 <button
@@ -278,17 +236,14 @@ export default function SplitPdfPage() {
                   <div style={s.statLabel}>Final size</div>
                 </div>
               </div>
-              <p style={s.resultMessage}>Preview ready. Final extracted PDF will download watermark-free after one plan use.</p>
+              <p style={s.resultMessage}>Preview ready. Final extracted PDF downloads directly from your browser with no server processing.</p>
               <div style={s.resultActions}>
                 <button
                   style={s.btnPrimary}
-                  onClick={async () => {
-                    if (!user) return setShowAuthModal(true);
-                    await handleDownloadAfterAuth();
-                  }}
+                  onClick={handleDownload}
                   disabled={downloading}
                 >
-                  {downloading ? "Unlocking Download..." : downloadUnlocked ? "Download Again" : "Download Final PDF (1 Use)"}
+                  {downloading ? "Preparing Download..." : "Download Final PDF"}
                 </button>
                 <button style={s.btnSecondary} onClick={handleReset}>Split Another PDF</button>
               </div>

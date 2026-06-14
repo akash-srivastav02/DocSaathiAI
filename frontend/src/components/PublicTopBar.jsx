@@ -11,16 +11,16 @@ export default function PublicTopBar() {
 
   const copy = language === "hi"
     ? {
-        subtitle: "ऑफिशियल टूल हब",
-        allTools: "सभी टूल्स",
+        subtitle: "डायरेक्ट-एक्सेस एग्जाम हब",
+        allTools: "एग्जाम हब",
         blog: "ब्लॉग",
         support: "सपोर्ट",
         light: "लाइट मोड",
         dark: "डार्क मोड",
       }
     : {
-        subtitle: "Official tool hub",
-        allTools: "All Tools",
+        subtitle: "Direct-access exam hub",
+        allTools: "Exam Hub",
         blog: "Blog",
         support: "Support",
         light: "Light Mode",
@@ -59,7 +59,7 @@ export default function PublicTopBar() {
             style={{ ...s.langBtn, ...(language === "hi" ? s.langActive : s.langIdle) }}
             onClick={() => setLanguage("hi")}
           >
-            हिंदी
+            हिन्दी
           </button>
         </div>
         <button type="button" style={{ ...s.ghostBtn, ...(isDark ? s.ghostDark : s.ghostLight) }} onClick={toggleTheme}>
@@ -68,7 +68,7 @@ export default function PublicTopBar() {
         <button type="button" style={{ ...s.ghostBtn, ...(isDark ? s.ghostDark : s.ghostLight) }} onClick={() => navigate("/blog")}>
           {copy.blog}
         </button>
-        <button type="button" style={s.primaryBtn} onClick={() => navigate("/all-tools")}>
+        <button type="button" style={s.primaryBtn} onClick={() => navigate("/")}>
           {copy.allTools}
         </button>
         {!isMobile ? (

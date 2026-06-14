@@ -1,7 +1,5 @@
 import { useEffect, useRef } from "react";
 import { BrowserRouter, Routes, Route, Navigate, useLocation, useNavigate } from "react-router-dom";
-import Landing         from "./pages/Landing";
-import Auth            from "./pages/Auth";
 import ExamPage        from "./pages/ExamPage";
 import UtilityPage     from "./pages/UtilityPage";
 import Dashboard       from "./pages/Dashboard";
@@ -13,22 +11,17 @@ import MergePdfPage    from "./pages/MergePdfPage";
 import SplitPdfPage    from "./pages/SplitPdfPage";
 import Support         from "./pages/Support";
 import MergerPage      from "./pages/MergerPage";
-import Pricing         from "./pages/Pricing";
 import PrivacyPage     from "./pages/PrivacyPage";
 import TermsPage       from "./pages/TermsPage";
 import BlogIndexPage   from "./pages/BlogIndexPage";
 import BlogPostPage    from "./pages/BlogPostPage";
+import BrowserOnlyPausedPage from "./pages/BrowserOnlyPausedPage";
 import useStore        from "./store/useStore";
 import useTheme        from "./hooks/useTheme";
+import { BROWSER_ONLY_MODE } from "./utils/browserOnlyMode";
 
 const INACTIVITY_LIMIT_MS = 8 * 60 * 60 * 1000;
 const ACTIVITY_KEY = "formfixer_last_activity";
-
-// Protected route wrapper
-function Protected({ children }) {
-  const { user } = useStore();
-  return user ? children : <Navigate to="/" replace />;
-}
 
 function App() {
   return (
@@ -46,7 +39,7 @@ function ThemedRoutes() {
   const navigate = useNavigate();
   const { user, logout } = useStore();
   const timeoutRef = useRef(null);
-  const isLanding = location.pathname === "/";
+  const isLanding = location.pathname === "/" || location.pathname === "/all-tools";
   const shellClass = [
     "ff-app-shell",
     isDark ? "ff-app-shell--dark" : "ff-app-shell--light",
@@ -67,8 +60,8 @@ function ThemedRoutes() {
       />
       <Routes>
         {/* Public */}
-        <Route path="/" element={<Landing />} />
-        <Route path="/auth" element={<Auth />} />
+        <Route path="/" element={<Dashboard mode="hub" />} />
+        <Route path="/auth" element={<Navigate to="/" replace />} />
         <Route path="/blog" element={<BlogIndexPage />} />
         <Route path="/blog/:blogSlug" element={<BlogPostPage />} />
         <Route path="/exam/:examSlug" element={<ExamPage />} />
@@ -76,19 +69,18 @@ function ThemedRoutes() {
 
         <Route path="/tool/passport-sheet" element={<PassportSheetPage />} />
         <Route path="/all-tools" element={<Dashboard mode="hub" />} />
-        <Route path="/tool/:toolId" element={<ToolPage />} />
-        <Route path="/pdf/compress" element={<PDFCompressPage />} />
-        <Route path="/pdf/merge" element={<MergePdfPage />} />
-        <Route path="/pdf/split" element={<SplitPdfPage />} />
-        <Route path="/pdf/image-to-pdf" element={<ImageToPdfPage />} />
-        <Route path="/merger"       element={<MergerPage />} />
+        <Route path="/tool/:toolId" element={BROWSER_ONLY_MODE ? <BrowserOnlyPausedPage /> : <ToolPage />} />
+        <Route path="/pdf/compress" element={BROWSER_ONLY_MODE ? <BrowserOnlyPausedPage /> : <PDFCompressPage />} />
+        <Route path="/pdf/merge" element={BROWSER_ONLY_MODE ? <BrowserOnlyPausedPage /> : <MergePdfPage />} />
+        <Route path="/pdf/split" element={BROWSER_ONLY_MODE ? <BrowserOnlyPausedPage /> : <SplitPdfPage />} />
+        <Route path="/pdf/image-to-pdf" element={BROWSER_ONLY_MODE ? <BrowserOnlyPausedPage /> : <ImageToPdfPage />} />
+        <Route path="/merger"       element={BROWSER_ONLY_MODE ? <BrowserOnlyPausedPage /> : <MergerPage />} />
         <Route path="/support" element={<Support />} />
         <Route path="/privacy-policy" element={<PrivacyPage />} />
         <Route path="/terms-and-conditions" element={<TermsPage />} />
 
-        {/* Protected */}
-        <Route path="/dashboard"    element={<Protected><Dashboard mode="dashboard" /></Protected>} />
-        <Route path="/pricing"      element={<Protected><Pricing /></Protected>} />
+        <Route path="/dashboard" element={<Navigate to="/" replace />} />
+        <Route path="/pricing" element={<Navigate to="/" replace />} />
 
         {/* Fallback */}
         <Route path="*" element={<Navigate to="/" replace />} />
@@ -99,7 +91,7 @@ function ThemedRoutes() {
 
 function SessionGuard({ user, logout, navigate, pathname, timeoutRef }) {
   useEffect(() => {
-    if (!user) {
+    if (BROWSER_ONLY_MODE || !user) {
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
         timeoutRef.current = null;

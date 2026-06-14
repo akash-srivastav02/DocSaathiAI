@@ -1,11 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import API from "../api/axios";
-import useStore from "../store/useStore";
-import AuthModal from "../components/AuthModal";
-import Sidebar from "../components/Sidebar";
-import TopBar from "../components/TopBar";
+import PublicTopBar from "../components/PublicTopBar";
 import useIsMobile from "../hooks/useIsMobile";
+import { imagesToPdfFiles } from "../utils/pdfLocal";
 
 function PreviewCard({ count, pageMode, orientation }) {
   return (
@@ -20,7 +17,7 @@ function PreviewCard({ count, pageMode, orientation }) {
             </div>
           </div>
         </div>
-        <div style={s.previewBody}>Final PDF will be watermark-free. One plan use is counted only at final export.</div>
+        <div style={s.previewBody}>Your PDF is generated locally in the browser. No server processing is used.</div>
       </div>
     </div>
   );
@@ -61,8 +58,6 @@ export default function ImageToPdfPage() {
   const navigate = useNavigate();
   const isMobile = useIsMobile(900);
   const [searchParams] = useSearchParams();
-  const { user, credits, updateCredits, logout } = useStore();
-  const currentCredits = user ? (credits ?? user?.credits ?? 0) : 0;
 
   const [files, setFiles] = useState([]);
   const [fileError, setFileError] = useState("");
@@ -72,9 +67,6 @@ export default function ImageToPdfPage() {
   const [result, setResult] = useState(null);
   const [error, setError] = useState("");
   const [done, setDone] = useState(false);
-  const [showAuthModal, setShowAuthModal] = useState(false);
-  const [downloadUnlocked, setDownloadUnlocked] = useState(false);
-  const [downloading, setDownloading] = useState(false);
 
   const acceptedLabel = useMemo(() => {
     const source = searchParams.get("source");
@@ -92,7 +84,6 @@ export default function ImageToPdfPage() {
     setResult(null);
     setDone(false);
     setError("");
-    setDownloadUnlocked(false);
     const picked = Array.from(incomingFiles || []);
     if (!picked.length) return;
     const allowed = ["image/jpeg", "image/png", "image/jpg", "image/webp", "image/heic", "image/heif"];
@@ -107,46 +98,30 @@ export default function ImageToPdfPage() {
 
   const handleConvert = async () => {
     setError("");
-    if (!files.length) return setError("Please upload one or more images first.");
+    if (!files.length) {
+      setError("Please upload one or more images first.");
+      return;
+    }
+
     setProcessing(true);
     try {
-      const formData = new FormData();
-      files.forEach((file) => formData.append("images", file));
-      formData.append("pageMode", pageMode);
-      formData.append("orientation", orientation);
-      const { data } = await API.post("/pdf/image-to-pdf", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
+      const data = await imagesToPdfFiles(files, pageMode, orientation);
       setResult(data);
       setDone(true);
-      setDownloadUnlocked(false);
     } catch (err) {
-      setError(err.response?.data?.message || "Image to PDF conversion failed.");
+      setError(err?.message || "Image to PDF conversion failed.");
     } finally {
       setProcessing(false);
     }
   };
 
-  const handleDownloadAfterAuth = async () => {
+  const handleDownload = async () => {
     if (!result?.url) return;
     setError("");
     try {
-      if (!downloadUnlocked) {
-        setDownloading(true);
-        const { data } = await API.post("/process/confirm-download", {
-          toolType: "imgtopdf",
-          examName: `Image to PDF (${files.length} images)`,
-          processedUrl: result.url,
-        });
-        if (data.creditsLeft !== undefined) updateCredits(data.creditsLeft);
-        setDownloadUnlocked(true);
-      }
       await downloadFileFromUrl(result.url, "formfixer_images_to_pdf.pdf");
     } catch (err) {
-      if (err.response?.data?.message) return setError(err.response.data.message);
-      window.open(result.url, "_blank");
-    } finally {
-      setDownloading(false);
+      setError(err?.message || "Could not download the PDF.");
     }
   };
 
@@ -156,7 +131,6 @@ export default function ImageToPdfPage() {
     setError("");
     setFileError("");
     setDone(false);
-    setDownloadUnlocked(false);
   };
 
   const totalSizeMB = files.length
@@ -165,31 +139,12 @@ export default function ImageToPdfPage() {
 
   return (
     <div style={s.root}>
-      {showAuthModal && (
-        <AuthModal
-          onClose={() => setShowAuthModal(false)}
-          onSuccess={async () => {
-            setShowAuthModal(false);
-            await handleDownloadAfterAuth();
-          }}
-          title="Login to Download PDF"
-          subtitle="Preview is available in guest mode. Final PDF download needs quick login."
-        />
-      )}
-      {user && <Sidebar credits={currentCredits} planLabel={user?.planLabel} isUnlimited={user?.isUnlimited} onLogout={() => { logout(); navigate("/"); }} />}
       <div style={s.main}>
-        {user ? (
-          <TopBar user={user} credits={currentCredits} onLogout={() => { logout(); navigate("/"); }} />
-        ) : (
-          <div style={{ ...s.guestBar, ...(isMobile ? s.guestBarMobile : null) }}>
-            <span>Preview in guest mode. Login only when you need the final PDF download.</span>
-            <button style={s.guestLoginBtn} onClick={() => setShowAuthModal(true)}>Login / Sign Up</button>
-          </div>
-        )}
+        <PublicTopBar />
 
-        <div style={{ ...s.content, ...(isMobile ? s.contentMobile : null), ...(user ? s.contentWithFixedTopbar : null) }}>
+        <div style={{ ...s.content, ...(isMobile ? s.contentMobile : null), ...s.contentWithFixedTopbar }}>
           <div style={s.toolHeader}>
-            <button style={s.backBtn} onClick={() => navigate(user ? "/dashboard" : "/all-tools")}>Back</button>
+            <button style={s.backBtn} onClick={() => navigate("/all-tools")}>Back</button>
             <div>
               <h1 style={s.toolTitle}>Images to PDF Converter</h1>
               <p style={s.toolDesc}>Combine multiple images into one clean PDF with page size and orientation controls.</p>
@@ -302,7 +257,7 @@ export default function ImageToPdfPage() {
                   onClick={handleConvert}
                   disabled={processing || !files.length}
                 >
-                  {processing ? "Generating PDF..." : "Generate Preview"}
+                  {processing ? "Generating PDF..." : "Generate PDF"}
                 </button>
               )}
             </div>
@@ -327,17 +282,10 @@ export default function ImageToPdfPage() {
                   <div style={s.statLabel}>PDF size</div>
                 </div>
               </div>
-              <p style={s.resultMessage}>Preview ready. Final PDF will download watermark-free after one plan use.</p>
+              <p style={s.resultMessage}>PDF ready. Download starts directly from your browser with no login and no server dependency.</p>
               <div style={s.resultActions}>
-                <button
-                  style={s.btnPrimary}
-                  onClick={async () => {
-                    if (!user) return setShowAuthModal(true);
-                    await handleDownloadAfterAuth();
-                  }}
-                  disabled={downloading}
-                >
-                  {downloading ? "Unlocking Download..." : downloadUnlocked ? "Download Again" : "Download Final PDF (1 Use)"}
+                <button style={s.btnPrimary} onClick={handleDownload}>
+                  Download PDF
                 </button>
                 <button style={s.btnSecondary} onClick={handleReset}>Convert More Images</button>
               </div>
@@ -352,9 +300,6 @@ export default function ImageToPdfPage() {
 const s = {
   root: { display: "flex", minHeight: "100vh", background: "transparent", fontFamily: "'Segoe UI', sans-serif" },
   main: { flex: 1, overflowY: "auto", paddingBottom: 56 },
-  guestBar: { display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, padding: "16px 28px 0", color: "var(--ff-text-soft)", fontSize: 13, flexWrap: "wrap" },
-  guestBarMobile: { padding: "84px 14px 0", gap: 10 },
-  guestLoginBtn: { background: "#f97316", color: "#fff", border: "none", borderRadius: 999, padding: "10px 16px", fontWeight: 700, cursor: "pointer" },
   content: { maxWidth: 1180, margin: "0 auto", padding: "18px 28px 0" },
   contentMobile: { padding: "16px 14px 0" },
   contentWithFixedTopbar: { paddingTop: 104 },

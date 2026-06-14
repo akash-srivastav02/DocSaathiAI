@@ -15,10 +15,10 @@ export default function LegalPageLayout({ title, summary, updated, sections }) {
           </div>
           <div style={s.actions}>
             <button type="button" style={s.secondaryBtn} onClick={() => navigate("/")}>
-              Home
+              Exam Hub
             </button>
-            <button type="button" style={s.primaryBtn} onClick={() => navigate("/auth")}>
-              Open FormFixer
+            <button type="button" style={s.primaryBtn} onClick={() => navigate("/blog")}>
+              Open Blog
             </button>
           </div>
         </div>

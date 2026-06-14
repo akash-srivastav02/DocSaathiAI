@@ -1,36 +1,45 @@
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { Navigate, useNavigate, useParams } from "react-router-dom";
 import { EXAM_PAGE_DATA, getExamBySlug } from "../utils/examPages";
-import useStore from "../store/useStore";
 import Seo from "../components/Seo";
+import PublicTopBar from "../components/PublicTopBar";
 
 const EXAM_SPECS = {
-  "SSC CGL": { photo: "200 x 230 px · 20-50 KB", signature: "200 x 70 px · 10-20 KB" },
-  "SSC CHSL": { photo: "200 x 230 px · 20-50 KB", signature: "200 x 70 px · 10-20 KB" },
-  "SSC MTS": { photo: "200 x 230 px · 20-50 KB", signature: "200 x 70 px · 10-20 KB" },
-  "SSC GD": { photo: "200 x 230 px · 20-50 KB", signature: "200 x 70 px · 10-20 KB" },
-  "SBI PO": { photo: "200 x 200 px · 20-50 KB", signature: "200 x 80 px · 10-20 KB" },
-  "SBI Clerk": { photo: "200 x 200 px · 20-50 KB", signature: "200 x 80 px · 10-20 KB" },
-  "IBPS PO": { photo: "200 x 230 px · 20-50 KB", signature: "200 x 80 px · 10-20 KB" },
-  "IBPS Clerk": { photo: "200 x 230 px · 20-50 KB", signature: "200 x 80 px · 10-20 KB" },
-  "IBPS RRB": { photo: "200 x 230 px · 20-50 KB", signature: "200 x 80 px · 10-20 KB" },
-  "RRB NTPC": { photo: "200 x 230 px · 20-50 KB", signature: "200 x 70 px · 10-20 KB" },
-  "RRB Group D": { photo: "200 x 230 px · 20-50 KB", signature: "200 x 70 px · 10-20 KB" },
-  "RRB JE": { photo: "200 x 230 px · 20-50 KB", signature: "200 x 70 px · 10-20 KB" },
-  "JEE Main": { photo: "236 x 295 px · 10-200 KB", signature: "300 x 80 px · 4-30 KB" },
-  "JEE Advanced": { photo: "236 x 295 px · 10-200 KB", signature: "300 x 80 px · 4-30 KB" },
-  "NEET UG": { photo: "236 x 295 px · 10-200 KB", signature: "300 x 80 px · 4-30 KB" },
-  "CUET UG": { photo: "200 x 230 px · 10-300 KB", signature: "200 x 80 px · 4-50 KB" },
-  "UPSC CSE": { photo: "200 x 230 px · 20-300 KB", signature: "200 x 80 px · 10-100 KB" },
-  "UPSC CDS": { photo: "200 x 230 px · 20-300 KB", signature: "200 x 80 px · 10-100 KB" },
-  "UPSC NDA": { photo: "200 x 230 px · 20-300 KB", signature: "200 x 80 px · 10-100 KB" },
-  "Delhi Police Constable": { photo: "200 x 230 px · 20-50 KB", signature: "200 x 70 px · 10-20 KB" },
-  "Delhi Police SI": { photo: "200 x 230 px · 20-50 KB", signature: "200 x 70 px · 10-20 KB" },
-  "UP Police": { photo: "200 x 230 px · 20-50 KB", signature: "200 x 70 px · 10-20 KB" },
-  NDA: { photo: "200 x 230 px · 20-300 KB", signature: "200 x 80 px · 10-100 KB" },
-  AFCAT: { photo: "200 x 230 px · 20-300 KB", signature: "200 x 80 px · 10-100 KB" },
-  "LIC AAO": { photo: "200 x 230 px · 20-50 KB", signature: "200 x 80 px · 10-20 KB" },
-  GATE: { photo: "236 x 295 px · 10-500 KB", signature: "300 x 80 px · 4-100 KB" },
+  "SSC CGL": { photo: "200 x 230 px • 20-50 KB", signature: "200 x 70 px • 10-20 KB" },
+  "SSC CHSL": { photo: "200 x 230 px • 20-50 KB", signature: "200 x 70 px • 10-20 KB" },
+  "SSC MTS": { photo: "200 x 230 px • 20-50 KB", signature: "200 x 70 px • 10-20 KB" },
+  "SSC GD": { photo: "200 x 230 px • 20-50 KB", signature: "200 x 70 px • 10-20 KB" },
+  "SBI PO": { photo: "200 x 200 px • 20-50 KB", signature: "200 x 80 px • 10-20 KB" },
+  "SBI Clerk": { photo: "200 x 200 px • 20-50 KB", signature: "200 x 80 px • 10-20 KB" },
+  "IBPS PO": { photo: "200 x 230 px • 20-50 KB", signature: "200 x 80 px • 10-20 KB" },
+  "IBPS Clerk": { photo: "200 x 230 px • 20-50 KB", signature: "200 x 80 px • 10-20 KB" },
+  "IBPS RRB": { photo: "200 x 230 px • 20-50 KB", signature: "200 x 80 px • 10-20 KB" },
+  "RRB NTPC": { photo: "200 x 230 px • 20-50 KB", signature: "200 x 70 px • 10-20 KB" },
+  "RRB Group D": { photo: "200 x 230 px • 20-50 KB", signature: "200 x 70 px • 10-20 KB" },
+  "RRB JE": { photo: "200 x 230 px • 20-50 KB", signature: "200 x 70 px • 10-20 KB" },
+  "JEE Main": { photo: "236 x 295 px • 10-200 KB", signature: "300 x 80 px • 4-30 KB" },
+  "JEE Advanced": { photo: "236 x 295 px • 10-200 KB", signature: "300 x 80 px • 4-30 KB" },
+  "NEET UG": { photo: "236 x 295 px • 10-200 KB", signature: "300 x 80 px • 4-30 KB" },
+  "CUET UG": { photo: "200 x 230 px • 10-300 KB", signature: "200 x 80 px • 4-50 KB" },
+  "UPSC CSE": { photo: "200 x 230 px • 20-300 KB", signature: "200 x 80 px • 10-100 KB" },
+  "UPSC CDS": { photo: "200 x 230 px • 20-300 KB", signature: "200 x 80 px • 10-100 KB" },
+  "UPSC NDA": { photo: "200 x 230 px • 20-300 KB", signature: "200 x 80 px • 10-100 KB" },
+  "Delhi Police Constable": { photo: "200 x 230 px • 20-50 KB", signature: "200 x 70 px • 10-20 KB" },
+  "Delhi Police SI": { photo: "200 x 230 px • 20-50 KB", signature: "200 x 70 px • 10-20 KB" },
+  "UP Police": { photo: "200 x 230 px • 20-50 KB", signature: "200 x 70 px • 10-20 KB" },
+  NDA: { photo: "200 x 230 px • 20-300 KB", signature: "200 x 80 px • 10-100 KB" },
+  AFCAT: { photo: "200 x 230 px • 20-300 KB", signature: "200 x 80 px • 10-100 KB" },
+  "LIC AAO": { photo: "200 x 230 px • 20-50 KB", signature: "200 x 80 px • 10-20 KB" },
+  GATE: { photo: "236 x 295 px • 10-500 KB", signature: "300 x 80 px • 4-100 KB" },
+};
+
+const EXAM_BLOG_ROUTES = {
+  "SSC CGL": "/blog/ssc-cgl-photo-signature-guide",
+  "SSC CHSL": "/blog/ssc-chsl-photo-signature-guide",
+  "UPSC CDS": "/blog/upsc-cds-photo-signature-guide",
+  "NEET UG": "/blog/neet-ug-photo-signature-guide",
+  "JEE Main": "/blog/jee-main-photo-signature-guide",
+  "IBPS Clerk": "/blog/ibps-clerk-photo-signature-guide",
 };
 
 function SectionCard({ title, children }) {
@@ -45,12 +54,11 @@ function SectionCard({ title, children }) {
 export default function ExamPage() {
   const { examSlug } = useParams();
   const navigate = useNavigate();
-  const { user } = useStore();
   const exam = getExamBySlug(examSlug);
 
   useEffect(() => {
     if (!exam) return;
-    document.title = `${exam.name} Photo Resize & Signature Resize | FormFixer`;
+    document.title = `${exam.name} Photo Resize & Signature Guide | FormFixer`;
   }, [exam]);
 
   if (!exam) {
@@ -61,40 +69,29 @@ export default function ExamPage() {
   const siteUrl = "https://formfixer.in";
   const canonical = `${siteUrl}/exam/${exam.slug}`;
   const relatedExams = EXAM_PAGE_DATA.filter((item) => item.family === exam.family && item.slug !== exam.slug).slice(0, 4);
-  const faqSchema = exam.faqs.map((item) => ({
-    "@type": "Question",
-    name: item.q,
-    acceptedAnswer: { "@type": "Answer", text: item.a },
-  }));
-  const examSchema = [
-    {
-      "@context": "https://schema.org",
-      "@type": "WebPage",
-      name: `${exam.name} Photo Resize, Signature Resize & Form Guide`,
-      url: canonical,
-      description: exam.seoDescription,
-      about: [
-        { "@type": "Thing", name: `${exam.name} photo resize` },
-        { "@type": "Thing", name: `${exam.name} signature resize` },
-        { "@type": "Thing", name: `${exam.name} eligibility` },
-        { "@type": "Thing", name: `${exam.name} syllabus` },
-      ],
-    },
-    {
-      "@context": "https://schema.org",
-      "@type": "BreadcrumbList",
-      itemListElement: [
-        { "@type": "ListItem", position: 1, name: "Home", item: siteUrl },
-        { "@type": "ListItem", position: 2, name: "Exam Guides", item: `${siteUrl}/#ff-tools-grid` },
-        { "@type": "ListItem", position: 3, name: exam.name, item: canonical },
-      ],
-    },
-    {
-      "@context": "https://schema.org",
-      "@type": "FAQPage",
-      mainEntity: faqSchema,
-    },
-  ];
+  const relatedBlogRoute = EXAM_BLOG_ROUTES[exam.name] || "/blog";
+
+  const examSchema = useMemo(
+    () => [
+      {
+        "@context": "https://schema.org",
+        "@type": "WebPage",
+        name: `${exam.name} Photo Resize, Signature Resize & Form Guide`,
+        url: canonical,
+        description: exam.seoDescription,
+      },
+      {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        mainEntity: exam.faqs.map((item) => ({
+          "@type": "Question",
+          name: item.q,
+          acceptedAnswer: { "@type": "Answer", text: item.a },
+        })),
+      },
+    ],
+    [canonical, exam]
+  );
 
   return (
     <div style={s.root}>
@@ -102,49 +99,42 @@ export default function ExamPage() {
         title={`${exam.name} Photo Resize, Signature Resize, Eligibility & Syllabus | FormFixer`}
         description={exam.seoDescription}
         canonical={canonical}
-        keywords={`${exam.name} photo resize, ${exam.name} signature resize, ${exam.name} eligibility, ${exam.name} syllabus, ${exam.name} photo size, ${exam.name} form guide, FormFixer`}
+        keywords={`${exam.name} photo resize, ${exam.name} signature resize, ${exam.name} eligibility, ${exam.name} syllabus, ${exam.name} photo size, FormFixer`}
         type="article"
         ldJson={examSchema}
       />
+      <PublicTopBar />
       <div style={s.wrap}>
-        <button style={s.backBtn} onClick={() => navigate("/")}>← Back</button>
+        <button style={s.backBtn} onClick={() => navigate("/")}>← Back to Exam Hub</button>
 
         <div style={s.hero}>
           <span style={s.family}>{exam.family}</span>
           <h1 style={s.title}>{exam.name} Photo Resize, Signature Resize & Form Guide</h1>
-          <p style={s.sub}>
-            {exam.seoDescription || exam.summary}
-          </p>
+          <p style={s.sub}>{exam.seoDescription || exam.summary}</p>
         </div>
 
         <div style={s.specGrid}>
           <div style={s.specCard}>
             <p style={s.specLabel}>Photo Requirements</p>
             <p style={s.specValue}>{specs.photo}</p>
-            <p style={s.specNote}>Auto white background, resize, and KB adjustment for this exam format.</p>
+            <p style={s.specNote}>Use this as your prep checklist before touching the actual portal upload step.</p>
           </div>
           <div style={s.specCard}>
             <p style={s.specLabel}>Signature Requirements</p>
             <p style={s.specValue}>{specs.signature}</p>
-            <p style={s.specNote}>Clean black-ink signature output with exact dimensions and file size.</p>
+            <p style={s.specNote}>Keep a black-ink signature on white paper and avoid noisy backgrounds.</p>
           </div>
         </div>
 
         <div style={s.ctaGrid}>
-          <button style={s.primaryBtn} onClick={() => navigate(`/tool/photo?exam=${encodeURIComponent(exam.name)}`)}>
-            Fix {exam.name} Photo
+          <button style={s.primaryBtn} onClick={() => navigate("/tool/passport-sheet")}>
+            Open Passport Photo Sheet
           </button>
-          <button style={s.secondaryBtn} onClick={() => navigate(`/tool/signature?exam=${encodeURIComponent(exam.name)}`)}>
-            Fix {exam.name} Signature
+          <button style={s.secondaryBtn} onClick={() => navigate(relatedBlogRoute)}>
+            Read Matching Blog Guide
           </button>
-                <button style={s.secondaryBtn} onClick={() => navigate(user ? `/tool/photo?exam=${encodeURIComponent(exam.name)}` : "/auth")}>
-                  Open Photo Tool
-                </button>
-          <button style={s.secondaryBtn} onClick={() => navigate("/merger")}>
-            Merge Photo + Sign / Date
-          </button>
-          <button style={s.secondaryBtn} onClick={() => navigate("/pdf/compress")}>
-            Compress PDF
+          <button style={s.secondaryBtn} onClick={() => navigate("/blog")}>
+            Browse All Blog Articles
           </button>
         </div>
 
@@ -207,9 +197,9 @@ export default function ExamPage() {
           </SectionCard>
         </div>
 
-        <SectionCard title={`How FormFixer Helps With ${exam.name} Photo Resize`}>
+        <SectionCard title={`How FormFixer Helps With ${exam.name}`}>
           <p style={s.infoText}>
-                Instead of guessing dimensions, background, and file size, you can use the exact {exam.name} photo resize and signature resize flow here, then move to merge or PDF workflows without switching websites.
+            Instead of guessing dimensions, source quality, and upload flow across multiple websites, you can use this requirement page as a direct reference, then move to the printable passport sheet flow if you also need offline copies.
           </p>
         </SectionCard>
 
@@ -243,7 +233,7 @@ export default function ExamPage() {
 
 const s = {
   root: { minHeight: "100vh", background: "transparent", color: "#f8fafc", fontFamily: "'Segoe UI', sans-serif" },
-  wrap: { maxWidth: 1080, margin: "0 auto", padding: "28px 20px 56px" },
+  wrap: { maxWidth: 1080, margin: "0 auto", padding: "104px 20px 56px" },
   backBtn: { background: "#111827", border: "1px solid #334155", color: "#cbd5e1", padding: "10px 16px", borderRadius: 10, cursor: "pointer", fontWeight: 700 },
   hero: { marginTop: 22, display: "flex", flexDirection: "column", gap: 10 },
   family: { width: "fit-content", padding: "7px 12px", borderRadius: 999, background: "#f9731618", border: "1px solid #f9731635", color: "#fdba74", fontSize: 12, fontWeight: 800 },

@@ -1,8 +1,10 @@
 import { create } from 'zustand';
 
-// Read stored user once at startup
-const storedUser = JSON.parse(localStorage.getItem('docsaathi_user') || 'null');
-const apiBase = (import.meta.env.VITE_API_URL || 'http://localhost:5000/api').replace(/\/$/, '');
+// Browser-only mode: force guest state and keep the app free of backend/session dependency.
+if (typeof window !== 'undefined') {
+  localStorage.removeItem('docsaathi_user');
+}
+const storedUser = null;
 const ACTIVITY_KEY = 'formfixer_last_activity';
 
 const useStore = create((set) => ({
@@ -30,15 +32,6 @@ const useStore = create((set) => ({
   },
 
   logout: () => {
-    const currentUser = JSON.parse(localStorage.getItem('docsaathi_user') || 'null');
-    if (currentUser?.token) {
-      fetch(`${apiBase}/auth/logout`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${currentUser.token}`,
-        },
-      }).catch(() => {});
-    }
     localStorage.removeItem('docsaathi_user');
     localStorage.removeItem(ACTIVITY_KEY);
     set({ user: null, credits: 0 });
