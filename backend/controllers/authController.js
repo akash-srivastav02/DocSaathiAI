@@ -7,7 +7,13 @@ const {
   reconcileUserAssetCleanup,
 } = require('../utils/assetCleanup');
 
-const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+const getGoogleClient = () => {
+  if (!process.env.GOOGLE_CLIENT_ID) {
+    return null;
+  }
+
+  return new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+};
 
 // ─── Helper ────────────────────────────────────────────────────────────────────
 const generateToken = (id) =>
@@ -108,9 +114,14 @@ const login = async (req, res) => {
 const googleAuth = async (req, res) => {
   try {
     const { credential } = req.body;
+    const googleClient = getGoogleClient();
 
     if (!credential)
       return res.status(400).json({ message: 'Google credential is required.' });
+
+    if (!googleClient) {
+      return res.status(503).json({ message: 'Google login is not configured yet.' });
+    }
 
     // Verify Google token
     const ticket = await googleClient.verifyIdToken({

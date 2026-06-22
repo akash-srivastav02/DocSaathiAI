@@ -1,7 +1,11 @@
 import axios from 'axios';
 
+const defaultBaseURL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+  ? 'http://localhost:5000/api'
+  : 'https://api.formfixer.in/api';
+
 const API = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5000/api'
+  baseURL: import.meta.env.VITE_API_URL || defaultBaseURL
 });
 
 // Attach token to every request automatically
