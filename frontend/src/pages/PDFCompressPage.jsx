@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import API from "../api/axios";
+import API, { ensureBackendReady, getApiErrorMessage } from "../api/axios";
 import useStore from "../store/useStore";
 import AuthModal from "../components/AuthModal";
 import Sidebar from "../components/Sidebar";
@@ -132,6 +132,7 @@ export default function PDFCompressPage() {
       formData.append("pdf", file);
       formData.append("targetKB", targetKB);
       formData.append("quality", quality);
+      await ensureBackendReady();
       const { data } = await API.post("/pdf/compress", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
@@ -139,7 +140,7 @@ export default function PDFCompressPage() {
       setDone(true);
       setDownloadUnlocked(false);
     } catch (err) {
-      setError(err.response?.data?.message || "Compression failed.");
+      setError(getApiErrorMessage(err, "Compression failed."));
     } finally {
       setProcessing(false);
     }

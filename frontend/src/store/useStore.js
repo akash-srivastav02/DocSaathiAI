@@ -1,38 +1,47 @@
 import { create } from 'zustand';
 
-// Browser-only mode: force guest state and keep the app free of backend/session dependency.
-if (typeof window !== 'undefined') {
-  localStorage.removeItem('docsaathi_user');
-}
-const storedUser = null;
+const USER_KEY = 'docsaathi_user';
 const ACTIVITY_KEY = 'formfixer_last_activity';
 
+function readStoredUser() {
+  if (typeof window === 'undefined') return null;
+
+  try {
+    const raw = localStorage.getItem(USER_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch {
+    localStorage.removeItem(USER_KEY);
+    return null;
+  }
+}
+
+const storedUser = readStoredUser();
+
 const useStore = create((set) => ({
-  user:    storedUser,
-  // ── FIX: initialize credits from stored user, NOT hardcoded 0 ──────────
+  user: storedUser,
   credits: storedUser?.credits ?? 0,
 
   setUser: (userData) => {
-    localStorage.setItem('docsaathi_user', JSON.stringify(userData));
+    localStorage.setItem(USER_KEY, JSON.stringify(userData));
     localStorage.setItem(ACTIVITY_KEY, String(Date.now()));
     set({
-      user:    userData,
-      credits: userData.credits ?? 0,  // sync credits at login/signup
+      user: userData,
+      credits: userData.credits ?? 0,
     });
   },
 
   updateCredits: (newCredits) => {
     set((state) => {
-      // Update both the credits field AND the credits inside the user object
-      // so localStorage always reflects the real value after refresh
-      const updatedUser = { ...state.user, credits: newCredits };
-      localStorage.setItem('docsaathi_user', JSON.stringify(updatedUser));
+      const updatedUser = state.user ? { ...state.user, credits: newCredits } : null;
+      if (updatedUser) {
+        localStorage.setItem(USER_KEY, JSON.stringify(updatedUser));
+      }
       return { user: updatedUser, credits: newCredits };
     });
   },
 
   logout: () => {
-    localStorage.removeItem('docsaathi_user');
+    localStorage.removeItem(USER_KEY);
     localStorage.removeItem(ACTIVITY_KEY);
     set({ user: null, credits: 0 });
   },

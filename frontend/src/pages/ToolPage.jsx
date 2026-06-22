@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import Webcam from "react-webcam";
-import API from "../api/axios";
+import API, { ensureBackendReady, getApiErrorMessage } from "../api/axios";
 import useStore from "../store/useStore";
 import AuthModal from "../components/AuthModal";
 import Sidebar from "../components/Sidebar";
@@ -705,13 +705,14 @@ export default function ToolPage() {
         : isImageConverterTool
           ? "/process/image-converter"
           : `/process/${toolId}`;
+      await ensureBackendReady();
       const { data } = await API.post(endpoint, formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
       setResult({ ...data, kind: "remote" });
       setDone(true);
     } catch (err) {
-      setError(err.response?.data?.message || copy.processingFailed);
+      setError(getApiErrorMessage(err, copy.processingFailed));
     } finally {
       setProcessing(false);
     }
