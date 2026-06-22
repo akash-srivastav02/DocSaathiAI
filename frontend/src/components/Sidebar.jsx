@@ -11,10 +11,10 @@ const NAV_ITEMS = [
 ];
 
 const EXAM_TOOL_LINKS = [
-  { label: "Passport Photo Sheet", path: "/tool/passport-sheet", icon: "PS" },
-  { label: "SSC CGL", path: "/exam/ssc-cgl", icon: "SSC" },
-  { label: "UPSC CDS", path: "/exam/upsc-cds", icon: "UPSC" },
-  { label: "NEET UG", path: "/exam/neet-ug", icon: "NEET" },
+  { label: "Exam Photo", path: "/tool/photo", icon: "PH" },
+  { label: "Exam Signature", path: "/tool/signature", icon: "SG" },
+  { label: "Photo + Sign / Date", path: "/merger", icon: "MX" },
+  { label: "Custom Image Resizer", path: "/tool/crop", icon: "RS" },
 ];
 
 const normalizePlanLabel = (planLabel, isUnlimited, credits) => {
@@ -45,7 +45,7 @@ export default function Sidebar({
   const { language } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
   const [openGroups, setOpenGroups] = useState(() =>
-    Object.fromEntries(TOOL_CATEGORIES.map((group) => [group.id, true]))
+    Object.fromEntries(TOOL_CATEGORIES.map((group, index) => [group.id, index < 3]))
   );
 
   const copy = language === "hi"
@@ -53,9 +53,9 @@ export default function Sidebar({
         dashboard: "डैशबोर्ड",
         pricing: "प्लान्स",
         contact: "संपर्क",
-        documentToolkit: "एग्जाम टूलकिट",
+        documentToolkit: "डॉक्यूमेंट टूलकिट",
         quickAccess: "क्विक एक्सेस",
-        examTools: "एग्जाम पेजेस",
+        examTools: "एग्जाम टूल्स",
         viewTiers: "प्लान देखें",
         unlimited: "अनलिमिटेड एक्सेस चालू",
         downloadsLeft: (count) => `${count} डाउनलोड बाकी`,
@@ -65,9 +65,9 @@ export default function Sidebar({
         dashboard: "Dashboard",
         pricing: "Pricing",
         contact: "Contact",
-        documentToolkit: "Exam toolkit",
+        documentToolkit: "Document toolkit",
         quickAccess: "Quick Access",
-        examTools: "Exam Pages",
+        examTools: "Exam Tools",
         viewTiers: "View Tiers",
         unlimited: "Unlimited access active",
         downloadsLeft: (count) => `${count} downloads left`,
@@ -80,6 +80,19 @@ export default function Sidebar({
       item.label === "Dashboard" ? copy.dashboard :
       item.label === "Pricing" ? copy.pricing :
       copy.contact,
+  }));
+
+  const translatedExamTools = EXAM_TOOL_LINKS.map((tool) => ({
+    ...tool,
+    label:
+      language === "hi"
+        ? (
+            tool.label === "Exam Photo" ? "एग्जाम फोटो" :
+            tool.label === "Exam Signature" ? "एग्जाम सिग्नेचर" :
+            tool.label === "Photo + Sign / Date" ? "फोटो + साइन / डेट" :
+            "कस्टम इमेज रीसाइज़र"
+          )
+        : tool.label,
   }));
 
   const activeLabel =
@@ -164,7 +177,7 @@ export default function Sidebar({
 
         <div style={s.sectionLabel}>{copy.examTools}</div>
         <div style={s.quickAccess}>
-          {EXAM_TOOL_LINKS.map((tool) => (
+          {translatedExamTools.map((tool) => (
             <button
               key={tool.path}
               type="button"
