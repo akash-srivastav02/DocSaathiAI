@@ -106,8 +106,8 @@ export default function TopBar({
           <img src="/favicon.png" alt="FormFixer logo" style={s.brandIcon} />
         </div>
         <div style={s.brandCopy}>
-          <p style={{ ...s.brandTitle, ...t.brandTitle }}>FormFixer</p>
-          <p style={{ ...s.brandSub, ...t.brandSub }}>
+          <p style={{ ...s.brandTitle, ...t.brandTitle, ...(isMobile ? s.brandTitleMobile : null) }}>FormFixer</p>
+          <p style={{ ...s.brandSub, ...t.brandSub, ...(isMobile ? s.brandSubMobile : null) }}>
             {isGuest ? copy.guestLabel : `${copy.welcome}, ${firstName}`}
           </p>
         </div>
@@ -139,7 +139,7 @@ export default function TopBar({
           </button>
         </div>
 
-        <button type="button" style={{ ...s.themeBtn, ...t.themeBtn }} onClick={toggleTheme} aria-label="Toggle theme">
+        <button type="button" style={{ ...s.themeBtn, ...t.themeBtn, ...(isMobile ? s.themeBtnMobile : null) }} onClick={toggleTheme} aria-label="Toggle theme">
           {theme === "dark" ? "☀" : "☾"}
         </button>
 
@@ -155,7 +155,7 @@ export default function TopBar({
 
         <div style={s.avatarWrap}>
           <button type="button" style={s.avatarBtn} onClick={() => setShowMenu((prev) => !prev)} aria-label="Open account menu">
-            <div style={{ ...s.avatar, ...t.avatar }}>{isGuest ? "G" : user.name?.[0]?.toUpperCase() || "U"}</div>
+            <div style={{ ...s.avatar, ...t.avatar, ...(isMobile ? s.avatarMobile : null) }}>{isGuest ? "G" : user.name?.[0]?.toUpperCase() || "U"}</div>
           </button>
 
           {showMenu ? (
@@ -215,7 +215,14 @@ const s = {
     padding: "14px 22px",
   },
   topbarNoSidebar: { left: 0 },
-  topbarMobile: { left: 0, right: 0, padding: "10px 14px 10px 62px" },
+  topbarMobile: {
+    left: 0,
+    right: 0,
+    padding: "10px 14px 12px 62px",
+    flexDirection: "column",
+    alignItems: "stretch",
+    gap: 8,
+  },
   brandButton: {
     display: "flex",
     alignItems: "center",
@@ -227,7 +234,7 @@ const s = {
     cursor: "pointer",
     textAlign: "left",
   },
-  brandButtonMobile: { flex: 1, minWidth: 0 },
+  brandButtonMobile: { width: "100%", minWidth: 0 },
   brandIconWrap: {
     width: 40,
     height: 40,
@@ -241,13 +248,16 @@ const s = {
   brandIcon: { width: 27, height: 27, objectFit: "contain", display: "block" },
   brandCopy: { minWidth: 0, display: "flex", flexDirection: "column", gap: 2 },
   brandTitle: { margin: 0, fontSize: 19, fontWeight: 900, lineHeight: 1.1, letterSpacing: -0.3 },
+  brandTitleMobile: { fontSize: 17 },
   brandSub: { margin: 0, fontSize: 14, fontWeight: 600, lineHeight: 1.3, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" },
+  brandSubMobile: { display: "none" },
   actions: { display: "flex", alignItems: "center", gap: 10 },
-  actionsMobile: { gap: 8 },
+  actionsMobile: { width: "100%", gap: 8, justifyContent: "flex-start", flexWrap: "wrap" },
   langSwitch: { display: "inline-flex", alignItems: "center", gap: 4, padding: 4, borderRadius: 999, border: "1px solid transparent" },
   langOption: { minWidth: 38, border: "none", borderRadius: 999, padding: "7px 10px", cursor: "pointer", fontSize: 12, fontWeight: 900, transition: "background .16s ease, color .16s ease, box-shadow .16s ease" },
   langOptionActive: { boxShadow: "0 10px 22px rgba(249, 115, 22, 0.24)" },
   themeBtn: { width: 38, height: 38, borderRadius: 12, border: "1px solid transparent", background: "transparent", cursor: "pointer", fontWeight: 900, fontSize: 15 },
+  themeBtnMobile: { width: 34, height: 34, borderRadius: 11, fontSize: 14 },
   planPill: { display: "flex", alignItems: "center", gap: 8, borderRadius: 999, padding: "8px 14px", border: "1px solid transparent", cursor: "pointer" },
   planBolt: { fontSize: 15, lineHeight: 1 },
   planTextWrap: { display: "flex", flexDirection: "column", gap: 1, textAlign: "left" },
@@ -267,8 +277,9 @@ const s = {
     fontWeight: 900,
     background: "linear-gradient(135deg,#f97316,#7c3aed)",
   },
+  avatarMobile: { width: 34, height: 34, fontSize: 13 },
   menu: { position: "absolute", top: "calc(100% + 10px)", right: 0, width: 220, borderRadius: 14, padding: 10, zIndex: 60 },
-  menuMobile: { width: 220 },
+  menuMobile: { width: 240, right: -2 },
   menuHead: { padding: "6px 6px 10px", marginBottom: 8 },
   menuBrand: { margin: 0, fontSize: 13, fontWeight: 900 },
   menuName: { margin: "4px 0 0", fontSize: 12 },

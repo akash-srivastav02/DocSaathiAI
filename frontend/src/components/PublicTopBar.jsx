@@ -62,13 +62,13 @@ export default function PublicTopBar() {
             हिन्दी
           </button>
         </div>
-        <button type="button" style={{ ...s.ghostBtn, ...(isDark ? s.ghostDark : s.ghostLight) }} onClick={toggleTheme}>
+        <button type="button" style={{ ...s.ghostBtn, ...(isMobile ? s.ghostBtnMobile : null), ...(isDark ? s.ghostDark : s.ghostLight) }} onClick={toggleTheme}>
           {theme === "dark" ? copy.light : copy.dark}
         </button>
-        <button type="button" style={{ ...s.ghostBtn, ...(isDark ? s.ghostDark : s.ghostLight) }} onClick={() => navigate("/blog")}>
+        <button type="button" style={{ ...s.ghostBtn, ...(isMobile ? s.ghostBtnMobile : null), ...(isDark ? s.ghostDark : s.ghostLight) }} onClick={() => navigate("/blog")}>
           {copy.blog}
         </button>
-        <button type="button" style={s.primaryBtn} onClick={() => navigate("/")}>
+        <button type="button" style={{ ...s.primaryBtn, ...(isMobile ? s.primaryBtnMobile : null) }} onClick={() => navigate("/")}>
           {copy.allTools}
         </button>
         {!isMobile ? (
@@ -105,7 +105,7 @@ const s = {
     color: "#162033",
   },
   rootMobile: {
-    padding: "10px 12px",
+    padding: "10px 12px 12px",
     alignItems: "stretch",
     flexDirection: "column",
     gap: 10,
@@ -146,21 +146,15 @@ const s = {
     lineHeight: 1,
     fontWeight: 900,
   },
-  brandSub: {
-    fontSize: 13,
-    color: "#94a3b8",
-  },
+  brandSub: { fontSize: 13, color: "#94a3b8" },
+  brandSubMobile: { display: "none" },
   actions: {
     display: "flex",
     alignItems: "center",
     gap: 10,
     flexWrap: "wrap",
   },
-  actionsMobile: {
-    width: "100%",
-    justifyContent: "space-between",
-    gap: 8,
-  },
+  actionsMobile: { width: "100%", justifyContent: "space-between", gap: 8, flexWrap: "nowrap" },
   langSwitch: {
     display: "inline-flex",
     alignItems: "center",
@@ -222,4 +216,6 @@ const s = {
     fontSize: 14,
     cursor: "pointer",
   },
+  ghostBtnMobile: { padding: "9px 12px", fontSize: 13 },
+  primaryBtnMobile: { padding: "10px 14px", fontSize: 13 },
 };

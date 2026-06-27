@@ -233,9 +233,9 @@ export default function Landing() {
           </div>
 
           <div style={{ ...s.heroSide, ...(isMobile ? s.heroSideMobile : null) }}>
-            <div style={s.stageCard}>
-              <div style={s.stageFrame}>
-                <div style={{ ...s.stagePanel, ...s.stagePanelMain, ...stageMotion.main, ...(isDark ? s.stagePanelDark : s.stagePanelLight) }}><span style={s.stageFlow}>Search → Fix → Preview → Download</span></div>
+            <div style={{ ...s.stageCard, ...(isMobile ? s.stageCardMobile : null) }}>
+              <div style={{ ...s.stageFrame, ...(isMobile ? s.stageFrameMobile : null) }}>
+                <div style={{ ...s.stagePanel, ...s.stagePanelMain, ...stageMotion.main, ...(isDark ? s.stagePanelDark : s.stagePanelLight) }}><span style={{ ...s.stageFlow, ...(isMobile ? s.stageFlowMobile : null) }}>Search → Fix → Preview → Download</span></div>
                 <div style={{ ...s.stagePanel, ...s.stagePanelOne, ...stageMotion.one, ...(isDark ? s.stagePanelDark : s.stagePanelLight) }}><span style={s.stageMiniTag}>Photo</span><strong style={s.stageMiniTitle}>Exam preset</strong></div>
                 <div style={{ ...s.stagePanel, ...s.stagePanelTwo, ...stageMotion.two, ...(isDark ? s.stagePanelDark : s.stagePanelLight) }}><span style={s.stageMiniTag}>PDF</span><strong style={s.stageMiniTitle}>Compress & merge</strong></div>
                 <div style={{ ...s.stagePanel, ...s.stagePanelThree, ...stageMotion.three, ...(isDark ? s.stagePanelDark : s.stagePanelLight) }}><span style={s.stageMiniTag}>Sign</span><strong style={s.stageMiniTitle}>Clean signature</strong></div>
@@ -315,7 +315,7 @@ const s = {
   header: { position: "fixed", top: 0, left: 0, right: 0, zIndex: 50, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, padding: "14px 18px", backdropFilter: "blur(18px)" },
   headerDark: { background: "linear-gradient(180deg, rgba(10,15,30,0.98), rgba(13,20,33,0.94))", borderBottom: "1px solid rgba(79,97,130,0.2)", boxShadow: "0 18px 40px rgba(2,6,23,0.16)" },
   headerLight: { background: "linear-gradient(180deg, rgba(255,250,242,0.98), rgba(255,253,248,0.94))", borderBottom: "1px solid rgba(133,99,66,0.16)", boxShadow: "0 16px 34px rgba(148,163,184,0.12)" },
-  headerMobile: { padding: "10px 12px 12px", alignItems: "stretch", flexDirection: "column", gap: 10 },
+  headerMobile: { padding: "8px 12px 10px", alignItems: "stretch", flexDirection: "column", gap: 8 },
   brand: { display: "flex", alignItems: "center", gap: 10, border: "none", background: "transparent", color: "inherit", padding: 0, cursor: "pointer", textAlign: "left" },
   brandIconWrap: { width: 42, height: 42, borderRadius: 12, background: "rgba(249,115,22,0.12)", border: "1px solid rgba(249,115,22,0.2)", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden", flexShrink: 0 },
   brandIcon: { width: 28, height: 28, objectFit: "contain" },
@@ -325,10 +325,10 @@ const s = {
   headerActions: { display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" },
   headerActionsMobileWrap: { width: "100%", display: "grid", gap: 8 },
   headerUtilityRow: { display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8 },
-  headerCtaRow: { display: "flex", alignItems: "center", gap: 8 },
-  headerLoginBtn: { flex: 1, justifyContent: "center", minWidth: 0 },
-  headerPrimaryBtn: { flex: 1.25, justifyContent: "center", minWidth: 0 },
-  ghostBtnMobile: { minWidth: 42, padding: "11px 12px" },
+  headerCtaRow: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 },
+  headerLoginBtn: { width: "100%", justifyContent: "center", minWidth: 0 },
+  headerPrimaryBtn: { width: "100%", justifyContent: "center", minWidth: 0 },
+  ghostBtnMobile: { minWidth: 42, padding: "10px 12px" },
   langSwitch: { display: "inline-flex", alignItems: "center", gap: 4, padding: 4, borderRadius: 999, border: "1px solid transparent" },
   langSwitchDark: { background: "#111827", borderColor: "#334155" },
   langSwitchLight: { background: "#ffffff", borderColor: "rgba(133,99,66,0.15)" },
@@ -341,18 +341,18 @@ const s = {
   ghostBtnAccent: { borderRadius: 999, padding: "10px 14px", fontWeight: 800, cursor: "pointer", border: "1px solid rgba(249,115,22,0.3)", background: "rgba(249,115,22,0.1)", color: "#f97316" },
   primaryBtn: { border: "none", borderRadius: 12, padding: "11px 16px", fontWeight: 900, cursor: "pointer", color: "#ffffff", background: "linear-gradient(135deg,#f97316,#ea580c)", boxShadow: "0 16px 32px rgba(249,115,22,0.22)" },
   main: { maxWidth: 1180, margin: "0 auto", padding: "108px 20px 56px" },
-  mainMobile: { padding: "128px 12px 42px" },
+  mainMobile: { padding: "108px 12px 40px" },
   hero: { display: "grid", gridTemplateColumns: "minmax(0,0.96fr) minmax(360px,1.04fr)", gap: 22, alignItems: "start", marginBottom: 38 },
   heroMobile: { gridTemplateColumns: "1fr", gap: 16 },
   heroCopy: { display: "flex", flexDirection: "column", gap: 16, minWidth: 0 },
   badge: { width: "fit-content", borderRadius: 999, padding: "7px 12px", fontSize: 12, fontWeight: 800, color: "#fdba74", background: "rgba(249,115,22,0.12)", border: "1px solid rgba(249,115,22,0.24)" },
   heroTitle: { margin: 0, display: "grid", gap: 4, fontSize: "clamp(44px, 8vw, 74px)", lineHeight: 0.98, fontWeight: 950, letterSpacing: -2.2 },
-  heroTitleMobile: { fontSize: "clamp(34px, 11vw, 48px)", lineHeight: 1.02, letterSpacing: -1.2 },
+  heroTitleMobile: { fontSize: "clamp(30px, 10vw, 42px)", lineHeight: 1.03, letterSpacing: -1 },
   heroAccent: { color: "#f97316" },
   heroSub: { margin: 0, fontSize: 18, lineHeight: 1.7, color: "#94a3b8", maxWidth: 760 },
   heroTrust: { margin: 0, fontSize: 14, lineHeight: 1.7, color: "#94a3b8", maxWidth: 760 },
   heroCtas: { display: "flex", gap: 12, flexWrap: "wrap" },
-  heroCtasMobile: { width: "100%" },
+  heroCtasMobile: { width: "100%", display: "grid", gap: 10 },
   fullBtn: { width: "100%" },
   secondaryBtn: { borderRadius: 12, padding: "12px 16px", fontWeight: 800, cursor: "pointer", border: "1px solid transparent" },
   secondaryBtnDark: { background: "rgba(15,23,42,0.82)", borderColor: "rgba(96,165,250,0.18)", color: "#dbe7f9" },
@@ -368,7 +368,9 @@ const s = {
   heroSide: { minWidth: 0, display: "grid", gap: 16, alignContent: "start", minHeight: 360 },
   heroSideMobile: { width: "100%" },
   stageCard: { padding: 6, display: "grid", gap: 12, overflow: "visible", minHeight: 390, background: "transparent" },
+  stageCardMobile: { minHeight: 290, paddingTop: 0 },
   stageFrame: { position: "relative", minHeight: 332, overflow: "visible" },
+  stageFrameMobile: { minHeight: 252 },
   stagePanel: { position: "absolute", borderRadius: 20, transition: "transform .18s linear", willChange: "transform", backdropFilter: "blur(16px)" },
   stagePanelDark: { background: "linear-gradient(180deg, rgba(18,24,40,0.72), rgba(11,17,31,0.52))", border: "1px solid rgba(96,165,250,0.16)", boxShadow: "0 24px 44px rgba(2,6,23,0.28)" },
   stagePanelLight: { background: "linear-gradient(180deg, rgba(255,255,255,0.66), rgba(245,240,233,0.46))", border: "1px solid rgba(133,99,66,0.14)", boxShadow: "0 20px 40px rgba(148,163,184,0.16)" },
@@ -377,6 +379,7 @@ const s = {
   stagePanelTwo: { bottom: 4, left: 40, width: 176, padding: 16, transform: "rotate(8deg)" },
   stagePanelThree: { top: 52, right: 0, width: 164, padding: 16, transform: "rotate(7deg)" },
   stageFlow: { color: "var(--ff-text)", fontSize: 34, lineHeight: 1.08, fontWeight: 900, letterSpacing: -0.8, textAlign: "center" },
+  stageFlowMobile: { fontSize: 24, lineHeight: 1.1, letterSpacing: -0.5 },
   stageMiniTag: { display: "inline-flex", padding: "4px 8px", borderRadius: 999, background: "rgba(59,130,246,0.16)", color: "#93c5fd", fontSize: 11, fontWeight: 800, marginBottom: 8 },
   stageMiniTitle: { display: "block", color: "var(--ff-text)", fontSize: 17, lineHeight: 1.3, fontWeight: 800 },
   section: { display: "grid", gap: 16, marginBottom: 38 },

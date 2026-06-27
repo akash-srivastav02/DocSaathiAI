@@ -45,9 +45,9 @@ function ToolCard({ item, onOpen, compact = false }) {
 function Section({ section, navigate, compact = false }) {
   return (
     <section style={s.section}>
-      <div style={s.sectionHead}>
+      <div style={{ ...s.sectionHead, ...(compact ? s.sectionHeadMobile : null) }}>
         <div>
-          <h2 style={s.sectionTitle}>{section.title}</h2>
+          <h2 style={{ ...s.sectionTitle, ...(compact ? s.sectionTitleMobile : null) }}>{section.title}</h2>
           {section.subtitle && <p style={s.sectionSub}>{section.subtitle}</p>}
         </div>
         {section.viewAllLabel && section.viewAllRoute ? (
@@ -141,7 +141,7 @@ export default function Dashboard({ mode = "dashboard" }) {
         />
 
         <div style={{ ...s.content, ...(isMobile ? s.contentMobile : null), ...s.contentWithFixedTopbar }}>
-          <section style={s.heroBand}>
+          <section style={{ ...s.heroBand, ...(isMobile ? s.heroBandMobile : null) }}>
             <div style={s.heroGlow} />
             <div style={s.heroCopy}>
               <span style={s.heroBadge}>{copy.badge}</span>
@@ -183,7 +183,7 @@ const s = {
     flexDirection: "column",
     gap: 30,
   },
-  contentMobile: { padding: "18px 14px 44px", gap: 24 },
+  contentMobile: { padding: "18px 12px 44px", gap: 22 },
   contentWithFixedTopbar: { paddingTop: 104 },
   heroBand: {
     position: "relative",
@@ -198,6 +198,10 @@ const s = {
     color: "#fff",
     boxShadow: "0 26px 60px rgba(37, 99, 235, 0.24)",
     overflow: "hidden",
+  },
+  heroBandMobile: {
+    padding: "20px 18px",
+    gap: 14,
   },
   heroGlow: {
     position: "absolute",
@@ -234,12 +238,14 @@ const s = {
   statLabel: { fontSize: 13, color: "rgba(255,255,255,0.86)" },
   section: { display: "grid", gap: 16 },
   sectionHead: { display: "flex", alignItems: "end", justifyContent: "space-between", gap: 12, flexWrap: "wrap" },
+  sectionHeadMobile: { flexDirection: "column", alignItems: "flex-start" },
   sectionTitle: { margin: 0, color: "var(--ff-text)", fontSize: 34, lineHeight: 1.06, fontWeight: 900, letterSpacing: -0.8 },
+  sectionTitleMobile: { fontSize: 28, lineHeight: 1.12 },
   sectionSub: { margin: "6px 0 0", color: "var(--ff-text-soft)", fontSize: 15, lineHeight: 1.7 },
   viewAll: { color: "var(--ff-blue)", fontSize: 14, fontWeight: 800 },
   viewAllBtn: { border: "none", background: "transparent", color: "var(--ff-blue)", fontSize: 14, fontWeight: 800, cursor: "pointer", padding: 0 },
   cardGrid: { display: "grid", gridTemplateColumns: "repeat(4, minmax(0, 1fr))", gap: 14 },
-  cardGridCompact: { gridTemplateColumns: "1fr 1fr" },
+  cardGridCompact: { gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))" },
   toolCard: {
     borderRadius: 18,
     border: "1px solid var(--ff-border)",
